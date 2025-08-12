@@ -1,0 +1,42 @@
+{
+  "name": "vercel-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Vercel deployment operations",
+  "capabilities": [
+    "deploy:create",
+    "deploy:list",
+    "deploy:rollback",
+    "domain:manage",
+    "env:manage",
+    "analytics:read"
+  ],
+  "configuration": {
+    "token": "${VERCEL_TOKEN}",
+    "teamId": "${VERCEL_TEAM_ID}"
+  },
+  "projects": [
+    {
+      "name": "meterr-marketing",
+      "id": "prj_O7tM6vH5MxVOLM2Jjh4ftUyCBUnj",
+      "domain": "meterr.ai"
+    },
+    {
+      "name": "meterr-app",
+      "id": "prj_UsU6oonrsOvKY1DYDo7fW4nga2cp",
+      "domain": "app.meterr.ai"
+    },
+    {
+      "name": "meterr-admin",
+      "id": "",
+      "domain": "admin.meterr.ai"
+    }
+  ],
+  "operations": [
+    "deploy",
+    "promote",
+    "rollback",
+    "setEnv",
+    "getDomains",
+    "getAnalytics"
+  ]
+}

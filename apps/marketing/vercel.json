@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "cd ../.. && pnpm run build:marketing",
+  "installCommand": "cd ../.. && pnpm install",
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["iad1"],

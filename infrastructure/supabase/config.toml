@@ -1,0 +1,63 @@
+# Supabase Configuration for meterr.ai
+
+[project]
+id = "meterr-ai"
+name = "meterr.ai"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "auth", "storage"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+pool_size = 10
+
+[db.pooler]
+enabled = true
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 20
+max_client_conn = 100
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+allowed_mime_types = ["image/*", "application/pdf", "text/csv", "application/json"]
+
+[auth]
+enabled = true
+site_url = "https://meterr.ai"
+additional_redirect_urls = ["https://app.meterr.ai", "http://localhost:3000", "http://localhost:3001"]
+jwt_expiry = 3600
+enable_signup = true
+enable_anonymous_sign_ins = false
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+secure_password_change = true
+template.confirmation = "confirm.html"
+template.recovery = "recovery.html"
+template.magic_link = "magic_link.html"
+
+[auth.external.google]
+enabled = false
+client_id = ""
+secret = ""
+
+[auth.external.github]
+enabled = false
+client_id = ""
+secret = ""
+
+[studio]
+enabled = true
+port = 54323
+
+[edge_runtime]
+enabled = true
+port = 54324

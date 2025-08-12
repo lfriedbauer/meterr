@@ -1,0 +1,38 @@
+{
+  "name": "aws-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for AWS service operations",
+  "capabilities": [
+    "s3:manage",
+    "lambda:invoke",
+    "cloudfront:manage",
+    "rds:query",
+    "ses:send"
+  ],
+  "configuration": {
+    "region": "us-east-1",
+    "accessKeyId": "${AWS_ACCESS_KEY_ID}",
+    "secretAccessKey": "${AWS_SECRET_ACCESS_KEY}"
+  },
+  "services": {
+    "s3": {
+      "buckets": [
+        "meterr-assets",
+        "meterr-backups",
+        "meterr-user-uploads"
+      ]
+    },
+    "lambda": {
+      "functions": [
+        "meterr-token-calculator",
+        "meterr-report-generator",
+        "meterr-data-processor"
+      ]
+    },
+    "cloudfront": {
+      "distributions": [
+        "meterr-cdn"
+      ]
+    }
+  }
+}

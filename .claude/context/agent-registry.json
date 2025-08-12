@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "lastUpdate": "2025-08-12T20:30:00Z",
+  "agents": {
+    "orchestrator": {
+      "status": "active",
+      "type": "primary",
+      "created": "2025-08-12T20:30:00Z",
+      "lastActivity": "2025-08-12T20:30:00Z",
+      "currentTask": "Restructuring monorepo architecture",
+      "subAgents": []
+    },
+    "architect": {
+      "status": "active",
+      "type": "primary",
+      "created": "2025-08-12T20:30:00Z",
+      "lastActivity": "2025-08-12T20:30:00Z",
+      "currentTask": "Designing scalable folder structure",
+      "subAgents": []
+    },
+    "builder": {
+      "status": "active",
+      "type": "primary",
+      "created": "2025-08-12T20:30:00Z",
+      "lastActivity": "2025-08-12T20:30:00Z",
+      "currentTask": "Ready for implementation",
+      "subAgents": []
+    },
+    "validator": {
+      "status": "idle",
+      "type": "primary",
+      "created": "2025-08-12T20:30:00Z",
+      "lastActivity": "2025-08-12T20:30:00Z",
+      "currentTask": "Awaiting code to test",
+      "subAgents": []
+    },
+    "scribe": {
+      "status": "active",
+      "type": "primary",
+      "created": "2025-08-12T20:30:00Z",
+      "lastActivity": "2025-08-12T20:30:00Z",
+      "currentTask": "Documenting restructure process",
+      "subAgents": []
+    },
+    "spawner": {
+      "status": "idle",
+      "type": "meta",
+      "created": "2025-08-12T20:30:00Z",
+      "lastActivity": "2025-08-12T20:30:00Z",
+      "currentTask": "Ready to create specialized agents",
+      "subAgents": []
+    }
+  },
+  "messageQueue": [],
+  "statistics": {
+    "totalAgentsCreated": 6,
+    "activeAgents": 4,
+    "idleAgents": 2,
+    "terminatedAgents": 0
+  }
+}

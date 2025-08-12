@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "servers": {
+    "filesystem": {
+      "enabled": true,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "root": "C:\\Users\\LeviFriedbauer\\meterr"
+    },
+    "supabase": {
+      "enabled": false,
+      "command": "node",
+      "args": ["mcp-servers/supabase-server.js"],
+      "env": {
+        "SUPABASE_URL": "${SUPABASE_URL}",
+        "SUPABASE_SERVICE_KEY": "${SUPABASE_SERVICE_KEY}"
+      }
+    },
+    "aws": {
+      "enabled": false,
+      "command": "node",
+      "args": ["mcp-servers/aws-server.js"],
+      "env": {
+        "AWS_REGION": "us-east-1",
+        "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
+        "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}"
+      }
+    },
+    "vercel": {
+      "enabled": false,
+      "command": "node",
+      "args": ["mcp-servers/vercel-server.js"],
+      "env": {
+        "VERCEL_TOKEN": "${VERCEL_TOKEN}"
+      }
+    }
+  }
+}

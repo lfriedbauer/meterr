@@ -1,9 +1,10 @@
 {
-  "name": "meterr-app",
+  "name": "@meterr/admin",
   "version": "0.1.0",
   "private": true,
+  "description": "Admin panel for meterr.ai",
   "scripts": {
-    "dev": "next dev --port 3001",
+    "dev": "next dev --port 3002",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -17,11 +18,6 @@
     "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
-    "eslint": "^9",
-    "eslint-config-next": "15.4.6",
-    "@eslint/eslintrc": "^3"
+    "@types/react-dom": "^19"
   }
 }

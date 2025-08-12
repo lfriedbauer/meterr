@@ -1,7 +1,8 @@
 packages:
-  - meterr-ui
-  - meterr-marketing
-  - meterr-app
+  - "apps/*"
+  - "packages/*"
+  - "packages/@meterr/*"
+  - "ui"
 
 ignoredBuiltDependencies:
   - '@tailwindcss/oxide'

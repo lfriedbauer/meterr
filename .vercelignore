@@ -1,0 +1,26 @@
+# Ignore development files
+.git
+.gitignore
+.env.local
+.env.development
+.env.test
+
+# Ignore documentation
+*.md
+!README.md
+docs/
+
+# Ignore test files
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+__tests__/
+
+# Ignore Storybook files (for meterr-ui)
+.storybook/
+*.stories.tsx
+*.stories.ts
+
+# Ignore other project folders when deploying
+# (Vercel will handle this based on rootDirectory setting)

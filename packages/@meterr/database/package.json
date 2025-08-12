@@ -1,0 +1,19 @@
+{
+  "name": "@meterr/database",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Database schemas and types for meterr.ai",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "generate": "supabase gen types typescript"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
