@@ -1,0 +1,10 @@
+packages:
+  - meterr-ui
+  - meterr-marketing
+  - meterr-app
+
+ignoredBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - esbuild
+  - sharp
+  - unrs-resolver
