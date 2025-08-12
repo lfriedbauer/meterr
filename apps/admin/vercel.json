@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd ../.. && pnpm run build:admin",
+  "installCommand": "cd ../.. && pnpm install",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "env": {
+    "NEXT_PUBLIC_APP_URL": "https://app.meterr.ai",
+    "NEXT_PUBLIC_MARKETING_URL": "https://meterr.ai",
+    "NEXT_PUBLIC_ADMIN_URL": "https://admin.meterr.ai"
+  }
+}
