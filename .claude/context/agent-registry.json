@@ -6,8 +6,26 @@
       "status": "active",
       "type": "primary",
       "created": "2025-08-12T20:30:00Z",
-      "lastActivity": "2025-08-12T20:30:00Z",
-      "currentTask": "Restructuring monorepo architecture",
+      "lastActivity": "2025-08-12T23:00:00Z",
+      "currentTask": "Coordinating research phase for optimal tech stack",
+      "subAgents": ["research-coordinator"]
+    },
+    "research-coordinator": {
+      "status": "active",
+      "type": "meta",
+      "parent": "orchestrator",
+      "created": "2025-08-12T23:00:00Z",
+      "lastActivity": "2025-08-12T23:00:00Z",
+      "currentTask": "Managing technology research agents",
+      "subAgents": ["auth-researcher"]
+    },
+    "auth-researcher": {
+      "status": "active",
+      "type": "research-specialist",
+      "parent": "research-coordinator",
+      "created": "2025-08-12T23:00:00Z",
+      "lastActivity": "2025-08-12T23:00:00Z",
+      "currentTask": "Comparing authentication solutions",
       "subAgents": []
     },
     "architect": {
