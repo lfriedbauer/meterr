@@ -1,5 +1,21 @@
-  {
-    "name": "meterr",
-    "version": "1.0.0",
-    "private": true
+{
+  "name": "meterr",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm run dev:marketing & pnpm run dev:app",
+    "dev:marketing": "pnpm --filter meterr-marketing dev",
+    "dev:app": "pnpm --filter meterr-app dev",
+    "dev:ui": "pnpm --filter @meterr/ui dev",
+    "build": "pnpm run build:marketing && pnpm run build:app",
+    "build:marketing": "pnpm --filter meterr-marketing build",
+    "build:app": "pnpm --filter meterr-app build",
+    "build:ui": "pnpm --filter @meterr/ui build",
+    "deploy": "pnpm run deploy:marketing && pnpm run deploy:app",
+    "deploy:marketing": "cd meterr-marketing && vercel --prod",
+    "deploy:app": "cd meterr-app && vercel --prod"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
   }
+}
