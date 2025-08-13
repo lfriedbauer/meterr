@@ -1,3 +1,42 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ff98b0cb437b8530bb59d2c835d963693855824d08f6401f07fdbf71bec8a967
-size 869
+{
+  "name": "vercel-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Vercel deployment operations",
+  "capabilities": [
+    "deploy:create",
+    "deploy:list",
+    "deploy:rollback",
+    "domain:manage",
+    "env:manage",
+    "analytics:read"
+  ],
+  "configuration": {
+    "token": "${VERCEL_TOKEN}",
+    "teamId": "${VERCEL_TEAM_ID}"
+  },
+  "projects": [
+    {
+      "name": "meterr-marketing",
+      "id": "prj_O7tM6vH5MxVOLM2Jjh4ftUyCBUnj",
+      "domain": "meterr.ai"
+    },
+    {
+      "name": "meterr-app",
+      "id": "prj_UsU6oonrsOvKY1DYDo7fW4nga2cp",
+      "domain": "app.meterr.ai"
+    },
+    {
+      "name": "meterr-admin",
+      "id": "",
+      "domain": "admin.meterr.ai"
+    }
+  ],
+  "operations": [
+    "deploy",
+    "promote",
+    "rollback",
+    "setEnv",
+    "getDomains",
+    "getAnalytics"
+  ]
+}

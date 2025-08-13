@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d0667cfb3b020978ad9213f501861bc8023fc347f085e0b73efc67d959fea813
-size 400
+{
+  "name": "@meterr/sdk",
+  "version": "0.1.0",
+  "description": "Track AI API costs with one line of code",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "openai": "^4.0.0",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

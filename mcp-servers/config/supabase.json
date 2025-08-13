@@ -1,3 +1,39 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dda6fe44e3622248d797173850dc079ff11df27354f5c1f74df38e5bb9d22a52
-size 732
+{
+  "name": "supabase-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Supabase operations",
+  "capabilities": [
+    "database:read",
+    "database:write",
+    "auth:manage",
+    "storage:manage",
+    "functions:invoke"
+  ],
+  "configuration": {
+    "url": "${SUPABASE_URL}",
+    "serviceKey": "${SUPABASE_SERVICE_KEY}",
+    "anonKey": "${SUPABASE_ANON_KEY}"
+  },
+  "operations": {
+    "database": [
+      "query",
+      "insert",
+      "update",
+      "delete",
+      "upsert"
+    ],
+    "auth": [
+      "signUp",
+      "signIn",
+      "signOut",
+      "getUser",
+      "updateUser"
+    ],
+    "storage": [
+      "upload",
+      "download",
+      "delete",
+      "list"
+    ]
+  }
+}

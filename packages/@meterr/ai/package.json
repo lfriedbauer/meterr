@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:cf4af67d7b97d33e191609bc26da7ed8cb7a89efbfb7530b54b0e045f502bc17
-size 442
+{
+  "name": "@meterr/ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI service integrations for meterr.ai",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "openai": "^4.67.0",
+    "@anthropic-ai/sdk": "^0.32.0",
+    "@google/generative-ai": "^0.21.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

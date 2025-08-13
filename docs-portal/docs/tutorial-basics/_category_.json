@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a90547675a740b11e0e466f80983715127aa6772d5a389d737f374c94315a433
-size 180
+{
+  "label": "Tutorial - Basics",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "5 minutes to learn the most important Docusaurus concepts."
+  }
+}

@@ -1,3 +1,59 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f73c50c660904c79f41fdc474a5f967132ce6b16ed88e1741b5524e081994192
-size 2769
+{
+  "name": "meterr",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm run dev:marketing & pnpm run dev:app",
+    "dev:marketing": "pnpm --filter @meterr/marketing dev",
+    "dev:app": "pnpm --filter @meterr/app dev",
+    "dev:admin": "pnpm --filter @meterr/admin dev",
+    "dev:ui": "pnpm --filter @meterr/ui dev",
+    "build": "pnpm run build:packages && pnpm run build:apps",
+    "build:apps": "pnpm run build:marketing && pnpm run build:app",
+    "build:marketing": "pnpm --filter @meterr/marketing build",
+    "build:app": "pnpm --filter @meterr/app build",
+    "build:admin": "pnpm --filter @meterr/admin build",
+    "build:packages": "pnpm --filter './packages/**' build",
+    "build:ui": "pnpm --filter @meterr/ui build",
+    "test": "pnpm --filter './packages/**' test",
+    "lint": "pnpm --filter './apps/**' lint",
+    "typecheck": "pnpm --filter './apps/**' typecheck",
+    "deploy": "pnpm run deploy:marketing && pnpm run deploy:app",
+    "deploy:marketing": "cd apps/marketing && vercel --prod",
+    "deploy:app": "cd apps/app && vercel --prod",
+    "deploy:admin": "cd apps/admin && vercel --prod",
+    "setup": "powershell -ExecutionPolicy Bypass -File scripts/setup.ps1",
+    "spawn-agent": "node scripts/agent-spawn.js",
+    "research": "tsx apps/app/scripts/research-executor.ts",
+    "analyze": "tsx apps/app/scripts/analyze-research.ts",
+    "prototype": "tsx apps/app/scripts/prototype-builder.ts",
+    "validate": "tsx apps/app/scripts/validate-prototypes.ts",
+    "docs": "cd docs-portal && pnpm start",
+    "docs:build": "cd docs-portal && pnpm build",
+    "docs:serve": "cd docs-portal && pnpm serve",
+    "docs:migrate": "tsx scripts/migrate-to-docusaurus.ts",
+    "docs:fix": "tsx scripts/fix-mdx-syntax.ts",
+    "mcp": "node scripts/mcp-inspect.js",
+    "mcp:llm": "node scripts/mcp-inspect.js llm-research",
+    "mcp:fs": "node scripts/mcp-inspect.js filesystem",
+    "mcp:github": "node scripts/mcp-inspect.js github",
+    "mcp:test": "mcp-inspector-cli --config mcp-config.json --server llm-research --cli",
+    "overnight": "npm run research && npm run analyze && npm run prototype && npm run validate",
+    "env:setup": "cp .env.example .env && echo 'Please add your API keys to .env'",
+    "skeptic": "tsx apps/app/scripts/skeptical-validator.ts",
+    "dialogue": "tsx apps/app/scripts/agent-dialogue.ts",
+    "validate-claims": "npm run skeptic && npm run dialogue"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "dotenv": "^16.3.1"
+  },
+  "dependencies": {
+    "openai": "^4.24.1",
+    "@anthropic-ai/sdk": "^0.17.0",
+    "@google/generative-ai": "^0.2.0",
+    "axios": "^1.6.5"
+  }
+}

@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b7bec4e77b55b1bf091a39750409b842654c87fa27f5e6b1fb98fdac97e84323
-size 438
+{
+  "name": "@meterr/database",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Database schemas and types for meterr.ai",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "generate": "supabase gen types typescript"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

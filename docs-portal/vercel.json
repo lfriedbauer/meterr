@@ -1,3 +1,6 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a213d008fb5acbad3570b9740c4bb9b6450a8cd6401c6816f8b72a1ce1af7b42
-size 147
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": null
+}

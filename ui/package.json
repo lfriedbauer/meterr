@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a16620020aedccf0416cb59f39ddbccf3e500bb3cdd444ad385653bbdea3865d
-size 506
+{
+  "name": "meterr-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0",
+  "devDependencies": {
+    "@storybook/react": "^9.1.2",
+    "@types/node": "^24.2.1",
+    "@types/react": "^19.1.10",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.2"
+  }
+}
