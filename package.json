@@ -23,9 +23,27 @@
     "deploy:app": "cd apps/app && vercel --prod",
     "deploy:admin": "cd apps/admin && vercel --prod",
     "setup": "powershell -ExecutionPolicy Bypass -File scripts/setup.ps1",
-    "spawn-agent": "node scripts/agent-spawn.js"
+    "spawn-agent": "node scripts/agent-spawn.js",
+    "research": "tsx apps/app/scripts/research-executor.ts",
+    "analyze": "tsx apps/app/scripts/analyze-research.ts",
+    "prototype": "tsx apps/app/scripts/prototype-builder.ts",
+    "validate": "tsx apps/app/scripts/validate-prototypes.ts",
+    "overnight": "npm run research && npm run analyze && npm run prototype && npm run validate",
+    "env:setup": "cp .env.example .env && echo 'Please add your API keys to .env'",
+    "skeptic": "tsx apps/app/scripts/skeptical-validator.ts",
+    "dialogue": "tsx apps/app/scripts/agent-dialogue.ts",
+    "validate-claims": "npm run skeptic && npm run dialogue"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "dotenv": "^16.3.1"
+  },
+  "dependencies": {
+    "openai": "^4.24.1",
+    "@anthropic-ai/sdk": "^0.17.0",
+    "@google/generative-ai": "^0.2.0",
+    "axios": "^1.6.5"
   }
 }

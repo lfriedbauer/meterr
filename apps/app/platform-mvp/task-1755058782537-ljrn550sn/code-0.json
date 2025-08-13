@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "OpenAI API Call Capture",
+  "version": "1.0.0",
+  "description": "Captures API calls from OpenAI playground",
+  "permissions": [
+    "storage",
+    "webRequest",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://platform.openai.com/*",
+    "https://api.openai.com/*"
+  ],
+  "background": {
+    "service_worker": "dist/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://platform.openai.com/*"],
+      "js": ["dist/content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["dist/injected.js"],
+      "matches": ["https://platform.openai.com/*"]
+    }
+  ]
+}

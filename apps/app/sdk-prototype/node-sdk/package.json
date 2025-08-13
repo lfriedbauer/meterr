@@ -1,0 +1,19 @@
+{
+  "name": "@meterr/sdk",
+  "version": "0.1.0",
+  "description": "Track AI API costs with one line of code",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "openai": "^4.0.0",
+    "axios": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

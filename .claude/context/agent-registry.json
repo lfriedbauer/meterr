@@ -70,9 +70,23 @@
     }
   },
   "messageQueue": [],
+  "messageQueue": [
+    {
+      "from": "orchestrator",
+      "to": "market-research-agent",
+      "message": "Begin overnight research on AI expense tools",
+      "timestamp": "2025-08-12T23:35:00Z"
+    },
+    {
+      "from": "orchestrator", 
+      "to": "prototype-builder-agent",
+      "message": "Start building token calculator based on SpendCharm analysis",
+      "timestamp": "2025-08-12T23:35:00Z"
+    }
+  ],
   "statistics": {
-    "totalAgentsCreated": 6,
-    "activeAgents": 4,
+    "totalAgentsCreated": 8,
+    "activeAgents": 6,
     "idleAgents": 2,
     "terminatedAgents": 0
   }

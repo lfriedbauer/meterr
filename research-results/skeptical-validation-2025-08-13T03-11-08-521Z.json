@@ -1,0 +1,71 @@
+{
+  "timestamp": "2025-08-13T03:11:08.522Z",
+  "validations": [
+    {
+      "claim": "67% of companies have no visibility into AI costs across providers",
+      "verdict": "VERIFIED",
+      "confidence": 50,
+      "evidence": {
+        "supporting": [
+          "Perplexity: However, closely related data show that **many companies face significant challenges with AI cost visibility and ROI evaluation**, reflecting a substa",
+          "Gemini: Claim appears logically sound"
+        ],
+        "contradicting": [
+          "Claude: The precision suggests rigor that likely doesn't exist\n- Classic \"survey statistic\" that sounds scientific but may come from a small, biased sample\n\n*"
+        ],
+        "missing": [
+          "Missing Context 🔍\n\n**Sample Questions**\n- How many companies surveyed? 30? 300? 3000?\n- Self-selected respondents (those already concerned about AI costs)?\n- Survey methodology? Online poll vs"
+        ]
+      },
+      "recommendation": "Use this claim with some confidence"
+    },
+    {
+      "claim": "Average company wastes 30-40% on suboptimal model selection",
+      "verdict": "VERIFIED",
+      "confidence": 50,
+      "evidence": {
+        "supporting": [
+          "Perplexity: There is no direct, recent study or industry report explicitly stating that the \"average company wastes 30-40% on suboptimal model selection\" in AI or",
+          "Gemini: Claim appears logically sound"
+        ],
+        "contradicting": [
+          "Claude: Red Flags 🚩\n\n**Round Number Warning**\n- The suspiciously round \"30-40%\" range suggests estimation rather than precise measurement\n- Real waste metric"
+        ],
+        "missing": [
+          "Missing Context 📊\n\n**Critical Omissions:**\n- **Industry variance**: A bank's model needs ≠ a retailer's needs\n- **Company maturity**: Startups vs"
+        ]
+      },
+      "recommendation": "Use this claim with some confidence"
+    },
+    {
+      "claim": "No unified solution exists for multi-provider AI management",
+      "verdict": "NEEDS_CLARIFICATION",
+      "confidence": 30,
+      "evidence": {
+        "supporting": [
+          "Perplexity: , Microsoft Copilot, Google Gemini), no market-wide standard or unified management layer across all providers is reported[3]"
+        ],
+        "contradicting": [
+          "Claude: Unstated Assumptions 🤔\n\n- Assumes \"unified\" is necessary or even desirable\n- Presumes all organizations need multi-provider management\n- Implies curr"
+        ],
+        "missing": [
+          "Missing Context 🔍\n\n**Scope Ambiguity**\n- What constitutes \"multi-provider\"? 2 providers? 20?\n- Which AI services? LLMs? Computer vision? All ML services?\n- Management of what specifically? APIs? Costs? Governance? Performance?\n\n**Use Case Vacuum**\n- Enterprise? Startups? Developers?\n- Production systems or experimentation?\n- Regulated industries vs"
+        ]
+      },
+      "revisedClaim": "No unified solution exists for multi-provider AI management (unverified)",
+      "recommendation": "Gather more specific data before making this claim."
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "verified": 2,
+    "false": 0,
+    "unverified": 0,
+    "needsClarification": 1
+  },
+  "recommendations": [
+    "Use ranges instead of specific percentages where data is uncertain",
+    "Add disclaimers for estimated statistics",
+    "Focus on provable features rather than speculative benefits"
+  ]
+}

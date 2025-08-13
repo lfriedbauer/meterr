@@ -1,0 +1,70 @@
+{
+  "timestamp": "2025-08-13T04:32:09.971Z",
+  "tiers": [
+    {
+      "name": "Starter",
+      "basePrice": 49,
+      "features": [
+        "Track up to $2,000/month AI spend",
+        "Basic dashboard",
+        "Weekly email reports",
+        "Chrome extension",
+        "30-day data retention"
+      ],
+      "targetCustomer": "Small teams, individuals",
+      "revenueModel": "subscription"
+    },
+    {
+      "name": "Professional",
+      "basePrice": 99,
+      "features": [
+        "Track up to $10,000/month AI spend",
+        "Real-time dashboard",
+        "Daily reports & alerts",
+        "API access",
+        "Team management (5 users)",
+        "90-day data retention",
+        "Basic optimization suggestions"
+      ],
+      "targetCustomer": "Growing startups",
+      "revenueModel": "subscription"
+    },
+    {
+      "name": "Business",
+      "basePrice": 299,
+      "features": [
+        "Unlimited AI spend tracking",
+        "Advanced analytics",
+        "Custom alerts & workflows",
+        "Unlimited users",
+        "1-year data retention",
+        "Monthly optimization review",
+        "Slack integration",
+        "Priority support"
+      ],
+      "targetCustomer": "Scale-ups, mid-market",
+      "revenueModel": "hybrid"
+    },
+    {
+      "name": "Enterprise Performance",
+      "basePrice": 499,
+      "features": [
+        "Everything in Business",
+        "Dedicated account manager",
+        "Custom integrations",
+        "SLA guarantees",
+        "Quarterly business reviews",
+        "Performance-based pricing available"
+      ],
+      "targetCustomer": "Enterprise (>$20K/month AI spend)",
+      "revenueModel": "performance"
+    }
+  ],
+  "performanceModel": {
+    "minBaseFee": 499,
+    "savingsShare": "20-35%",
+    "baselinePeriod": 30,
+    "minContract": 6
+  },
+  "recommendation": "# Optimal Pricing Strategy for Meterr.ai: **Hybrid Model with Smart Positioning**\n\n## Recommended Structure\n\n### **\"Success-Aligned Pricing\"**\n- **Base Platform Fee**: $99-299/month (based on company size)\n- **Performance Bonus**: 15-20% of verified savings\n- **Pilot Option**: First 30 days at base fee only (prove value first)\n\n## Why This Wins\n\n### 1. **Easier to Sell** ✓\n- Low entry barrier ($99/month for small teams)\n- \"We only win when you win\" narrative\n- Pilot period removes risk perception\n- Clear ROI story: \"Cover the base fee in Week 1, everything else is profit\"\n\n### 2. **Revenue Predictability** ✓\n- Base fees provide 40-50% predictable MRR\n- Performance fees scale with customer success\n- Natural expansion revenue as customers grow\n- Reduces cash flow volatility\n\n### 3. **Customer Psychology** ✓\n- Base fee is low enough to be a \"no-brainer\" decision\n- Performance component aligns incentives perfectly\n- Customers feel like partners, not just buyers\n- Creates stickiness through shared success\n\n## Implementation Tiers\n\n### **Starter** ($99/month base + 20% of savings)\n- 1-10 employees\n- Up to 3 integrations\n- Basic analytics\n\n### **Growth** ($199/month base + 18% of savings)\n- 11-50 employees\n- Unlimited integrations\n- Advanced analytics\n- Priority support\n\n### **Enterprise** ($299/month base + 15% of savings)\n- 50+ employees\n- Custom integrations\n- Dedicated success manager\n- Quarterly business reviews\n\n## Key Differentiators\n\n1. **Market Position**: Only vendor truly betting on your success\n2. **Trust Builder**: \"Try base features first, pay performance only when you see results\"\n3. **Scalability**: Grows naturally with customer success\n4. **Competitive Moat**: Competitors stuck in traditional SaaS pricing\n\n## Quick-Start Execution\n\n### Week 1-2:\n- Update pricing page with \"Success-Aligned Pricing\"\n- Create ROI calculator showing base fee payback time\n- Develop case studies showing total savings vs. total cost\n\n### Week 3-4:\n- Launch \"Risk-Free Pilot\" campaign\n- Train sales on value-based selling approach\n- Set up automated usage and savings tracking\n\n### Month 2:\n- A/B test messaging: \"Partnership Pricing\" vs. \"Success-Aligned\"\n- Implement performance tracking dashboard for customers\n- Create customer success playbooks for each tier\n\n## Expected Outcomes\n\n- **Close Rate**: 35-40% improvement over pure subscription\n- **CAC Payback**: 3-4 months (vs. 6-8 for pure subscription)\n- **Net Revenue Retention**: 130-150% (expansion through performance fees)\n- **Churn Rate**: <5% monthly (aligned incentives increase stickiness)\n\n## Risk Mitigation\n\n- **Cap performance fees** at 3x base fee to prevent sticker shock\n- **Offer annual prepay** for base fee with 20% discount\n- **Include \"savings guarantee\"**: Refund base fee if no savings in first 90 days\n\nThis hybrid approach gives you the best of all worlds: predictable revenue, aligned incentives, easy sales narrative, and natural expansion potential. It positions Meterr.ai as a true partner in optimization, not just another SaaS expense."
+}
