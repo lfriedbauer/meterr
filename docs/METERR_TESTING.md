@@ -11,16 +11,41 @@ meterr/
 ├── apps/app/__tests__/          # Main app tests
 │   ├── api/                     # API endpoint tests
 │   ├── components/              # Component tests
-│   └── services/                # Service layer tests
+│   ├── services/                # Service layer tests
+│   ├── property/                # Property-based tests
+│   └── security/                # Security fuzz tests
 ├── apps/app/scripts/__tests__/  # Script tests
 └── packages/@meterr/*/tests/    # Package tests
 ```
 
-## Types of Tests
+## Running Tests
+
+### Quick Start
+```bash
+pnpm test                 # Run all tests
+pnpm test:watch          # Watch mode for development
+pnpm test:coverage       # Generate coverage report
+```
+
+### Test Suites by Category
+```bash
+# Core functionality
+pnpm test token          # Token counting tests
+pnpm test cost           # Cost calculation tests
+pnpm test api            # API endpoint tests
+
+# Advanced testing
+pnpm test:property       # Property-based tests
+pnpm test:security       # Security fuzz tests
+pnpm test:perf           # Performance benchmarks
+pnpm test:load           # Load testing
+```
+
+## Core Test Types
 
 ### 1. Token Counting Accuracy Tests
 
-**Why Critical**: Different providers count tokens differently. Our counts must match their billing.
+**Why Critical**: Different providers count tokens differently. Our counts must match their billing exactly.
 
 ```typescript
 // apps/app/__tests__/services/token-counter.test.ts
@@ -37,12 +62,19 @@ describe("Token Counter Accuracy", () => {
     const ourCount = await countTokens(text, "gpt-4");
     expect(ourCount).toBe(7); // Verified count
   });
+
+  it("should match Claude's tokenizer", async () => {
+    const text = "Hello, world!";
+    const ourCount = await countTokens(text, "claude-3");
+    const anthropicCount = 5; // Verified with Anthropic
+    expect(ourCount).toBe(anthropicCount);
+  });
 });
 ```
 
 ### 2. Cost Calculation Tests
 
-**Why Critical**: Financial calculations need precision to 6 decimal places.
+**Why Critical**: Financial calculations need precision to 6 decimal places without rounding errors.
 
 ```typescript
 // apps/app/__tests__/services/cost-calculator.test.ts
@@ -61,12 +93,17 @@ describe("Cost Calculator", () => {
     const cost = calculateCost(tokens, 0.03);
     expect(cost).toBe(300.000000);
   });
+
+  it("should use BigNumber for precision", () => {
+    const cost = calculateCost(999999, 0.000001);
+    expect(cost).toBe(0.999999); // No floating point errors
+  });
 });
 ```
 
 ### 3. API Integration Tests
 
-**Why Critical**: Ensure our API endpoints handle real-world scenarios.
+**Why Critical**: Ensure our API endpoints handle real-world scenarios and edge cases.
 
 ```typescript
 // apps/app/__tests__/api/smart-router.test.ts
@@ -85,7 +122,6 @@ describe("Smart Router API", () => {
   });
 
   it("should handle rate limits gracefully", async () => {
-    // Simulate rate limit scenario
     const response = await fetch("/api/smart-router", {
       method: "POST",
       headers: { "X-Rate-Limit-Test": "true" }
@@ -94,12 +130,23 @@ describe("Smart Router API", () => {
     expect(response.status).toBe(429);
     expect(response.headers.get("Retry-After")).toBeDefined();
   });
+
+  it("should validate input with Zod", async () => {
+    const response = await fetch("/api/count-tokens", {
+      method: "POST",
+      body: JSON.stringify({ invalid: "data" })
+    });
+    
+    expect(response.status).toBe(400);
+    const error = await response.json();
+    expect(error.message).toContain("validation");
+  });
 });
 ```
 
 ### 4. Performance Tests
 
-**Why Critical**: Dashboard must load in <1 second, API responses in <100ms.
+**Why Critical**: Dashboard must load in <1 second, API responses in <100ms for good UX.
 
 ```typescript
 // apps/app/__tests__/performance/dashboard.test.ts
@@ -121,12 +168,23 @@ describe("Dashboard Performance", () => {
     
     expect(duration).toBeLessThan(100);
   });
+
+  it("should leverage GPU for large batches", async () => {
+    const largeBatch = generateTokenBatch(100_000);
+    
+    const cpuTime = await measureCPUProcessing(largeBatch);
+    const gpuTime = await measureGPUProcessing(largeBatch);
+    
+    expect(gpuTime).toBeLessThan(cpuTime / 10); // 10x faster
+  });
 });
 ```
 
-### 5. Property-Based Tests
+## Advanced Test Patterns
 
-**Why Critical**: Automatically test edge cases and invariants that manual tests might miss.
+### 5. Property-Based Testing
+
+**Why Critical**: Automatically discovers edge cases that manual tests miss. Essential for financial accuracy.
 
 ```typescript
 // apps/app/__tests__/property/token-counter.property.test.ts
@@ -160,12 +218,27 @@ describe("Token Counter Properties", () => {
       })
     );
   });
+
+  it("should scale linearly with repetition", () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1 }),
+        fc.integer({ min: 1, max: 100 }),
+        (text, repeats) => {
+          const single = countTokens(text, 'gpt-4');
+          const repeated = countTokens(text.repeat(repeats), 'gpt-4');
+          // Allow small variance for token boundaries
+          return Math.abs(repeated - (single * repeats)) <= repeats;
+        }
+      )
+    );
+  });
 });
 ```
 
 ### 6. Financial Precision Property Tests
 
-**Why Critical**: Ensure no precision loss in financial calculations across all possible inputs.
+**Why Critical**: Ensure no precision loss across all possible inputs - critical for billing.
 
 ```typescript
 // apps/app/__tests__/property/cost-calculator.property.test.ts
@@ -197,7 +270,7 @@ describe("Cost Calculator Properties", () => {
     );
   });
 
-  it("should be commutative for batch operations", () => {
+  it("should be associative for batch operations", () => {
     fc.assert(
       fc.property(
         fc.array(fc.nat(), { minLength: 1, maxLength: 100 }),
@@ -220,15 +293,15 @@ describe("Cost Calculator Properties", () => {
 });
 ```
 
-### 7. Fuzz Testing for Security
+### 7. Security Fuzz Testing
 
-**Why Critical**: Prevent crashes and security vulnerabilities from malformed input.
+**Why Critical**: Prevent crashes and vulnerabilities from malformed or malicious input.
 
 ```typescript
 // apps/app/__tests__/security/api-fuzz.test.ts
 import { fuzzer } from '@jazzer.js/core';
 
-describe("API Fuzz Testing", () => {
+describe("API Security Testing", () => {
   it("should handle malformed JSON gracefully", async () => {
     const malformedInputs = [
       '{"text": null}',
@@ -239,6 +312,7 @@ describe("API Fuzz Testing", () => {
       '{"text": "' + 'a'.repeat(1_000_000) + '"}',
       '{]',
       '{"text": {"$ref": "#"}}', // JSON reference attack
+      '{"__proto__": {"isAdmin": true}}', // Prototype pollution
     ];
 
     for (const input of malformedInputs) {
@@ -251,13 +325,22 @@ describe("API Fuzz Testing", () => {
       // Should never crash, always return valid error
       expect(response.status).toBeGreaterThanOrEqual(400);
       expect(response.status).toBeLessThan(500);
+      
+      // Should not leak internal errors
+      const body = await response.text();
+      expect(body).not.toContain('stack');
+      expect(body).not.toContain('TypeError');
     }
   });
 
   it("should resist injection attacks", () => {
     fc.assert(
       fc.property(
-        fc.string().filter(s => s.includes('DROP') || s.includes('<script>')),
+        fc.string().filter(s => 
+          s.includes('DROP') || 
+          s.includes('<script>') ||
+          s.includes('../../')
+        ),
         async (maliciousInput) => {
           const response = await fetch('/api/smart-router', {
             method: 'POST',
@@ -268,6 +351,7 @@ describe("API Fuzz Testing", () => {
           const data = await response.json();
           expect(data).not.toContain('DROP');
           expect(data).not.toContain('<script>');
+          expect(data).not.toContain('../');
         }
       )
     );
@@ -275,57 +359,73 @@ describe("API Fuzz Testing", () => {
 });
 ```
 
-## Running Tests
+## Test Setup and Configuration
 
-### All Tests
-```bash
-pnpm test                 # Run all tests
-pnpm test:watch          # Watch mode
-pnpm test:coverage       # Coverage report
+### Basic Setup (Jest)
+```json
+// jest.config.js
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "coverageThreshold": {
+    "global": {
+      "branches": 80,
+      "functions": 80,
+      "lines": 80,
+      "statements": 80
+    },
+    "./src/services/token-counter": {
+      "branches": 100,
+      "functions": 100,
+      "lines": 100,
+      "statements": 100
+    }
+  }
+}
 ```
 
-### Specific Tests
+### Advanced Testing Libraries
 ```bash
-pnpm test token          # Token counting tests
-pnpm test cost           # Cost calculation tests
-pnpm test api            # API tests
-pnpm test:property       # Property-based tests
-pnpm test:security       # Security fuzz tests
-```
-
-### Performance Tests
-```bash
-pnpm test:perf           # Performance benchmarks
-pnpm test:load           # Load testing
-```
-
-## Advanced Testing Setup
-
-### Installing Test Libraries
-```bash
-# Property-based testing
+# Property-based testing for edge cases
 pnpm add -D fast-check
 
 # Fuzz testing for security
 pnpm add -D @jazzer.js/core
 
-# Load testing
+# Load testing for scalability
 pnpm add -D k6
+
+# Snapshot testing for API responses
+pnpm add -D jest-snapshot
 ```
 
 ## Test Coverage Requirements
 
-### Critical Paths (100% Required)
+### Critical Paths (100% Coverage Required)
 - Token counting functions
 - Cost calculations
 - Billing operations
 - API key encryption
+- Input validation
 
-### Standard Paths (80% Target)
+### Standard Paths (80% Coverage Target)
 - API endpoints
 - React components
 - Database queries
 - Utility functions
+- Error handling
+
+### Coverage Reports
+```bash
+# Generate coverage report
+pnpm test:coverage
+
+# View coverage in browser
+open coverage/lcov-report/index.html
+
+# Enforce coverage in CI
+pnpm test:coverage --ci --coverageThreshold
+```
 
 ## Testing Best Practices
 
@@ -354,19 +454,19 @@ describe("Edge Cases", () => {
     expect(countTokens("")).toBe(0);
   });
 
-  it("should handle very long input", () => {
-    const longText = "a".repeat(1_000_000);
-    expect(() => countTokens(longText)).not.toThrow();
+  it("should handle maximum input length", () => {
+    const maxText = "a".repeat(100_000); // Max context
+    expect(() => countTokens(maxText)).not.toThrow();
   });
 
   it("should handle special characters", () => {
-    const special = "♠♣♥♦ 你好 مرحبا";
+    const special = "♠♣♥♦ 你好 مرحبا शुभ प्रभात";
     expect(countTokens(special)).toBeGreaterThan(0);
   });
 });
 ```
 
-### 3. Test Error Handling
+### 3. Test Error Scenarios
 ```typescript
 it("should handle API failures gracefully", async () => {
   // Mock API failure
@@ -377,93 +477,124 @@ it("should handle API failures gracefully", async () => {
   expect(result.success).toBe(false);
   expect(result.error).toBe("Service temporarily unavailable");
   expect(result.retry).toBe(true);
+  expect(result.retryAfter).toBe(60);
 });
 ```
 
-## Continuous Testing
+## Testing with Your Hardware
+
+Your RTX 5070 Ti and 32-thread CPU enable advanced testing capabilities:
+
+### Parallel Testing
+```bash
+# Run tests across all 32 threads
+pnpm test --parallel --maxWorkers=32
+
+# Parallel property tests
+pnpm test:property --maxWorkers=32 --numRuns=10000
+```
+
+### GPU-Accelerated Tests
+```bash
+# Enable GPU for token processing tests
+CUDA_VISIBLE_DEVICES=0 pnpm test:gpu
+
+# Verify GPU is being used
+nvidia-smi  # Should show node.js process
+```
+
+### High-Volume Load Testing
+```bash
+# Test with 10,000 concurrent users
+pnpm test:load --vus=10000 --duration=60s
+
+# Test token processing throughput
+pnpm test:perf --tokens=1000000 --parallel=32
+```
+
+## Continuous Integration
 
 ### Pre-commit Hooks
 ```json
 // .husky/pre-commit
 {
   "hooks": {
-    "pre-commit": "pnpm test:affected"
+    "pre-commit": "pnpm test:affected && pnpm typecheck"
   }
 }
 ```
 
-### CI Pipeline
+### GitHub Actions Pipeline
 ```yaml
 # .github/workflows/test.yml
-- Run type checking
-- Run unit tests
-- Run integration tests
-- Check coverage thresholds
-- Performance benchmarks
+name: Test Suite
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - run: pnpm install
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test:coverage
+      - run: pnpm test:property
+      - run: pnpm test:security
 ```
 
-## Debugging Failed Tests
+## Debugging Test Failures
 
-### 1. Token Count Mismatches
+### Token Count Mismatches
 ```bash
-# Debug mode shows token breakdown
+# Debug mode shows detailed token breakdown
 DEBUG=tokens pnpm test token-counter
 
-# Output:
+# Output example:
 # Text: "Hello world"
 # Tokens: ["Hello", " world"]
-# IDs: [15496, 1917]
+# Token IDs: [15496, 1917]
 # Count: 2
 ```
 
-### 2. Cost Calculation Errors
+### Cost Calculation Precision Issues
 ```bash
-# Use precise math debugging
-DEBUG=math pnpm test cost-calculator
+# Enable BigNumber debugging
+DEBUG=bignumber pnpm test cost-calculator
 
-# Shows each calculation step
+# Shows each arithmetic operation
 ```
 
-### 3. Flaky Tests
+### Flaky Test Detection
 ```bash
-# Run test multiple times to identify flakiness
-pnpm test --run-in-band --repeat 10
+# Run test multiple times to detect flakiness
+pnpm test --runInBand --repeat=10
+
+# Use seed for deterministic property tests
+pnpm test:property --seed=12345
 ```
 
-## Testing with Your Hardware
-
-Your RTX 5070 Ti and 32-thread CPU enable:
-
-### Parallel Testing
+### Performance Regression Detection
 ```bash
-# Runs tests across all 32 threads
-pnpm test --parallel --maxWorkers=32
+# Compare against baseline
+pnpm test:perf --compare=baseline.json
+
+# Generate new baseline
+pnpm test:perf --updateBaseline
 ```
 
-### GPU-Accelerated Tests
-```bash
-# Tests GPU token counting
-pnpm test:gpu
+## Common Test Issues and Solutions
 
-# Verifies GPU acceleration is working
-nvidia-smi  # Should show node process
-```
-
-### Load Testing
-```bash
-# Simulate 10,000 concurrent users
-pnpm test:load --users=10000 --duration=60s
-```
-
-## Common Test Failures
-
-| Failure | Cause | Solution |
-|---------|-------|----------|
-| Token count mismatch | Model update | Update expected counts |
-| Timeout errors | Slow CI server | Increase timeout |
-| Database connection | No local DB | Run `supabase start` |
-| GPU tests fail | No CUDA | Skip on CI, run locally |
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Token count mismatch | Provider model update | Update expected counts from provider |
+| Precision loss | JavaScript floating point | Use BigNumber library |
+| Timeout in CI | Slower CI machines | Increase timeout or optimize test |
+| GPU tests fail in CI | No CUDA in CI | Skip GPU tests in CI environment |
+| Property test failures | Edge case found | Fix bug or adjust property |
+| Fuzz test crashes | Missing validation | Add input validation |
+| Snapshot mismatches | Intentional changes | Update snapshots with --updateSnapshot |
 
 ---
 
-*For test implementation patterns, see `.claude/context/METERR_TESTING.md`*
+*For concise test patterns and enforcement rules, see `.claude/context/METERR_TESTING.md`*
