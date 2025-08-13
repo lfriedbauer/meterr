@@ -43,14 +43,7 @@ db.query("SELECT * FROM users WHERE id = $1", [userId]);
 
 ## Environment Variables
 
-```bash
-# Required in .env.local
-DATABASE_URL=
-ENCRYPTION_KEY=
-SUPABASE_SERVICE_KEY=
-
-# NEVER commit .env.local
-```
+See METERR_DEPLOYMENT.md for secure environment configuration
 
 ## Row-Level Security
 
@@ -70,13 +63,9 @@ USING (org_id = auth.jwt() ->> 'org_id');
 3. **XSS**: Never use dangerouslySetInnerHTML
 4. **Secrets in git**: Check .gitignore
 
-## Security Commands
+## Security Testing
 
-```bash
-pnpm audit         # Check vulnerabilities
-pnpm audit fix     # Fix issues
-pnpm test:security # Security tests
-```
+See METERR_TESTING.md for security testing commands
 
 ## Incident Response
 

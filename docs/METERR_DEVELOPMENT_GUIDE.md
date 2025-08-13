@@ -43,8 +43,8 @@ meterr/
 ```bash
 pnpm dev          # Starts all 3 apps
 pnpm dev:app      # Just the main dashboard
-pnpm test         # Run test suite
-pnpm build        # Production build (uses all 32 CPU cores)
+pnpm dev:marketing # Just the marketing site
+pnpm dev:admin    # Just the admin panel
 ```
 
 ### Making Changes
@@ -55,18 +55,11 @@ pnpm build        # Production build (uses all 32 CPU cores)
 
 Hot reload is instant with your hardware.
 
-### Testing Your Changes
+### Building & Testing
 
-```bash
-# Type checking (catches errors before runtime)
-pnpm typecheck
+For all testing commands and patterns, see [Testing Guide](./METERR_TESTING.md)
 
-# Run tests
-pnpm test
-
-# Check token counting accuracy
-pnpm test:tokens
-```
+For build and deployment commands, see [Deployment Guide](./METERR_DEPLOYMENT.md)
 
 ## meterr.ai Specific Concepts
 
@@ -92,9 +85,7 @@ Your RTX 5070 Ti accelerates the Token Counter step using CUDA.
 
 ### Database Structure
 
-- **Supabase**: User data, authentication, real-time updates
-- **DynamoDB**: High-volume token logs (millions of records)
-- Both run locally for development
+For detailed database architecture and schema, see [Architecture Guide](./METERR_ARCHITECTURE.md#database-design)
 
 ## Common Workflows
 
@@ -122,20 +113,9 @@ With your hardware, focus on:
 2. GPU acceleration for token operations
 3. Caching frequently accessed data
 
-## Environment Variables
+## Environment Setup
 
-Create `.env.local` in `apps/app/`:
-
-```bash
-# Required for development
-NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-local-key
-DATABASE_URL=postgresql://postgres:postgres@localhost:54322/postgres
-
-# Optional (for testing real providers)
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-```
+For required environment variables and configuration, see [Deployment Guide](./METERR_DEPLOYMENT.md#environment-variables)
 
 ## Troubleshooting
 
@@ -148,10 +128,12 @@ ANTHROPIC_API_KEY=sk-ant-...
 
 ## Getting Help
 
-- Architecture questions: See `/docs/ARCHITECTURE.md`
-- Security concerns: See `/docs/SECURITY.md`
+- Architecture questions: See [Architecture Guide](./METERR_ARCHITECTURE.md)
+- Security concerns: See [Security Guide](./METERR_SECURITY.md)
+- Testing strategy: See [Testing Guide](./METERR_TESTING.md)
+- Coding standards: See [Coding Standards](./METERR_CODING_STANDARDS.md)
+- Hardware setup: See [Environment Guide](./METERR_ENVIRONMENT.md)
 - Claude assistance: Claude has context in `.claude/context/`
-- GPU optimization: Your RTX 5070 Ti supports CUDA 13.0
 
 ## Next Steps
 

@@ -176,23 +176,7 @@ supabase status  # Should show running
 
 ## IDE Setup
 
-### VS Code Recommendations
-
-Install extensions:
-- ESLint
-- Prettier
-- TypeScript and JavaScript
-- Tailwind CSS IntelliSense
-- Prisma (for database)
-
-Settings (`.vscode/settings.json`):
-```json
-{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "typescript.tsdk": "node_modules/typescript/lib"
-}
-```
+For IDE configuration and coding standards, see [Coding Standards](./METERR_CODING_STANDARDS.md#ide-configuration)
 
 ## Next Steps
 

@@ -18,37 +18,26 @@ pnpm dev
 
 ## Key Commands
 
-```bash
-# Development
-pnpm dev           # All apps
-pnpm dev:app       # Main app only
-pnpm build         # Production build
+For development commands, see METERR_TESTING.md
 
+```bash
 # GPU Monitoring
 nvidia-smi         # Check GPU status
 nvidia-smi -l 1    # Real-time monitoring
-
-# Testing
-pnpm test
-pnpm test:watch
 ```
 
-## Environment Variables
-
-Create `.env.local` in `/apps/app/`:
+## Performance Settings
 
 ```bash
-# Performance (leverages 32 threads)
+# Leverage 32 threads
 NODE_OPTIONS="--max-old-space-size=32768"
 UV_THREADPOOL_SIZE=32
 
 # GPU (RTX 5070 Ti)
 CUDA_VISIBLE_DEVICES=0
-
-# meterr.ai
-METERR_ENV=development
-NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
+
+For full environment variables, see METERR_DEPLOYMENT.md
 
 ## Project Structure
 

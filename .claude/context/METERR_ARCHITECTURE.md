@@ -81,17 +81,11 @@ export async function POST(request: Request) {
 
 ## Environment Variables
 
-Required in `.env.local`:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `DATABASE_URL`
-- `OPENAI_API_KEY` (for testing)
+See METERR_DEPLOYMENT.md for environment variables
 
 ## Performance Settings
 
-- NODE_OPTIONS="--max-old-space-size=32768"
-- UV_THREADPOOL_SIZE=32
-- CUDA_VISIBLE_DEVICES=0
+See METERR_ENVIRONMENT.md for performance configuration
 
 ## Security Rules
 
@@ -100,14 +94,9 @@ Required in `.env.local`:
 - Use RLS in Supabase
 - Validate all inputs with Zod
 
-## Testing Commands
+## Testing
 
-```bash
-pnpm test          # Run tests
-pnpm typecheck     # Type checking
-pnpm lint          # Linting
-pnpm build         # Production build
-```
+See METERR_TESTING.md for test commands and patterns
 
 ## Hardware Utilization
 

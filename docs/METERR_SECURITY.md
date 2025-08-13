@@ -149,17 +149,7 @@ export async function POST(request: Request) {
 
 ### Environment Variables
 
-```bash
-# .env.local (NEVER commit this file)
-OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxx
-DATABASE_URL=postgresql://user:pass@host/db
-ENCRYPTION_KEY=base64encodedkey
-
-# .env.example (Safe to commit)
-OPENAI_API_KEY=your-api-key-here
-DATABASE_URL=your-database-url
-ENCRYPTION_KEY=generate-with-openssl
-```
+For secure environment variable configuration, see [Deployment Guide](./METERR_DEPLOYMENT.md#environment-variables)
 
 ### Git Security
 
@@ -176,15 +166,7 @@ ENCRYPTION_KEY=generate-with-openssl
 
 ### Dependency Security
 
-```bash
-# Regular security audits
-pnpm audit              # Check for vulnerabilities
-pnpm audit fix          # Auto-fix when possible
-pnpm update --latest    # Keep dependencies current
-
-# Check before installing new packages
-pnpm audit [package-name]
-```
+For security testing and audit commands, see [Testing Guide](./METERR_TESTING.md#security-testing)
 
 ## Common Vulnerabilities & Prevention
 
