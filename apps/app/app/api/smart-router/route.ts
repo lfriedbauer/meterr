@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     // Route to appropriate provider
     let response;
     let actualCost = 0;
-    let tokens = { input: 0, output: 0 };
+    const tokens = { input: 0, output: 0 };
     
     if (selectedModel.startsWith('gpt')) {
       // Route to OpenAI

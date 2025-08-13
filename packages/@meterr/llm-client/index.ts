@@ -222,41 +222,56 @@ export class UnifiedLLMClient {
     if (this.config.openai) {
       promises.push(
         this.queryOpenAI(query)
-          .catch(err => errors.push(`OpenAI: ${err.message}`))
+          .catch(err => {
+            errors.push(`OpenAI: ${err.message}`);
+            return undefined as any;
+          })
       );
     }
     
     if (this.config.anthropic) {
       promises.push(
         this.queryClaude(query)
-          .catch(err => errors.push(`Claude: ${err.message}`))
+          .catch(err => {
+            errors.push(`Claude: ${err.message}`);
+            return undefined as any;
+          })
       );
     }
     
     if (this.config.google) {
       promises.push(
         this.queryGemini(query)
-          .catch(err => errors.push(`Gemini: ${err.message}`))
+          .catch(err => {
+            errors.push(`Gemini: ${err.message}`);
+            return undefined as any;
+          })
       );
     }
     
     if (this.config.perplexity) {
       promises.push(
         this.queryPerplexity(query)
-          .catch(err => errors.push(`Perplexity: ${err.message}`))
+          .catch(err => {
+            errors.push(`Perplexity: ${err.message}`);
+            return undefined as any;
+          })
       );
     }
     
     if (this.config.xai) {
       promises.push(
         this.queryGrok(query)
-          .catch(err => errors.push(`Grok: ${err.message}`))
+          .catch(err => {
+            errors.push(`Grok: ${err.message}`);
+            return undefined as any;
+          })
       );
     }
 
     const responses = await Promise.allSettled(promises);
     
-    responses.forEach(result => {
+    responses.forEach((result) => {
       if (result.status === 'fulfilled' && result.value) {
         results.push(result.value);
       }
