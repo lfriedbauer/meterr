@@ -98,9 +98,36 @@ VERCEL_ANALYTICS_ID=
 
 ## Vercel Configuration
 
-### vercel.json
+### Project Structure
+meterr.ai uses a monorepo with two Vercel projects:
+- **meterr-marketing** (Project ID: `prj_O7tM6vH5MxVOLM2Jjh4ftUyCBUnj`)
+  - Port: 3000
+  - Domain: meterr.ai, www.meterr.ai
+- **meterr-app** (Project ID: `prj_UsU6oonrsOvKY1DYDo7fW4nga2cp`)
+  - Port: 3001
+  - Domain: app.meterr.ai, admin.meterr.ai
+
+### vercel.json (meterr-marketing)
 ```json
 {
+  "buildCommand": "cd .. && pnpm run build:marketing",
+  "installCommand": "cd .. && pnpm install",
+  "functions": {
+    "apps/app/app/api/*": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
+```
+
+### vercel.json (meterr-app)
+```json
+{
+  "buildCommand": "cd .. && pnpm run build:app",
+  "installCommand": "cd .. && pnpm install",
   "functions": {
     "apps/app/app/api/*": {
       "maxDuration": 10
@@ -114,9 +141,9 @@ VERCEL_ANALYTICS_ID=
 
 ### Build Settings
 - Framework: Next.js
-- Build Command: `pnpm build`
+- Build Command: Project-specific (see above)
 - Output Directory: `.next`
-- Install Command: `pnpm install`
+- Install Command: `cd .. && pnpm install`
 
 ## Database Migration
 
