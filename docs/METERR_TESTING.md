@@ -124,6 +124,157 @@ describe("Dashboard Performance", () => {
 });
 ```
 
+### 5. Property-Based Tests
+
+**Why Critical**: Automatically test edge cases and invariants that manual tests might miss.
+
+```typescript
+// apps/app/__tests__/property/token-counter.property.test.ts
+import fc from 'fast-check';
+
+describe("Token Counter Properties", () => {
+  it("should always return non-negative count", () => {
+    fc.assert(
+      fc.property(fc.string(), (text) => {
+        const count = countTokens(text, 'gpt-4');
+        return count >= 0;
+      })
+    );
+  });
+
+  it("should be deterministic", () => {
+    fc.assert(
+      fc.property(fc.string(), (text) => {
+        const count1 = countTokens(text, 'gpt-4');
+        const count2 = countTokens(text, 'gpt-4');
+        return count1 === count2;
+      })
+    );
+  });
+
+  it("should handle any Unicode input", () => {
+    fc.assert(
+      fc.property(fc.unicodeString(), (text) => {
+        const count = countTokens(text, 'gpt-4');
+        return Number.isInteger(count) && count >= 0;
+      })
+    );
+  });
+});
+```
+
+### 6. Financial Precision Property Tests
+
+**Why Critical**: Ensure no precision loss in financial calculations across all possible inputs.
+
+```typescript
+// apps/app/__tests__/property/cost-calculator.property.test.ts
+describe("Cost Calculator Properties", () => {
+  it("should maintain 6 decimal precision", () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 10_000_000 }),
+        fc.float({ min: 0.0001, max: 1.0 }),
+        (tokens, rate) => {
+          const cost = calculateCost(tokens, rate);
+          const decimals = cost.toString().split('.')[1];
+          return !decimals || decimals.length <= 6;
+        }
+      )
+    );
+  });
+
+  it("should never produce negative costs", () => {
+    fc.assert(
+      fc.property(
+        fc.nat(),
+        fc.float({ min: 0, max: 1000 }),
+        (tokens, rate) => {
+          const cost = calculateCost(tokens, rate);
+          return cost >= 0;
+        }
+      )
+    );
+  });
+
+  it("should be commutative for batch operations", () => {
+    fc.assert(
+      fc.property(
+        fc.array(fc.nat(), { minLength: 1, maxLength: 100 }),
+        fc.float({ min: 0.001, max: 1.0 }),
+        (tokenBatches, rate) => {
+          const sumThenCalculate = calculateCost(
+            tokenBatches.reduce((a, b) => a + b, 0),
+            rate
+          );
+          const calculateThenSum = tokenBatches
+            .map(t => calculateCost(t, rate))
+            .reduce((a, b) => a + b, 0);
+          
+          // Should be equal within floating point precision
+          return Math.abs(sumThenCalculate - calculateThenSum) < 0.000001;
+        }
+      )
+    );
+  });
+});
+```
+
+### 7. Fuzz Testing for Security
+
+**Why Critical**: Prevent crashes and security vulnerabilities from malformed input.
+
+```typescript
+// apps/app/__tests__/security/api-fuzz.test.ts
+import { fuzzer } from '@jazzer.js/core';
+
+describe("API Fuzz Testing", () => {
+  it("should handle malformed JSON gracefully", async () => {
+    const malformedInputs = [
+      '{"text": null}',
+      '{"text": undefined}',
+      '{"text": NaN}',
+      '{"text": Infinity}',
+      '{"text": "\\x00\\x01\\x02"}',
+      '{"text": "' + 'a'.repeat(1_000_000) + '"}',
+      '{]',
+      '{"text": {"$ref": "#"}}', // JSON reference attack
+    ];
+
+    for (const input of malformedInputs) {
+      const response = await fetch('/api/count-tokens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: input
+      });
+
+      // Should never crash, always return valid error
+      expect(response.status).toBeGreaterThanOrEqual(400);
+      expect(response.status).toBeLessThan(500);
+    }
+  });
+
+  it("should resist injection attacks", () => {
+    fc.assert(
+      fc.property(
+        fc.string().filter(s => s.includes('DROP') || s.includes('<script>')),
+        async (maliciousInput) => {
+          const response = await fetch('/api/smart-router', {
+            method: 'POST',
+            body: JSON.stringify({ text: maliciousInput })
+          });
+
+          // Should sanitize input, never execute
+          const data = await response.json();
+          expect(data).not.toContain('DROP');
+          expect(data).not.toContain('<script>');
+        }
+      )
+    );
+  });
+});
+```
+
 ## Running Tests
 
 ### All Tests
@@ -138,12 +289,28 @@ pnpm test:coverage       # Coverage report
 pnpm test token          # Token counting tests
 pnpm test cost           # Cost calculation tests
 pnpm test api            # API tests
+pnpm test:property       # Property-based tests
+pnpm test:security       # Security fuzz tests
 ```
 
 ### Performance Tests
 ```bash
 pnpm test:perf           # Performance benchmarks
 pnpm test:load           # Load testing
+```
+
+## Advanced Testing Setup
+
+### Installing Test Libraries
+```bash
+# Property-based testing
+pnpm add -D fast-check
+
+# Fuzz testing for security
+pnpm add -D @jazzer.js/core
+
+# Load testing
+pnpm add -D k6
 ```
 
 ## Test Coverage Requirements
