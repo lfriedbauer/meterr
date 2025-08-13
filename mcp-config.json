@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "llm-research": {
+      "command": "node",
+      "args": ["mcp-servers/llm-research/dist/server.js"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:\\Users\\Owner\\Projects\\meterr"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    }
+  }
+}

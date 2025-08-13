@@ -61,28 +61,31 @@ meterr/
 ├── packages/
 │   └── @meterr/
 │       └── llm-client/   # Unified LLM client library
-├── docs/                 # Human-readable documentation
+├── docs-portal/          # Docusaurus documentation
+│   ├── docs/             # Human-focused documentation
+│   └── ai-docs/          # AI-optimized documentation
 └── .claude/
-    └── context/          # AI operational context
+    ├── CLAUDE.md         # AI assistant instructions
+    └── agents/           # Multi-agent definitions
 ```
 
 ## Documentation
 
-### For Developers
-- [Development Guide](docs/METERR_DEVELOPMENT_GUIDE.md) - Quick start guide
-- [Architecture](docs/METERR_ARCHITECTURE.md) - System design and components
-- [API Reference](docs/METERR_API_REFERENCE.md) - Endpoint documentation
-- [Coding Standards](docs/METERR_CODING_STANDARDS.md) - Code style and practices
+📚 **[View Documentation Portal](http://localhost:3001)** - Run `pnpm docs` to start
 
-### For Operations
-- [Deployment Guide](docs/METERR_DEPLOYMENT.md) - Vercel deployment setup
-- [Environment Setup](docs/METERR_ENVIRONMENT.md) - Hardware and software requirements
-- [Security Guide](docs/METERR_SECURITY.md) - Security best practices
-- [Monitoring](docs/METERR_MONITORING.md) - Metrics and observability
+### Quick Access
+- 🏗️ [Architecture](docs-portal/docs/METERR_ARCHITECTURE.md) - System design
+- 💻 [Development](docs-portal/docs/METERR_DEVELOPMENT_GUIDE.md) - Setup guide  
+- 📏 [Standards](docs-portal/docs/METERR_CODING_STANDARDS.md) - Coding standards
+- 🔌 [API Docs](docs-portal/docs/METERR_API_REFERENCE.md) - API reference
+- 🤖 [AI Context](.claude/CLAUDE.md) - AI assistant instructions
 
-### Project Planning
-- [Roadmap](docs/METERR_ROADMAP.md) - Feature roadmap and timeline
-- [Testing Strategy](docs/METERR_TESTING.md) - Testing philosophy and practices
+### Documentation Commands
+```bash
+pnpm docs          # Start documentation server
+pnpm docs:build    # Build documentation
+pnpm docs:serve    # Serve production build
+```
 
 ## Features
 
