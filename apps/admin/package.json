@@ -1,23 +1,3 @@
-{
-  "name": "@meterr/admin",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Admin panel for meterr.ai",
-  "scripts": {
-    "dev": "next dev --port 3002",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.4.6"
-  },
-  "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d32c299a99fa93067bd8425b196ca8fd5736a37fb592eeccf1e283e512c8a17c
+size 502

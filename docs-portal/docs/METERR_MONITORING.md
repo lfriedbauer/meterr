@@ -1,6 +1,6 @@
 ---
-title: METERR Monitoring Guide
-sidebar_label: METERR Monitoring Guide
+title: Monitoring
+sidebar_label: Monitoring
 sidebar_position: 8
 audience: ["human", "ai"]
 description: "METERR Monitoring Guide documentation for Meterr.ai"

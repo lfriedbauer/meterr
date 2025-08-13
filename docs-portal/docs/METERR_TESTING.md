@@ -1,6 +1,6 @@
 ---
-title: METERR Testing Guide
-sidebar_label: METERR Testing Guide
+title: Testing
+sidebar_label: Testing
 sidebar_position: 11
 audience: ["human", "ai"]
 description: "METERR Testing Guide documentation for Meterr.ai"

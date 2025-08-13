@@ -232,7 +232,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         researchStore.set(researchId, responses);
         
         // Format response summary
-        const summary = responses.map(r => ({
+        const summary = responses.map((r: ResearchResponse) => ({
           service: r.service,
           model: r.model,
           preview: r.response.substring(0, 200) + '...',
@@ -246,8 +246,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               text: JSON.stringify({
                 research_id: researchId,
                 total_responses: responses.length,
-                services_queried: responses.map(r => r.service),
-                total_cost: responses.reduce((sum, r) => sum + (r.usage?.totalCost || 0), 0).toFixed(4),
+                services_queried: responses.map((r: ResearchResponse) => r.service),
+                total_cost: responses.reduce((sum: number, r: ResearchResponse) => sum + (r.usage?.totalCost || 0), 0).toFixed(4),
                 responses: summary,
               }, null, 2),
             },
@@ -356,8 +356,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const text = response.response.toLowerCase();
         
         // Extract keywords (simple approach)
-        const words = text.split(/\s+/).filter(w => w.length > 5);
-        words.forEach(word => {
+        const words = text.split(/\s+/).filter((w: string) => w.length > 5);
+        words.forEach((word: string) => {
           keywords.set(word, (keywords.get(word) || 0) + 1);
         });
         

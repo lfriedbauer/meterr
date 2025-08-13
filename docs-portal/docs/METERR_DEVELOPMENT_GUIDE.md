@@ -1,6 +1,6 @@
 ---
-title: meterr.ai Development Guide
-sidebar_label: meterr.ai Development Guide
+title: Development Guide
+sidebar_label: Development Guide
 sidebar_position: 6
 audience: ["human"]
 description: "meterr.ai Development Guide documentation for Meterr.ai"

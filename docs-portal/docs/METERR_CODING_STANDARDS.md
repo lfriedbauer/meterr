@@ -1,6 +1,6 @@
 ---
-title: METERR Coding Standards
-sidebar_label: METERR Coding Standards
+title: Coding Standards
+sidebar_label: Coding Standards
 sidebar_position: 4
 audience: ["human", "ai"]
 description: "METERR Coding Standards documentation for Meterr.ai"

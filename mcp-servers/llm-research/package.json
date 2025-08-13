@@ -1,22 +1,3 @@
-{
-  "name": "@meterr/llm-research-mcp",
-  "version": "1.0.0",
-  "description": "MCP server for LLM research and API interactions",
-  "main": "dist/server.js",
-  "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsx server.ts",
-    "start": "node dist/server.js"
-  },
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.5.0",
-    "@meterr/llm-client": "workspace:*",
-    "dotenv": "^16.3.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:0872032e51e800a69bf0cbe9143cde6d0b11b6c571e34653b3026f051c36fb2c
+size 542

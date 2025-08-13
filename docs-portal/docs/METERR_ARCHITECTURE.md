@@ -1,6 +1,6 @@
 ---
-title: METERR Architecture
-sidebar_label: METERR Architecture
+title: Architecture
+sidebar_label: Architecture
 sidebar_position: 3
 audience: ["human", "ai"]
 description: "METERR Architecture documentation for Meterr.ai"

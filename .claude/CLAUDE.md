@@ -35,6 +35,14 @@ meterr/
 └── scripts/          # Utility scripts
 ```
 
+## Important Rules
+
+### File Management
+- **Temporary files**: Delete immediately after use (scripts, reports, test outputs)
+- **Clean up**: Remove any files created during task execution that aren't needed permanently
+- **No clutter**: Don't leave unnecessary files in the codebase
+- **Examples**: Delete one-time scripts, temporary JSON reports, test data files
+
 ## Essential Commands
 
 ### Quality Checks (ALWAYS run before committing)

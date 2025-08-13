@@ -1,0 +1,49 @@
+name: Archive Old Research
+
+on:
+  schedule:
+    # Run monthly on the 1st at 2 AM UTC
+    - cron: '0 2 1 * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Archive old research
+        run: |
+          # Find research files older than 30 days
+          find research-vault -name "*.json" -type f -mtime +30 -print0 | while IFS= read -r -d '' file; do
+            # Create archive directory if not exists
+            dir=$(dirname "$file")
+            archive_dir="${dir}/archived"
+            mkdir -p "$archive_dir"
+            
+            # Compress and move
+            gzip -9 "$file"
+            mv "$file.gz" "$archive_dir/"
+            
+            echo "Archived: $file"
+          done
+          
+      - name: Commit archives
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git diff --staged --quiet || git commit -m "Archive research older than 30 days"
+          
+      - name: Push changes
+        if: success()
+        run: git push

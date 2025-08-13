@@ -1,6 +1,6 @@
 ---
-title: Scaling Strategy for meterr.ai
-sidebar_label: Scaling Strategy for meterr.ai
+title: Scaling Strategy
+sidebar_label: Scaling Strategy
 sidebar_position: 12
 audience: ["human"]
 description: "Scaling Strategy for meterr.ai documentation for Meterr.ai"

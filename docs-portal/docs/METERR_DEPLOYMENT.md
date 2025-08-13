@@ -1,6 +1,6 @@
 ---
-title: METERR Deployment Guide
-sidebar_label: METERR Deployment Guide
+title: Deployment
+sidebar_label: Deployment
 sidebar_position: 5
 audience: ["human", "ai"]
 description: "METERR Deployment Guide documentation for Meterr.ai"
@@ -91,6 +91,22 @@ meterr.ai deploys on **Vercel** for global edge performance and automatic scalin
 - [ ] Lighthouse score &gt;90
 - [ ] API response &lt;100ms
 - [ ] Images optimized
+
+## Infrastructure Setup
+
+### AWS (Optional - for Lambda functions)
+```bash
+cd infrastructure/aws/cdk
+npm install
+cdk deploy
+```
+
+### Supabase
+```bash
+cd infrastructure/supabase
+supabase init
+supabase start
+```
 
 ## Deployment Process
 

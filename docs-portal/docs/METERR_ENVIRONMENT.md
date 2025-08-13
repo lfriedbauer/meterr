@@ -1,6 +1,6 @@
 ---
-title: METERR Environment Setup
-sidebar_label: METERR Environment Setup
+title: Environment
+sidebar_label: Environment
 sidebar_position: 7
 audience: ["human", "ai"]
 description: "METERR Environment Setup documentation for Meterr.ai"

@@ -36,6 +36,23 @@ const config: Config = {
     locales: ['en'],
   },
 
+  plugins: [
+    // Local search plugin
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      {
+        hashed: true,
+        language: ["en"],
+        indexDocs: true,
+        indexBlog: false,
+        indexPages: true,
+        docsRouteBasePath: "/docs",
+        searchBarPosition: "right",
+        searchBarShortcutHint: true,
+      },
+    ],
+  ],
+
   presets: [
     [
       'classic',
@@ -72,6 +89,13 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
+    algolia: {
+      appId: 'FPTRIXA309',
+      apiKey: '9549344cd69fa39375579ccf6999ff12',
+      indexName: 'meterr-docs',
+      contextualSearch: true,
+      searchPagePath: 'search',
+    },
     navbar: {
       title: 'My Site',
       logo: {

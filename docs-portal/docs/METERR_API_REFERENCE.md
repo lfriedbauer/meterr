@@ -1,6 +1,6 @@
 ---
-title: METERR API Reference
-sidebar_label: METERR API Reference
+title: Api Reference
+sidebar_label: Api Reference
 sidebar_position: 2
 audience: ["human", "ai"]
 description: "METERR API Reference documentation for Meterr.ai"

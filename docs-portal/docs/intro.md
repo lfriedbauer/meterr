@@ -8,9 +8,17 @@ owner: team
 status: ready
 ---
 
-# Meterr Documentation for Developers
+# Welcome to meterr.ai
 
-Welcome to the Meterr documentation! This comprehensive guide is designed for human developers working with the Meterr.ai platform.
+## What is meterr.ai?
+
+meterr.ai acts as a smart proxy between your applications and AI providers (OpenAI, Anthropic, Google, etc.), providing:
+
+- **Real-time cost tracking** - Monitor AI spending across all providers
+- **Token optimization** - Reduce usage by up to 30% with smart caching
+- **Team analytics** - Track usage by department, project, or user
+- **Budget alerts** - Get notified before overspending
+- **Smart routing** - Automatically choose the most cost-effective model
 
 ## Documentation Structure
 

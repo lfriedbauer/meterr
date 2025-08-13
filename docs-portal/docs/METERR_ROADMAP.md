@@ -1,6 +1,6 @@
 ---
-title: METERR Roadmap v1
-sidebar_label: METERR Roadmap v1
+title: Roadmap
+sidebar_label: Roadmap
 sidebar_position: 9
 audience: ["human", "ai"]
 description: "METERR Roadmap v1 documentation for Meterr.ai"

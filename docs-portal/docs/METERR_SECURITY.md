@@ -1,6 +1,6 @@
 ---
-title: METERR Security Guide
-sidebar_label: METERR Security Guide
+title: Security
+sidebar_label: Security
 sidebar_position: 10
 audience: ["human", "ai"]
 description: "METERR Security Guide documentation for Meterr.ai"

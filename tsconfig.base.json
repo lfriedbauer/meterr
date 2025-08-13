@@ -1,35 +1,3 @@
-{
-  "compilerOptions": {
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitOverride": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "jsx": "preserve",
-    "baseUrl": ".",
-    "paths": {
-      "@meterr/*": ["packages/@meterr/*"],
-      "@/app/*": ["apps/app/src/*"],
-      "@/marketing/*": ["apps/marketing/src/*"],
-      "@/admin/*": ["apps/admin/src/*"],
-      "@/ui/*": ["ui/src/*"]
-    }
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:599fdafb63a79fd69640d6ab53a23a2ba57054d20a7a2068de22f6866ccd80b5
+size 1022

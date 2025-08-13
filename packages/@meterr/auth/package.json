@@ -1,19 +1,3 @@
-{
-  "name": "@meterr/auth",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Authentication logic for meterr.ai",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.45.0",
-    "@supabase/auth-helpers-nextjs": "^0.10.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:ee9e7d54b2686d9ced067562932de35c7ce911d0b98273c2964a443bd5409931
+size 427
