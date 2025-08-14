@@ -264,10 +264,10 @@ meterr/
 │   └── build-report.json       # Status of built prototypes
 │
 ├── docs/                       # Human-readable documentation
-│   ├── METERR_ARCHITECTURE.md # This file
-│   ├── METERR_DEVELOPMENT_GUIDE.md
-│   ├── AGENT_GUIDE.md
-│   └── SCALING.md
+│   ├── architecture.md        # This file
+│   ├── development-guide.md
+│   ├── agent-guide.md
+│   └── architecture/scaling.md
 │
 ├── .claude/                    # Claude Code configuration
 │   ├── context/               # Claude's operational docs

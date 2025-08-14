@@ -29,9 +29,9 @@ Our documentation is organized to serve both human developers and AI agents effi
 
 ## Getting Started
 
-1. [Architecture Overview](./METERR_ARCHITECTURE.md) - Understand the system design
-2. [Development Guide](./METERR_DEVELOPMENT_GUIDE.md) - Set up your development environment
-3. [API Reference](./METERR_API_REFERENCE.md) - Complete API documentation
+1. [Architecture Overview](./architecture.md) - Understand the system design
+2. [Development Guide](./development-guide.md) - Set up your development environment
+3. [API Reference](./api/overview.md) - Complete API documentation
 
 ## Key Features
 

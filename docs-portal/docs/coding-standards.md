@@ -438,7 +438,7 @@ describe('Token Counter', () => {
 });
 ```
 
-For testing commands and patterns, see [Testing Guide](./METERR_TESTING.md)
+For testing commands and patterns, see [Testing Guide](./testing-guide.md)
 
 ## File Organization
 
@@ -631,6 +631,121 @@ style: Format code with Prettier
 perf: Improve query performance
 ```
 
+## Development Methodology
+
+### Phase-Based Progression Rules
+
+**NEVER use time references in code, documentation, or planning:**
+- ❌ "Week 1", "Month 2", "Q3 2025"
+- ❌ "This will take 2 weeks"
+- ❌ "By end of month"
+- ❌ "Sprint 1-3"
+- ❌ Comments like `// TODO: Fix by Friday`
+
+**ALWAYS use phase-based progression:**
+- ✅ "Phase 1: MVP (Confidence: 85%)"
+- ✅ "Phase 2: Pilot (Confidence: 70%)"
+- ✅ "Phase 3: Scale (Confidence: 60%)"
+- ✅ Comments like `// TODO: Phase 2 - Add caching`
+
+### Code Organization by Phases
+
+```typescript
+// ✅ Phase-based feature flags
+const FEATURE_FLAGS = {
+  // Phase 1: MVP Features
+  BASIC_COST_TRACKING: true,
+  SIMPLE_DASHBOARD: true,
+  
+  // Phase 2: Pilot Features
+  ADVANCED_ANALYTICS: false,
+  TEAM_COLLABORATION: false,
+  
+  // Phase 3: Scale Features
+  ENTERPRISE_SSO: false,
+  CUSTOM_INTEGRATIONS: false
+};
+
+// ✅ Phase-based TODO comments
+// TODO: Phase 2 - Implement caching layer
+// TODO: Phase 3 - Add horizontal scaling
+
+// ❌ Time-based comments
+// TODO: Fix by next week
+// TODO: Implement before Q2
+```
+
+### Confidence-Based Code Quality
+
+```typescript
+// High Confidence Code (80-100%)
+// - Comprehensive tests
+// - Error handling
+// - Documentation
+// - Performance optimized
+
+export async function calculateCost(tokens: number, model: string): Promise<Result<number>> {
+  try {
+    // Validated algorithm with 95% test coverage
+    const result = await costCalculator.calculate(tokens, model);
+    return Ok(result);
+  } catch (error) {
+    logger.error('Cost calculation failed', { tokens, model, error });
+    return Err(error);
+  }
+}
+
+// Medium Confidence Code (60-79%)
+// - Basic tests
+// - Some error handling
+// - TODO comments for improvements
+
+export function basicTokenCount(text: string): number {
+  // TODO: Phase 2 - Replace with more accurate tokenizer
+  // Basic implementation, needs validation
+  return text.split(/\s+/).length * 1.3; // Rough estimate
+}
+
+// Low Confidence Code (<60%)
+// - Prototype only
+// - No production use
+// - Clear warnings
+
+export function experimentalFeature(): any {
+  // WARNING: Experimental - do not use in production
+  // Confidence: 40% - needs major refactoring
+  throw new Error('Feature not ready for production');
+}
+```
+
+### Phase Gates in Code
+
+```typescript
+// Gate review checkpoints in critical functions
+export async function deployToProduction(): Promise<void> {
+  // Phase Gate Review Required
+  const confidence = await assessSystemReadiness();
+  
+  if (confidence < 80) {
+    throw new Error(`Confidence too low: ${confidence}%. Minimum 80% required.`);
+  }
+  
+  // Proceed with deployment
+  await executeDeployment();
+}
+
+// Feature flag progression
+export function enableNextPhaseFeatures(): void {
+  const currentPhaseComplete = assessCurrentPhase();
+  const confidence = calculateConfidenceLevel();
+  
+  if (currentPhaseComplete && confidence >= 80) {
+    FEATURE_FLAGS.NEXT_PHASE = true;
+    logger.info('Phase progression approved', { confidence });
+  }
+}
+```
+
 ## Project-Specific Patterns
 
 ### API Route Structure
@@ -684,6 +799,63 @@ export function Component({ prop1, prop2 }: Props) {
 - Implement virtual scrolling for lists
 - Lazy load heavy components
 
+## Code Hygiene & Startup Realities
+
+### Pre-Launch Essentials (Free, Do Now)
+Critical items that cost nothing but prevent disasters:
+
+- **Remove all console.log statements** - Use proper logging instead
+- **Delete commented-out code** - Keep git history, not dead code
+- **Remove hardcoded API keys** - Use environment variables
+- **Generic error messages** - No stack traces in production
+- **Basic rate limiting** - 100 requests/minute minimum
+- **Clean /experiments/ and /api/debug/** - Remove dev-only endpoints
+
+### Post-Revenue Improvements ($10K MRR)
+Invest in these once revenue justifies the effort:
+
+- **Automated testing suite** - Jest/Playwright setup
+- **Error tracking** - Sentry free tier integration
+- **Database backups** - Supabase includes daily backups
+- **Customer data export** - GDPR compliance preparation
+
+### Scale Considerations ($50K MRR+)
+Enterprise-grade improvements for significant revenue:
+
+- **SOC 2 consideration** - ~$30K annual investment
+- **Advanced monitoring** - DataDog, New Relic
+- **Formal compliance** - HIPAA, SOC 2 implementation
+
+### Financial Accuracy (Critical for meterr)
+Never compromise on money calculations:
+
+```typescript
+import { BigNumber } from 'bignumber.js';
+
+// ✅ Always use BigNumber for financial calculations
+function calculateCost(tokens: number, rate: number): string {
+  const cost = new BigNumber(tokens)
+    .multipliedBy(rate)
+    .dividedBy(1000)
+    .toFixed(6); // Always 6 decimal places
+  
+  // Log for audit trail
+  logger.info('Cost calculation', {
+    tokens,
+    rate,
+    cost,
+    timestamp: new Date().toISOString()
+  });
+  
+  return cost;
+}
+
+// ❌ Never use floating point for money
+function wrongCostCalculation(tokens: number, rate: number): number {
+  return (tokens * rate) / 1000; // Precision errors!
+}
+```
+
 ## Pre-Commit Checklist
 
 Before committing code:
@@ -698,7 +870,14 @@ Before committing code:
 - [ ] Input validation present
 - [ ] Used proper TypeScript patterns
 - [ ] No type assertions where inference works
+- [ ] No commented-out code
+- [ ] Bundle size <500KB
+- [ ] No unused dependencies
+- [ ] Financial calculations use BigNumber
+- [ ] No time references (weeks, months, dates)
+- [ ] Phase-based TODO comments only
+- [ ] Confidence level documented for uncertain code
 
 ---
 
-*For quick reference and enforcement rules, see `.claude/context/METERR_CODING_STANDARDS.md`*
+*For quick reference and enforcement rules, see `docs-portal/ai-docs/coding-standards.md`*

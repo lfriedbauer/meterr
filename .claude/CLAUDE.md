@@ -1,76 +1,376 @@
-# Claude Master Instructions - meterr.ai
+# Claude Instructions for meterr.ai
 
-## Project Overview
-meterr.ai is an AI expense tracking platform that helps teams monitor and optimize their AI API costs across providers like OpenAI, Anthropic, Google, and others. This is a scalable monorepo using Next.js, Supabase, and AWS.
+*Last updated: 2025-08-14*
 
-## Architecture
-- **Monorepo Structure**: Using pnpm workspaces
-- **Multi-Agent System**: Orchestrated agent architecture with dynamic spawning
-- **Deployment**: Vercel for frontend, AWS for infrastructure, Supabase for database
+## 0) Prime Directive & Purpose
 
-## Agent Roles
-When working on this project, you may assume different agent roles:
-- **Orchestrator**: Coordinate between agents and spawn new ones as needed
-- **Architect**: System design and planning
-- **Builder**: Implementation and coding
-- **Validator**: Testing and quality assurance
-- **Scribe**: Documentation and knowledge management
-- **Spawner**: Create new specialized agents
+**Goal:** Ship correct, secure, maintainable code with minimal duplication.
 
-## Project Structure
+**Prime Directive:** *Every line of code is a liability. Search → Reuse → Build the minimum.*
+
+---
+
+## 1) Critical Rules (The Five Commandments)
+
+1. **NO `any` TYPES** - Use explicit, exported TypeScript types and interfaces
+2. **BIGNUM FOR MONEY** - All financial calculations use BigNumber.js (never float/parseFloat)
+3. **SEARCH BEFORE CREATE** - Run searches before writing new code; reuse/extend existing patterns
+4. **NO CONSOLE.LOG** - Use structured logger (info/warn/error) with context
+5. **TEST EVERYTHING PUBLIC** - Each exported function requires comprehensive tests
+
+### Instant Failure Triggers
+```typescript
+// 🔴 These patterns FAIL code review immediately:
+any                           // Banned: Use explicit types
+console.log()                 // Banned: Use logger
+parseFloat(money)             // Banned: Use BigNumber
+catch(e) {}                   // Banned: Handle errors properly
+// @ts-ignore                 // Banned: Fix the type issue
+TODO: Fix by Friday           // Banned: Use phase-based planning
+```
+
+---
+
+## 2) Performance Limits (Non-Negotiable)
+
+- **API:** <200ms p95 response time, payload <1MB
+- **Frontend:** JS bundle <500KB, first load <3s
+- **Database:** Queries <50ms p95, select minimal fields only
+
+---
+
+## 3) Mandatory Workflow
+
+### A. Before Writing ANY Code
+```bash
+# 1. Pull latest and check recent work
+git pull --rebase origin main
+git log --oneline -20 -- "packages/*" "app/api"
+
+# 2. Search for similar implementations
+find . -type f -name "*.ts" -o -name "*.tsx" | xargs grep -l "FUNCTION_NAME"
+grep -r "similar_feature" packages/ --include="*.ts"
+
+# 3. Check existing patterns and utilities
+grep -r "Result<\|z\.object\|BigNumber" packages/ --include="*.ts"
+ls packages/*/src/utils/
+```
+
+**Decision Tree:**
+```
+Feature request
+    ↓
+Similar code exists? → YES → Reuse/extend existing
+    ↓ NO
+Library solves this? → YES → Use library
+    ↓ NO
+Is this MVP Phase 1? → NO → Defer to later phase
+    ↓ YES
+Build minimal version with validation, errors, tests, types
+```
+
+### B. While Writing Code
+Every function follows this defensive pattern:
+```typescript
+export async function functionName(input: TypedInput): Promise<Result<Output, Error>> {
+  // 1. Validate input
+  const valid = Schema.safeParse(input);
+  if (!valid.success) return Err(new ValidationError(valid.error));
+  
+  // 2. Check permissions/auth if needed
+  if (!hasPermission(user, resource)) return Err(new UnauthorizedError());
+  
+  // 3. Execute with error handling
+  try {
+    const result = await doWork(valid.data);
+    return Ok(result);
+  } catch (error) {
+    logger.error('Function failed', { error, input });
+    return Err(new ProcessingError(error.message));
+  }
+}
+```
+
+### C. Before Committing
+```bash
+# Run ALL checks (no exceptions)
+pnpm typecheck && pnpm lint && pnpm test
+
+# Clean up code
+grep -r "console\.log\|TODO:" --include="*.ts" --include="*.tsx"
+
+# Commit with conventional format
+git commit -m "feat: add token calculation" # or fix:, docs:, refactor:
+```
+
+### D. End of Session
+```bash
+# Verify clean state
+git status
+grep -r "TODO" --include="*.ts" # Review TODOs added
+pnpm typecheck && pnpm test # Ensure nothing broken
+```
+
+---
+
+## 4) Project Map & Pattern Locations
+
+### Structure
 ```
 meterr/
 ├── apps/
-│   ├── app/          # Main Next.js application
-│   ├── marketing/    # Marketing website
-│   └── admin/        # Admin dashboard
+│   ├── app/           → Main Next.js application
+│   └── marketing/     → Marketing website
 ├── packages/
-│   ├── @meterr/
-│   │   ├── ui/       # Shared UI components
-│   │   ├── database/ # Database schemas
-│   │   └── llm-client/ # LLM API client
-├── docs-portal/      # Docusaurus documentation
-│   ├── docs/         # Human-focused docs
-│   └── ai-docs/      # AI-optimized docs
-└── scripts/          # Utility scripts
+│   ├── @meterr/ui/    → Shared UI components (CHECK HERE FIRST!)
+│   ├── @meterr/database/ → DB schemas and queries
+│   └── @meterr/llm-client/ → AI provider integrations
+└── docs-portal/       → Documentation and standards
 ```
 
-## Important Rules
+### Quick Lookup Table
+| Need | Search Command | Location/Import |
+|------|----------------|-----------------|
+| **API endpoint** | `find app/api -name "route.ts" -exec grep -H "POST\|GET" {} \;` | `app/api/*/route.ts` |
+| **UI component** | `find . -name "*.tsx" -exec grep -l "export.*function.*return.*<" {} \;` | `@meterr/ui` |
+| **DB query** | `grep -r "db\." packages/@meterr/database` | `@meterr/database` |
+| **Error handling** | `grep -r "Result<" --include="*.ts"` | `packages/*/src/utils/errors.ts` |
+| **Validation** | `grep -r "z\." --include="*.ts"` | `packages/*/src/schemas/` |
+| **Cost calculation** | `grep -r "BigNumber" --include="*.ts"` | `@meterr/llm-client/src/utils/cost.ts` |
 
-### File Management
-- **Temporary files**: Delete immediately after use (scripts, reports, test outputs)
-- **Clean up**: Remove any files created during task execution that aren't needed permanently
-- **No clutter**: Don't leave unnecessary files in the codebase
-- **Examples**: Delete one-time scripts, temporary JSON reports, test data files
+---
 
-### Documentation Rules - CRITICAL
-Before creating ANY new MD document or file:
+## 5) Golden Patterns (Copy-Paste Ready)
 
-1. **Check for Existing Content**: Always search the repository structure (README.md, docs-portal/docs/, .claude/sub-agents/, ui/, apps/app/) for similar topics. Ask: "Does this information already exist? Can it be updated or appended instead?" If yes, propose edits to the existing file rather than creating a new one.
+### A. API Route (Next.js)
+```typescript
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
 
-2. **Prioritize Consolidation**: If content fits an established location:
-   - Design decisions → `docs-portal/docs/design-system.md`
-   - Agent prompts → `.claude/AGENT_GUIDE.md`
-   - Architecture → `docs-portal/docs/architecture/`
-   - API docs → `docs-portal/docs/api/`
-   Incorporate it there. Avoid new files unless absolutely necessary. Use cross-links (e.g., `[See design-system.md]`) to reference instead of duplicating.
+const RequestSchema = z.object({
+  // Define your schema here
+});
 
-3. **Efficiency and Validation**: 
-   - Limit new files to ONE per response unless justified
-   - After proposing, self-review: "Is this redundant? Does it bloat the repo?"
-   - If uncertain, use tools to confirm (e.g., Glob, Grep to list existing files)
+export async function POST(req: Request) {
+  // 1. Authentication
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  
+  // 2. Validation
+  const body = await req.json();
+  const parsed = RequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
+  
+  // 3. Business logic
+  const result = await processRequest(parsed.data, session.user);
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: 500 });
+  }
+  
+  // 4. Response
+  return NextResponse.json({ data: result.value });
+}
+```
 
-4. **Output Format**: When documenting, specify exact file/path for additions:
-   - Example: "Update `docs-portal/docs/design-system.md` with: [content]"
-   - Track ALL changes in the single `CHANGELOG.md` at project root
+### B. Cost/Token Calculation (Financial-Safe)
+```typescript
+import { BigNumber } from 'bignumber.js';
+import { Ok, Err, Result } from '../types/result';
 
-5. **Single Source of Truth**: Maintain ONLY ONE `CHANGELOG.md` at the project root. No duplicate changelogs in subdirectories.
+export function calculateCost(tokens: number, ratePerMillion: number): Result<string, Error> {
+  try {
+    const cost = new BigNumber(tokens)
+      .dividedBy(1_000_000)
+      .multipliedBy(ratePerMillion)
+      .toFixed(6); // Always 6 decimal places for financial accuracy
+    
+    return Ok(cost);
+  } catch (error) {
+    return Err(new Error('Failed to calculate cost'));
+  }
+}
+```
 
-Follow this strictly to keep documentation organized, scalable, and non-redundant.
+### C. Database Query (Minimal Select + Error Handling)
+```typescript
+export async function getUserById(id: string): Promise<Result<User, Error>> {
+  try {
+    const user = await db.user.findUnique({
+      where: { id },
+      select: { 
+        id: true, 
+        email: true 
+        // Only select needed fields
+      }
+    });
+    
+    if (!user) {
+      return Err(new NotFoundError('User not found'));
+    }
+    
+    return Ok(user);
+  } catch (error) {
+    logger.error('Database query failed', { error, userId: id });
+    return Err(new DatabaseError('Failed to fetch user'));
+  }
+}
+```
 
-## Essential Commands
+### D. React Component with Performance
+```typescript
+import React, { memo, useMemo } from 'react';
 
-### Quality Checks (ALWAYS run before committing)
+interface TokenDisplayProps {
+  tokens: number;
+  rate: number;
+}
+
+export const TokenDisplay = memo(({ tokens, rate }: TokenDisplayProps) => {
+  const cost = useMemo(() => 
+    calculateCost(tokens, rate), 
+    [tokens, rate]
+  );
+  
+  return (
+    <div className="token-display">
+      {tokens} tokens = ${cost.ok ? cost.value : 'Error'}
+    </div>
+  );
+});
+```
+
+---
+
+## 6) Phase-Based Planning (No Time References)
+
+```typescript
+export const FEATURES = {
+  // Phase 1: MVP (Ship first - Confidence: 85%)
+  BASIC_TRACKING: true,
+  SIMPLE_DASHBOARD: true,
+  USER_AUTH: true,
+  
+  // Phase 2: Enhancement (After MVP validated - Confidence: 70%)
+  ADVANCED_ANALYTICS: false,
+  TEAM_COLLABORATION: false,
+  EXPORT_REPORTS: false,
+  
+  // Phase 3: Scale (After product-market fit - Confidence: 60%)
+  ENTERPRISE_SSO: false,
+  CUSTOM_INTEGRATIONS: false,
+  WHITE_LABEL: false,
+};
+```
+
+**Rules:**
+- Gate scope by phase completion, not time
+- Use feature flags for easy toggling
+- Annotate TODOs with phases (never dates)
+- Cut non-MVP features ruthlessly
+
+---
+
+## 7) Anti-Pattern Detection & Quality Gates
+
+### Automated Sweeps (Run Regularly)
+```bash
+# Find banned patterns
+grep -r ": any\|console\.log" --include="*.ts" --include="*.tsx"
+
+# Find unhandled promises
+grep -r "await.*\(" --include="*.ts" | grep -v "try\|catch\|then"
+
+# Find missing validations
+grep -r "req\.body\|req\.query" app/api | grep -v "safeParse\|parse"
+
+# Find performance issues
+grep -r "SELECT \*\|findMany()" --include="*.ts"
+
+# Find security issues
+grep -r "eval\|innerHTML\|dangerouslySetInnerHTML" --include="*.ts" --include="*.tsx"
+```
+
+### Quality Checklist (All Must Pass)
+- [ ] **Types explicit** - No implicit or `any` types
+- [ ] **Errors handled** - All operations use `Result<T,E>` pattern
+- [ ] **Tests exist** - Unit tests for public APIs, key paths covered
+- [ ] **Performance within budgets** - Bundle/query analysis passes
+- [ ] **Security validated** - Input validation, no secrets exposed
+- [ ] **Documentation updated** - Exported signatures and behavior documented
+- [ ] **Existing code reused** - Searched for and extended similar implementations
+
+---
+
+## 8) Security & Compliance Essentials
+
+### Financial Accuracy (Critical for meterr)
+```typescript
+// ✅ ALWAYS use BigNumber for money
+import { BigNumber } from 'bignumber.js';
+
+function calculateCost(tokens: number, rate: number): string {
+  const cost = new BigNumber(tokens)
+    .multipliedBy(rate)
+    .dividedBy(1000)
+    .toFixed(6); // Always 6 decimal places
+  
+  // Log for audit trail
+  logger.info('Cost calculation', {
+    tokens,
+    rate,
+    cost,
+    timestamp: new Date().toISOString()
+  });
+  
+  return cost;
+}
+```
+
+### Input Validation & Error Messages
+```typescript
+// Always validate with Zod
+const UserInputSchema = z.object({
+  text: z.string().max(100000),
+  model: z.enum(['gpt-4', 'gpt-3.5-turbo', 'claude-3']),
+  userId: z.string().uuid()
+});
+
+// User-friendly error messages
+const ERROR_MESSAGES = {
+  INVALID_API_KEY: "Your API key is invalid. Please check your settings.",
+  RATE_LIMIT_EXCEEDED: "You've exceeded your rate limit. Please try again in a few minutes.",
+  INTERNAL_ERROR: "Something went wrong on our end. We've been notified and are fixing it."
+};
+```
+
+---
+
+## 9) Development Commands
+
+### Search Commands (Use Before Creating)
+```bash
+# Find existing token/cost code
+grep -r "calculateCost\|calculateToken\|tokenCount" packages/
+
+# Find React components
+find . -name "*.tsx" -exec grep -l "export.*function.*return.*<" {} \;
+
+# Find validation schemas
+grep -r "z\.object\|z\.string\|z\.number" packages/ --include="*.ts"
+
+# Check recent work in area
+git log --oneline -20 -- "packages/@meterr/llm-client"
+
+# Impact analysis before changes
+grep -r "from.*MODULE_NAME" --include="*.ts" --include="*.tsx"
+grep -r "<COMPONENT_NAME" --include="*.tsx"
+```
+
+### Quality Commands (Use Before Committing)
 ```bash
 # Type checking
 pnpm typecheck
@@ -81,170 +381,103 @@ pnpm lint
 # Testing
 pnpm test
 
-# Run all checks
+# Bundle analysis
+pnpm analyze
+
+# All checks combined
 pnpm typecheck && pnpm lint && pnpm test
 ```
 
-### Development Commands
+---
+
+## 10) Session Management & Self-Update
+
+### Session Start Protocol
 ```bash
-# Start development servers
-pnpm dev              # Start all (marketing + app)
-pnpm dev:app          # Start app only
-pnpm dev:marketing    # Start marketing only
-pnpm docs             # Start documentation server
+# Update knowledge
+git pull origin main
+git log --oneline -10
 
-# Build commands
-pnpm build            # Build all
-pnpm build:app        # Build app
-pnpm docs:build       # Build documentation
+# Check current focus
+cat .github/CURRENT_SPRINT.md 2>/dev/null || echo "No sprint file"
 
-# Database
-pnpm db:push          # Push schema to Supabase
-pnpm db:pull          # Pull schema from Supabase
-pnpm db:generate      # Generate types
-
-# Deployment
-pnpm deploy:marketing
-pnpm deploy:app
+# Understand context
+gh issue list --limit 5 --state open
 ```
 
-### Documentation Commands
+### Self-Update Protocol (Every session/30min)
 ```bash
-pnpm docs             # Start Docusaurus dev server
-pnpm docs:build       # Build documentation
-pnpm docs:serve       # Serve production build
-pnpm docs:migrate     # Re-run migration from old structure
-pnpm docs:fix         # Fix MDX syntax issues
+# Check for updates to standards
+git diff HEAD~1 .claude/CLAUDE.md
+ls -la docs-portal/docs/*-standards.md
+
+# Verify structure
+tree -L 2 -d
+
+# Review recent changes
+git log --oneline -10
 ```
 
-## Technology Stack
-- **Frontend**: Next.js 15, React 19, Tailwind CSS, shadcn/ui
-- **Backend**: Supabase (PostgreSQL, Auth, Storage)
-- **Infrastructure**: AWS (Lambda, S3, CloudFront), Vercel
-- **AI Services**: OpenAI, Anthropic, Google AI
-- **Payments**: Stripe
+### Continuous Improvement
+**Every 10 interactions, reflect on:**
+1. What patterns am I repeating? (Can they be automated?)
+2. What mistakes did I make? (How can I prevent them?)
+3. What took longest? (Can it be optimized?)
+4. What questions remained? (Document uncertainties)
 
-## Coding Standards
+---
 
-### File Naming
-- Components: `TokenCounter.tsx` (PascalCase)
-- Utilities: `token-utils.ts` (kebab-case)
-- Hooks: `useTokenData.ts` (camelCase with 'use' prefix)
-- Tests: `token-counter.test.ts` (.test.ts suffix)
+## 11) Reference Documentation
 
-### Code Quality
-- TypeScript strict mode (no `any`, no `!`, no `as unknown`)
-- Double quotes for strings
-- Full error handling
-- Comprehensive comments
-- No placeholders in code
+### Core Standards
+- **[coding-standards.md](../docs-portal/docs/coding-standards.md)** - Complete TypeScript and React patterns
+- **[api-design-standards.md](../docs-portal/docs/api-design-standards.md)** - REST API patterns
+- **[error-handling-playbook.md](../docs-portal/docs/error-handling-playbook.md)** - Error patterns and recovery
+- **[testing-guide.md](../docs-portal/docs/testing-guide.md)** - Testing standards and patterns
 
-### Database Conventions
-- Tables: `users`, `token_usage` (lowercase, snake_case)
-- Columns: `user_id`, `created_at`, `is_active` (snake_case)
-- Foreign keys: `user_id`, `team_id` (_id suffix)
-- Timestamps: `created_at`, `updated_at` (_at suffix)
-
-### Commit Messages
-```
-feat(api): Add token counting endpoint
-fix(auth): Resolve session timeout issue
-docs: Update API documentation
-test: Add integration tests
-chore: Update dependencies
-```
-
-## Current Focus (MVP Phase 1)
-
-### Week 1 Goals
-- [ ] Complete authentication (Supabase Auth)
-- [ ] Basic dashboard UI
-- [ ] Token counter tool
-- [ ] Database schema setup
-
-### Week 2 Goals
-- [ ] API proxy for providers
-- [ ] Cost tracking implementation
-- [ ] Budget alerts
-- [ ] Team features
-
-## API Patterns
-
-### Route Structure
-```typescript
-// app/api/[resource]/route.ts
-export async function POST(request: Request) {
-  // 1. Authenticate
-  const session = await auth();
-  if (!session) return unauthorized();
-  
-  // 2. Validate input
-  const data = schema.parse(await request.json());
-  
-  // 3. Business logic
-  const result = await processData(data);
-  
-  // 4. Return response
-  return NextResponse.json(result);
-}
-```
-
-## Environment Variables
-
-Required for development:
+### Environment Variables
 ```bash
-# Database
+# Required for development
 DATABASE_URL=             # Supabase connection string
 NEXT_PUBLIC_SUPABASE_URL= # Supabase project URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY= # Supabase anon key
-
-# AI Providers (for testing)
 OPENAI_API_KEY=          # OpenAI API key
 ANTHROPIC_API_KEY=       # Anthropic API key
 ```
 
-## Common Issues & Solutions
+---
 
-### Port Already in Use
-```bash
-# Kill process on port 3000
-lsof -ti:3000 | xargs kill -9  # Mac/Linux
-netstat -ano | findstr :3000   # Windows (then kill PID)
-```
+## 12) Final Reminders & Success Metrics
 
-### Type Errors
-- Run `pnpm typecheck` to see all errors
-- Check `tsconfig.json` for strict mode settings
-- Ensure all imports have proper types
+### Session Metrics (Track These)
+| Metric | Target | Track |
+|--------|--------|-------|
+| Code Reuse | >70% | Files reused vs created |
+| Pattern Consistency | 100% | Patterns match standards |
+| Test Coverage | >80% | New code has tests |
+| Performance Budget | 100% | Within defined limits |
+| Zero Duplicates | Yes | No duplicate implementations |
 
-### Database Issues
-- Check `.env` has correct `DATABASE_URL`
-- Run `pnpm db:generate` after schema changes
-- Use `pnpm db:push` to sync schema
+### The Never List
+1. **Never trust user input** - Always validate with Zod
+2. **Never catch without handling** - Log errors, return Result
+3. **Never use float for money** - Use BigNumber exclusively
+4. **Never SELECT *** - Select only needed fields
+5. **Never skip tests** - Every public function needs tests
+6. **Never use relative imports across packages** - Use package imports
+7. **Never commit secrets** - Use environment variables
 
-## MCP Servers Available
-- Filesystem access
-- Supabase operations (when configured)
-- AWS services (when configured)
-- Vercel deployments (when configured)
-- LLM research server (pnpm mcp:llm)
+### Boy Scout Rule
+**"Leave code better than you found it"**
 
-## Important Notes
-
-1. **Security First**: We handle API keys and financial data
-2. **Type Safety**: No `any` types, proper error handling
-3. **Testing**: Critical paths must have tests
-4. **Performance**: Monitor bundle size and query performance
-5. **Documentation**: Update docs when adding features
-
-## Getting Help
-
-1. Check `/docs-portal/docs/` for detailed guides
-2. Review agent definitions in `.claude/agents/` for role-specific instructions
-3. Search codebase for similar patterns
-4. Check test files for usage examples
+Every time you touch code:
+- Fix nearby code smells
+- Add missing types
+- Improve variable names
+- Add missing tests
+- Update outdated comments
 
 ---
 
-*Last updated: 2025-08-13*
-*For AI agents: Follow these instructions strictly. Run quality checks before any code changes.*
+*This document is the complete reference for world-class AI programming on meterr.ai*
+*Follow these standards religiously for consistent, high-quality code*

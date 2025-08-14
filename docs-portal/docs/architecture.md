@@ -144,12 +144,12 @@ Real-time notifications when approaching budget limits.
 
 ## Detailed Documentation
 
-For the complete technical architecture documentation, see [METERR_ARCHITECTURE.md](./METERR_ARCHITECTURE).
+For the complete technical architecture documentation, see [technical details](./architecture/technical-details.md).
 
 ## Related Documentation
 
 - [API Reference](./api/overview)
-- [Deployment Guide](./METERR_DEPLOYMENT)
-- [Security Overview](./METERR_SECURITY)
+- [Deployment Guide](./deployment-guide.md)
+- [Security Overview](./security-checklist.md)
 - [Scaling Guide](./SCALING)
-- [Development Guide](./METERR_DEVELOPMENT_GUIDE)
+- [Development Guide](./development-guide.md)

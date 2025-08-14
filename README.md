@@ -74,10 +74,10 @@ meterr/
 📚 **[View Documentation Portal](http://localhost:3001)** - Run `pnpm docs` to start
 
 ### Quick Access
-- 🏗️ [Architecture](docs-portal/docs/METERR_ARCHITECTURE.md) - System design
-- 💻 [Development](docs-portal/docs/METERR_DEVELOPMENT_GUIDE.md) - Setup guide  
-- 📏 [Standards](docs-portal/docs/METERR_CODING_STANDARDS.md) - Coding standards
-- 🔌 [API Docs](docs-portal/docs/METERR_API_REFERENCE.md) - API reference
+- 🏗️ [Architecture](docs-portal/docs/architecture.md) - System design
+- 💻 [Development](docs-portal/docs/development-guide.md) - Setup guide  
+- 📏 [Standards](docs-portal/docs/coding-standards.md) - Coding standards
+- 🔌 [API Docs](docs-portal/docs/api/overview.md) - API reference
 - 🤖 [AI Context](.claude/CLAUDE.md) - AI assistant instructions
 
 ### Documentation Commands

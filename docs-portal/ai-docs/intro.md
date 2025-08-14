@@ -21,8 +21,8 @@ Optimized documentation for AI agents and automated systems.
 
 ## Available Contexts
 
-- [Architecture](./METERR_ARCHITECTURE.md) - System structure
-- [Standards](./METERR_CODING_STANDARDS.md) - Code requirements
+- [Architecture](./architecture.md) - System structure
+- [Standards](./coding-standards.md) - Code requirements
 - [State](./project-state.md) - Current project status
 - [Decisions](./decisions.md) - Technical decisions
 

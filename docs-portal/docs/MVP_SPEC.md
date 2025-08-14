@@ -1,3 +1,12 @@
+---
+title: MVP Specification
+description: Technical blueprint for AI Profitability Platform features and requirements
+audience: ["human", "ai"]
+status: ready
+last_updated: 2025-01-14
+owner: product
+---
+
 # MVP Specification V2: AI Profitability Platform
 **Date**: 2025-01-14  
 **Phase**: 2 - Feature Prioritization & Platform Evolution
@@ -138,18 +147,18 @@ User → Meterr SDK/Proxy → Smart Router → AI Provider
 ## Integration Strategy
 
 ### Priority Integrations
-1. **AI Providers** (Week 1)
+1. **AI Providers** (Phase 1 - Confidence: 90%)
    - OpenAI (already built)
    - Anthropic (already built)
    - Google Gemini
    - Perplexity
 
-2. **Business Tools** (Week 2)
+2. **Business Tools** (Phase 1 - Confidence: 85%)
    - Slack (for alerts)
    - Email (for reports)
    - Webhooks (generic)
 
-3. **Financial Systems** (Week 3)
+3. **Financial Systems** (Phase 2 - Confidence: 70%)
    - CSV export
    - QuickBooks (future)
    - Stripe billing (future)
@@ -176,7 +185,7 @@ User → Meterr SDK/Proxy → Smart Router → AI Provider
 ### User Activation
 - Time to first insight: < 5 minutes
 - Setup completion rate: > 80%
-- First week retention: > 60%
+- Initial phase retention: > 60%
 
 ### Value Delivery
 - Average cost savings: 20-30%
@@ -196,24 +205,24 @@ User → Meterr SDK/Proxy → Smart Router → AI Provider
 
 ## Implementation Phases
 
-### Phase 1: Foundation (Current)
+### Phase 1: Foundation (Current - Confidence: 95%)
 - ✅ Smart router (built)
 - ✅ Token calculator (built)
 - ⚠️ Basic dashboard (needs enhancement)
 
-### Phase 2: Profitability Layer (Next)
+### Phase 2: Profitability Layer (Next - Confidence: 85%)
 - Business metric tracking
 - ROI calculations
 - Department allocation
 - Executive reporting
 
-### Phase 3: Optimization Engine
+### Phase 3: Optimization Engine (Confidence: 75%)
 - Automatic model selection
 - Quality monitoring
 - Proactive recommendations
 - Cost reduction tracking
 
-### Phase 4: Enterprise Features
+### Phase 4: Enterprise Features (Confidence: 60%)
 - Advanced compliance
 - Custom integrations
 - White-label options
