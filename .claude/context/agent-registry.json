@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "updated": "2025-08-13T22:52:00Z",
+  "version": "1.1.0",
+  "updated": "2025-08-14T12:25:00Z",
   "agents": {
     "meta": [
       {
@@ -47,7 +47,7 @@
         "created": "2025-08-13T00:00:00Z",
         "file": ".claude/agents/architect.md",
         "description": "Designs system architecture for scalability",
-        "can_spawn": ["database-specialist", "api-designer", "infrastructure-specialist"],
+        "can_spawn": ["data-engineer"],
         "metrics": {
           "designs_created": 0,
           "scalability_score": 0,
@@ -60,7 +60,7 @@
         "created": "2025-08-13T00:00:00Z",
         "file": ".claude/agents/builder.md",
         "description": "Implements features and writes production code",
-        "can_spawn": ["frontend-builder", "backend-builder", "integration-specialist"],
+        "can_spawn": ["product-design"],
         "metrics": {
           "features_completed": 0,
           "code_quality": 0,
@@ -73,7 +73,7 @@
         "created": "2025-08-13T00:00:00Z",
         "file": ".claude/agents/validator.md",
         "description": "Ensures quality through testing and validation",
-        "can_spawn": ["security-auditor", "performance-tester", "compliance-checker"],
+        "can_spawn": ["security-auditor", "performance-tester"],
         "metrics": {
           "tests_passed": 0,
           "coverage_percent": 0,
@@ -86,7 +86,7 @@
         "created": "2025-08-13T00:00:00Z",
         "file": ".claude/agents/scribe.md",
         "description": "Maintains documentation and knowledge base",
-        "can_spawn": ["api-documenter", "user-guide-writer"],
+        "can_spawn": [],
         "metrics": {
           "docs_created": 0,
           "clarity_score": 0,
@@ -99,7 +99,7 @@
         "created": "2025-08-13T22:30:00Z",
         "file": ".claude/agents/product-manager.md",
         "description": "Oversees feature prioritization and roadmap",
-        "can_spawn": ["user-feedback-analyzer", "competitor-analyst", "feature-spec-writer"],
+        "can_spawn": ["customer-success"],
         "metrics": {
           "features_prioritized": 0,
           "user_satisfaction": 0,
@@ -112,7 +112,7 @@
         "created": "2025-08-13T22:31:00Z",
         "file": ".claude/agents/operations-engineer.md",
         "description": "Manages CI/CD, monitoring, and deployments",
-        "can_spawn": ["deployment-specialist", "monitoring-specialist", "cost-optimizer"],
+        "can_spawn": [],
         "metrics": {
           "uptime_percent": 0,
           "deploy_frequency": 0,
@@ -125,7 +125,7 @@
         "created": "2025-08-13T22:50:00Z",
         "file": ".claude/agents/marketing.md",
         "description": "Provides market intelligence, personas, and competitive analysis",
-        "can_spawn": ["persona-researcher", "pricing-analyst", "competitor-tracker", "content-strategist", "growth-hacker"],
+        "can_spawn": [],
         "metrics": {
           "personas_validated": 0,
           "cac_dollars": 0,
@@ -147,19 +147,127 @@
           "accuracy_rate": 0,
           "false_positives": 0
         }
+      },
+      {
+        "name": "product-design",
+        "status": "active",
+        "created": "2025-08-14T12:15:00Z",
+        "file": ".claude/agents/product-design.md",
+        "parent": "builder",
+        "description": "UX/UI design for intuitive interfaces",
+        "metrics": {
+          "designs_created": 0,
+          "user_satisfaction": 0,
+          "load_time": 0
+        }
+      },
+      {
+        "name": "security-auditor",
+        "status": "active",
+        "created": "2025-08-14T12:15:00Z",
+        "file": ".claude/agents/security-auditor.md",
+        "parent": "validator",
+        "description": "Security vulnerability and compliance auditing",
+        "metrics": {
+          "vulnerabilities_found": 0,
+          "compliance_score": 0,
+          "mttr": 0
+        }
+      },
+      {
+        "name": "performance-tester",
+        "status": "active",
+        "created": "2025-08-14T12:15:00Z",
+        "file": ".claude/agents/performance-tester.md",
+        "parent": "validator",
+        "description": "Load testing and performance optimization",
+        "metrics": {
+          "tests_run": 0,
+          "p95_latency": 0,
+          "throughput": 0
+        }
+      },
+      {
+        "name": "customer-success",
+        "status": "active",
+        "created": "2025-08-14T12:15:00Z",
+        "file": ".claude/agents/customer-success.md",
+        "parent": "product-manager",
+        "description": "User retention and feedback management",
+        "metrics": {
+          "retention_rate": 0,
+          "nps_score": 0,
+          "onboarding_time": 0
+        }
+      },
+      {
+        "name": "data-engineer",
+        "status": "active",
+        "created": "2025-08-14T12:15:00Z",
+        "file": ".claude/agents/data-engineer.md",
+        "parent": "architect",
+        "description": "ETL pipelines and data processing",
+        "metrics": {
+          "pipelines_built": 0,
+          "query_time": 0,
+          "data_accuracy": 0
+        }
       }
     ],
-    "sub_agents": []
+    "sub_agents": [
+      {
+        "name": "auth-researcher",
+        "status": "active",
+        "created": "2025-08-12T23:00:00Z",
+        "file": ".claude/sub-agents/auth-researcher.md",
+        "parent": "research-coordinator",
+        "type": "research-specialist",
+        "description": "Authentication solution research and comparison",
+        "metrics": {
+          "solutions_analyzed": 5,
+          "recommendations_made": 1,
+          "accuracy_rate": 0
+        }
+      },
+      {
+        "name": "market-research-agent",
+        "status": "active",
+        "created": "2025-08-12T23:30:00Z",
+        "file": ".claude/sub-agents/market-research-agent.md",
+        "parent": "research-coordinator",
+        "type": "research-specialist",
+        "description": "Market needs and pain points research",
+        "metrics": {
+          "prompts_executed": 0,
+          "insights_generated": 0,
+          "validation_rate": 0
+        }
+      },
+      {
+        "name": "prototype-builder-agent",
+        "status": "active",
+        "created": "2025-08-12T23:45:00Z",
+        "file": ".claude/sub-agents/prototype-builder-agent.md",
+        "parent": "builder",
+        "type": "feature-specialist",
+        "description": "Prototype implementation and testing",
+        "metrics": {
+          "prototypes_built": 0,
+          "success_rate": 0,
+          "iteration_count": 0
+        }
+      }
+    ]
   },
   "statistics": {
-    "total_agents": 11,
-    "active_agents": 11,
+    "total_agents": 19,
+    "active_agents": 19,
     "idle_agents": 0,
     "terminated_agents": 0,
     "meta_agents": 3,
     "primary_agents": 7,
-    "specialist_agents": 1,
-    "sub_agents": 0
+    "specialist_agents": 6,
+    "sub_agents": 3
   },
   "saas_metrics": {
     "target_users": 1000000,

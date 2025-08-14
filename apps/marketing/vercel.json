@@ -1,0 +1,68 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd ../.. && pnpm run build:marketing",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "devCommand": "pnpm dev",
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 10,
+      "memory": 512
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    },
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/app",
+      "destination": "https://app.meterr.ai",
+      "permanent": false
+    },
+    {
+      "source": "/login",
+      "destination": "https://app.meterr.ai/login",
+      "permanent": false
+    },
+    {
+      "source": "/signup",
+      "destination": "https://app.meterr.ai/signup",
+      "permanent": false
+    }
+  ],
+  "regions": ["iad1", "sfo1", "lhr1"],
+  "env": {
+    "NEXT_PUBLIC_APP_URL": "https://app.meterr.ai",
+    "NEXT_PUBLIC_MARKETING_URL": "https://meterr.ai"
+  }
+}

@@ -12,14 +12,30 @@ This guide explains how to work with the multi-agent architecture in meterr.ai.
 
 ## Agent Types
 
+### Meta Agents
+Master control and coordination:
+- **Orchestrator**: Master controller managing all agents
+- **Spawner**: Agent creation and lifecycle management
+- **Research Coordinator**: Research synthesis and coordination
+
 ### Primary Agents
 Always active, core functionality:
-- **Orchestrator**: Master controller
-- **Architect**: System design
-- **Builder**: Implementation
-- **Validator**: Testing
-- **Scribe**: Documentation
-- **Spawner**: Agent creation
+- **Architect**: System design and infrastructure
+- **Builder**: Feature implementation
+- **Validator**: Testing and quality assurance
+- **Scribe**: Documentation and knowledge management
+- **Product Manager**: Feature prioritization and roadmap
+- **Operations Engineer**: CI/CD and deployments
+- **Marketing**: Market intelligence and competitive analysis
+
+### Specialist Agents
+Domain-specific expertise:
+- **Skeptic**: Critical analysis and fact-checking (parent: research-coordinator)
+- **Product Design**: UX/UI design (parent: builder)
+- **Security Auditor**: Compliance and vulnerability scanning (parent: validator)
+- **Performance Tester**: Load testing and optimization (parent: validator)
+- **Customer Success**: User retention and feedback (parent: product-manager)
+- **Data Engineer**: ETL pipelines and analytics (parent: architect)
 
 ### Sub-Agents
 Created dynamically as needed:

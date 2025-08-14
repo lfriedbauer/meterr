@@ -5,7 +5,19 @@
       "enabled": true,
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem"],
-      "root": "C:\\Users\\LeviFriedbauer\\meterr"
+      "root": "C:\\Users\\Owner\\Projects\\meterr"
+    },
+    "llm-research": {
+      "enabled": true,
+      "command": "node",
+      "args": ["C:\\Users\\Owner\\Projects\\meterr\\mcp-servers\\llm-research\\dist\\server.js"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+        "GOOGLE_API_KEY": "${GOOGLE_API_KEY}",
+        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}",
+        "XAI_API_KEY": "${XAI_API_KEY}"
+      }
     },
     "supabase": {
       "enabled": false,

@@ -295,18 +295,29 @@ Dashboard Updates
 - Never logged or exposed
 - Rotation support built-in
 - Masked in UI (sk-...xxx)
+- Environment variables: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY
 
 ### Data Isolation
 - Row-level security (RLS) in PostgreSQL
 - Organization-based data partitioning
 - Separate read/write permissions
+- **CRITICAL**: Enable RLS on ALL tables (token_usage, api_keys, organizations, team_members)
+- Foreign key constraints: auth.users → public.users (CASCADE DELETE)
 
 ### Authentication Flow
 ```
 User Login → Supabase Auth → JWT Token → API Access
                                 ↓
                           RLS Enforcement
+                                ↓
+                     Multi-tenant Isolation
 ```
+
+### Security Audit Findings (2025-08-14)
+- ✅ API keys properly secured with environment variables
+- ✅ Foreign key constraints on auth.users implemented
+- ⚠️ RLS missing on critical tables (token_usage, api_keys, organizations, team_members)
+- Action Required: Enable RLS policies for complete multi-tenant isolation
 
 ## Performance Optimizations
 
