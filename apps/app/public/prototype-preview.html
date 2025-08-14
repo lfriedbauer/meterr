@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meterr AI Profitability Dashboard - Static Preview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            color: #2d3748;
+        }
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 24px;
+        }
+        .header h1 {
+            font-size: 28px;
+            color: #1B4332;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #718096;
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .metric-label {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1B4332;
+            margin-bottom: 8px;
+        }
+        .metric-change {
+            font-size: 14px;
+            color: #48bb78;
+        }
+        .metric-change.negative {
+            color: #f56565;
+        }
+        .department-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .department-section h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #1B4332;
+        }
+        .department-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .department-row:last-child {
+            border-bottom: none;
+        }
+        .department-name {
+            font-weight: 500;
+        }
+        .roi-badge {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        .roi-high { color: #48bb78; }
+        .roi-medium { color: #4299e1; }
+        .roi-low { color: #ed8936; }
+        .optimization-banner {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .optimization-banner h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        .savings-amount {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 16px 0;
+        }
+        .btn {
+            background: white;
+            color: #38a169;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #f0fff4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>AI Profitability Dashboard</h1>
+            <p>Your AI CFO - Maximizing returns on AI investments</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">AI ROI</div>
+                <div class="metric-value">247%</div>
+                <div class="metric-change">↑ 23% vs last month</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Cost per Outcome</div>
+                <div class="metric-value">$0.42</div>
+                <div class="metric-change">↓ 15% improvement</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Monthly AI Spend</div>
+                <div class="metric-value">$8,432</div>
+                <div class="metric-change">↑ 12% increase</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Optimization Savings</div>
+                <div class="metric-value">$2,156</div>
+                <div class="metric-change">↑ 31% this month</div>
+            </div>
+        </div>
+
+        <!-- Department ROI Analysis -->
+        <div class="department-section">
+            <h2>Department ROI Analysis</h2>
+            <div class="department-row">
+                <span class="department-name">Customer Support</span>
+                <span class="roi-badge roi-high">300% ROI</span>
+            </div>
+            <div class="department-row">
+                <span class="department-name">Marketing</span>
+                <span class="roi-badge roi-medium">120% ROI</span>
+            </div>
+            <div class="department-row">
+                <span class="department-name">Sales</span>
+                <span class="roi-badge roi-high">200% ROI</span>
+            </div>
+            <div class="department-row">
+                <span class="department-name">Engineering</span>
+                <span class="roi-badge roi-low">100% ROI</span>
+            </div>
+        </div>
+
+        <!-- Optimization Opportunity -->
+        <div class="optimization-banner">
+            <h2>Optimization Opportunity Detected</h2>
+            <p>Enable smart routing to automatically save money without impacting quality</p>
+            <div class="savings-amount">$2,156</div>
+            <p>Potential Monthly Savings</p>
+            <br>
+            <button class="btn">Enable Auto-Optimization</button>
+        </div>
+
+        <!-- Feature Highlights -->
+        <div class="department-section">
+            <h2>Key Features Demonstrated</h2>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                    ✅ <strong>Business ROI Focus:</strong> Unlike competitors who show only costs, we show profitability
+                </li>
+                <li style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                    ✅ <strong>Department-Level P&L:</strong> Track AI ROI by team and project
+                </li>
+                <li style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                    ✅ <strong>Proactive Optimization:</strong> Automatic recommendations to reduce costs
+                </li>
+                <li style="padding: 12px 0; border-bottom: 1px solid #e2e8f0;">
+                    ✅ <strong>Executive-Friendly:</strong> No technical jargon, just business metrics
+                </li>
+                <li style="padding: 12px 0;">
+                    ✅ <strong>Precision Green Branding:</strong> Professional, trustworthy design language
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
