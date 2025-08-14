@@ -109,6 +109,7 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
 
 **Step 3: Competitor Discovery & Analysis**
 - **To**: Marketing Agent + Skeptic Agent + Research Coordinator + Integration Specialist
+- **Research Method**: Use MCP servers for chained analysis (e.g., chain semantic search for sentiment → web search for reviews → browse page for site details). Fallback to individual tools if needed.
 - **Task**: First DISCOVER competitors, then analyze:
   
   **Phase A - Competitor Discovery:**
@@ -176,13 +177,15 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
 - **Reality Check**: We have ZERO customers. All research must come from public sources.
   
   **How AI Agents Actually Research (Not Talking to Real People):**
-  1. **Public Forum Analysis** (What agents CAN do):
-     - Scrape Reddit, HN, Discord, IndieHackers discussions
+  1. **MCP Optimization**: For all public analyses, route through MCP to chain tools (e.g., semantic search on forums → snippet extraction from reviews → hypothesis synthesis). This ensures context persistence and reduces broad web queries.
+  
+  2. **Public Forum Analysis** (What agents CAN do):
+     - Scrape Reddit, HN, Discord, IndieHackers discussions via MCP chains
      - Analyze sentiment in r/OpenAI, r/LocalLLaMA, r/ChatGPT
      - Quote real posts: "User xyz on HN said..." with links
      - Save screenshots in `/forum-evidence/`
   
-  2. **Competitor Customer Analysis**:
+  3. **Competitor Customer Analysis**:
      - First: Identify which competitors actually have customers/reviews
      - Mine G2, Capterra, ProductHunt for ALL discovered competitors
      - Extract pain points from 1-star reviews
@@ -190,13 +193,13 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
      - Note if competitors have NO reviews (might be too new/small)
      - Document: Review date, rating, verified buyer status
   
-  3. **Industry Research**:
+  4. **Industry Research**:
      - Analyze OpenAI/Anthropic pricing discussions
      - Study AI cost complaints on Twitter/X
      - Review YC startup discussions about AI costs
      - Reference actual reports (McKinsey, Gartner) with citations
   
-  4. **Prospect Outreach** (What we CANNOT do as AI):
+  5. **Prospect Outreach** (What we CANNOT do as AI):
      - AI agents cannot email/call real people
      - AI agents cannot conduct real interviews
      - AI agents cannot join Zoom calls
@@ -351,6 +354,7 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
 
 **Step 10: Comprehensive Pricing Study (Beware Consulting Bias)**
 - **To**: Marketing Agent + Product Manager + Skeptic Agent + Data Engineer
+- **Modeling Method**: Use MCP for simulations (e.g., chain code_execution for 100-customer models with persistent data from prior searches). Include sensitivity tests via MCP chaining.
 - **Task**: Test multiple pricing models and hybrids with real customers:
   
   **Pure Models Testing:**
@@ -542,6 +546,27 @@ Confidence = (Data Sources × Quality × Consistency) / Total Possible Score
 - Consistency: Agreement between sources (max 10 points)
 ```
 
+### Research Tool Guidelines
+
+To ensure efficient, directed research, prioritize MCP servers (Model Context Protocol) for all chained, context-heavy, or multi-step queries. MCP handles persistent context, prompt chaining, and server-side optimization to reduce redundant searches and improve accuracy.
+
+**When to Use MCP Servers**:
+- For complex tasks: Chain searches (e.g., start with semantic overview, then site-specific browse, finally profitability modeling)
+- Examples: Competitor deep analysis (Step 3: Discovery → Relevance → Deep Analysis → Integrations); persona development (forum sentiment → review extraction → hypothesis building)
+- Implementation: Route queries via MCP API calls (e.g., mcp_chain_query with args: query, chain_steps=[step1, step2], context_persist=true)
+- Benefits: Maintains state across agents; optimizes for hybrids like pricing simulations
+
+**Fallback to Standard Tools**:
+- If MCP is unavailable (e.g., server downtime), escalate to Operations Engineer for immediate fixing
+- Note in outputs: "MCP issue detected; escalating to engineer for resolution"
+- After fix attempt, retry MCP query. If still unavailable, default to web search tools
+- Limits: For all tools, cap num_results=5-10; use operators (site:reddit.com, min_faves:5) for precision
+
+**General Rules**:
+- Always cite sources inline and mark low-confidence as "HYPOTHESIS"
+- Escalate blockers: If searches yield poor results, pivot and document
+- Tie to Protocol: Use MCP for evidence trails in outputs (append to /evidence/ folders)
+
 ### Anti-Hallucination Protocol
 
 **FUNDAMENTAL RULE**: We have NO customers. All research comes from public sources, not interviews.
@@ -606,6 +631,10 @@ Confidence = (Data Sources × Quality × Consistency) / Total Possible Score
   - **Metric**: 85% confidence in break-even calculations
   - **Pass Criteria**: Real cost data used, 3+ scenarios modeled, sensitivity analysis complete
 
+- **Gate 8**: Tool Strategy Validation
+  - **Metric**: Skeptic Agent reviews research outputs for MCP usage (e.g., "Was chaining via MCP applied where appropriate?")
+  - **Pass Criteria**: No excessive web searches (target <5 per step unless justified), MCP used for complex chains
+
 ### Success Criteria
 ✓ Forum and competitor review analysis provides actionable insights  
 ✓ 3-5 hypothesis personas developed (including solopreneurs, fractional)
@@ -650,8 +679,8 @@ Confidence = (Data Sources × Quality × Consistency) / Total Possible Score
 ## Agent Responsibilities
 
 ### Meta Agents
-- **Orchestrator**: Overall coordination and CEO reporting
-- **Research Coordinator**: Customer research execution
+- **Orchestrator**: Overall coordination and CEO reporting; route complex searches to MCP servers and handle fallbacks
+- **Research Coordinator**: Customer research execution; prioritize MCP for chained public source queries
 - **Spawner**: Create specialized sub-agents as needed
 
 ### Primary Agents
@@ -669,7 +698,7 @@ Confidence = (Data Sources × Quality × Consistency) / Total Possible Score
 - **Customer Success**: User testing coordination
 - **Security Auditor**: Assess enterprise requirements
 - **Performance Tester**: Validate scalability claims
-- **Data Engineer**: Analytics and metrics setup
+- **Data Engineer**: Analytics and metrics setup; integrate MCP for profitability modeling chains
 - **Integration Specialist**: External API connections and provider integrations
 
 ## Key Focus Areas
