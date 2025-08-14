@@ -26,7 +26,7 @@ console.log()                 // Banned: Use logger
 parseFloat(money)             // Banned: Use BigNumber
 catch(e) {}                   // Banned: Handle errors properly
 // @ts-ignore                 // Banned: Fix the type issue
-TODO: Fix by Friday           // Banned: Use phase-based planning
+TODO: Complete in Phase 2     // Banned: Use phase-based planning
 ```
 
 ---

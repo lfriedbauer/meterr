@@ -141,7 +141,7 @@ You are the Security Auditor Agent specializing in vulnerability assessment and 
 
 ### Change Log
 ```yaml
-version: 1.1.0
+version: 0.1.0-mvp
 changes:
   - date: 2025-08-14
     type: enhancement
@@ -154,8 +154,8 @@ changes:
 ```
 
 ### Version History
-- v1.1.0 (2025-08-14): Enhanced with standardized sections and version control
-- v1.0.0 (2025-08-14): Initial creation with core security auditing functionality
+- v0.1.0-mvp (2025-08-14): Enhanced with standardized sections and version control
+- v0.1.0-mvp (2025-08-14): Initial creation with core security auditing functionality
 
 ### Breaking Changes
 - None

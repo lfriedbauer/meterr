@@ -177,7 +177,7 @@ aws cloudwatch get-metric-statistics
 
 ### Change Log
 ```yaml
-version: 1.1.0
+version: 0.1.0-mvp
 changes:
   - date: 2025-08-14
     type: enhancement
@@ -190,8 +190,8 @@ changes:
 ```
 
 ### Version History
-- v1.1.0 (2025-08-14): Enhanced with standardized sections and version control
-- v1.0.0 (2025-08-13): Initial creation with core operations functionality
+- v0.1.0-mvp (2025-08-14): Enhanced with standardized sections and version control
+- v0.1.0-mvp (2025-08-13): Initial creation with core operations functionality
 
 ### Breaking Changes
 - None

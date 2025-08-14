@@ -354,7 +354,7 @@ function sanitizeFilename(filename: string): string {
 function sanitizeMongoQuery(query: Record<string, unknown>): Record<string, unknown> {
   if (typeof query !== 'object' || query === null) return query;
   
-  const sanitized: any = {};
+  const sanitized: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(query)) {
     // Remove $ operators from user input
     if (key.startsWith('$')) continue;

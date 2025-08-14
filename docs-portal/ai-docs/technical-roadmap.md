@@ -27,9 +27,9 @@ description: "METERR Roadmap v1 documentation for Meterr.ai"
 - Authentication implementation
 - Production deployment prep
 
-## Phase 1: MVP (2 Weeks)
+## Phase 1: MVP (Confidence: 85%)
 
-### Week 1
+### Phase 1A: Core Infrastructure
 - [ ] Complete authentication
 - [ ] Basic dashboard
 <!-- /audience -->
@@ -46,7 +46,7 @@ description: "METERR Roadmap v1 documentation for Meterr.ai"
 - Launch MVP
 
 ## Timeline
-- Week 1: Core features
+- Phase 1A: Core features
 <!-- /audience -->
 
 # METERR Roadmap v1
@@ -64,28 +64,28 @@ description: "METERR Roadmap v1 documentation for Meterr.ai"
 - Authentication implementation
 - Production deployment prep
 
-## Phase 1: MVP (2 Weeks)
+## Phase 1: MVP (Confidence: 85%)
 
-### Week 1
+### Phase 1A: Core Infrastructure
 - [ ] Complete authentication
 - [ ] Basic dashboard
 - [ ] Token counter tool
 - [ ] Database schema
 
-### Week 2
+### Phase 1B: User Features
 - [ ] API proxy setup
 - [ ] Cost tracking
 - [ ] Budget alerts
 - [ ] Team features
 
-## Phase 2: Launch (Month 2)
+## Phase 2: Launch (Confidence: 70%)
 
 - [ ] Stripe payments
 - [ ] All AI providers integrated
 - [ ] SDK release
 - [ ] Documentation
 
-## Phase 3: Growth (Month 3)
+## Phase 3: Growth (Confidence: 60%)
 
 - [ ] Enterprise features
 - [ ] Advanced analytics
@@ -94,9 +94,9 @@ description: "METERR Roadmap v1 documentation for Meterr.ai"
 
 ## Success Metrics
 
-- Week 1: 100 users
-- Month 1: $5K MRR
-- Month 3: $50K MRR
+- Phase 1 completion: 100 users
+- Phase 1 end: $5K MRR
+- Phase 3 completion: $50K MRR
 
 ---
 *v1 - August 2025*

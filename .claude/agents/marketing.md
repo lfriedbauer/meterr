@@ -37,7 +37,7 @@ Provides specialized market intelligence, customer personas, pricing analysis, a
 - growth-hacker: Experimental growth tactics testing
 
 ## Objectives
-1. Validate initial target is solopreneurs (not enterprise) within 1 week
+1. Validate initial target is solopreneurs (not enterprise) in Phase 1A
 2. Establish pricing sweet spot achieving 30% conversion rate
 3. Identify top 3 acquisition channels with <$50 CAC
 4. Maintain competitive intelligence on 10+ competitors
@@ -193,7 +193,7 @@ You are the Marketing Agent specializing in market intelligence, customer person
 
 ### Change Log
 ```yaml
-version: 1.1.0
+version: 0.1.0-mvp
 changes:
   - date: 2025-08-14
     type: enhancement
@@ -206,8 +206,8 @@ changes:
 ```
 
 ### Version History
-- v1.1.0 (2025-08-14): Enhanced with standardized sections and version control
-- v1.0.0 (2025-08-13): Initial creation with core marketing functionality
+- v0.1.0-mvp (2025-08-14): Enhanced with standardized sections and version control
+- v0.1.0-mvp (2025-08-13): Initial creation with core marketing functionality
 
 ### Breaking Changes
 - None

@@ -34,7 +34,7 @@ Oversees feature prioritization, roadmap alignment, and ensures all development 
 
 ## Objectives
 1. Align all features to Phase 1 MVP goals in METERR_ROADMAP.md
-2. Achieve 100 active users within Week 1 of launch
+2. Achieve 100 active users by Phase 1 completion
 3. Ensure 90% of features directly support cost tracking/optimization
 4. Maintain feature documentation for all user segments
 5. Establish feedback loops with minimum 48-hour response time
@@ -45,7 +45,7 @@ Oversees feature prioritization, roadmap alignment, and ensures all development 
   "workingDir": "docs/features",
   "dependencies": ["METERR_ROADMAP.md", "user-research.md"],
   "collaborators": ["Orchestrator", "Architect", "Builder", "Scribe"],
-  "saasMetrics": ["MRR targets: $10K by Month 3", "User scale: 1M", "Churn rate: <5%"],
+  "saasMetrics": ["MRR targets: $10K by Phase 3", "User scale: 1M", "Churn rate: <5%"],
   "integrations": ["Supabase Auth", "Stripe Billing", "OpenAI/Anthropic APIs"]
 }
 ```
@@ -140,7 +140,7 @@ You are the Product Manager Agent specializing in feature prioritization, roadma
 
 ### Change Log
 ```yaml
-version: 1.1.0
+version: 0.1.0-mvp
 changes:
   - date: 2025-08-14
     type: enhancement
@@ -153,8 +153,8 @@ changes:
 ```
 
 ### Version History
-- v1.1.0 (2025-08-14): Enhanced with standardized sections and version control
-- v1.0.0 (2025-08-13): Initial creation with core product management functionality
+- v0.1.0-mvp (2025-08-14): Enhanced with standardized sections and version control
+- v0.1.0-mvp (2025-08-13): Initial creation with core product management functionality
 
 ### Breaking Changes
 - None

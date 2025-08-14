@@ -13,7 +13,7 @@ orchestrator
 active
 
 ## Version
-1.0.0
+0.1.0-mvp
 
 ## Role
 Expert in connecting meterr.ai with external services, APIs, and third-party platforms. Focuses on seamless data flow, webhook management, API gateway configuration, and ensuring reliable communication between meterr and external systems.

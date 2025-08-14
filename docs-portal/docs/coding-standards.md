@@ -377,10 +377,10 @@ export async function POST(request: Request) {
 ### API Key Protection
 ```typescript
 // ❌ Never log keys
-console.log(`Using key: ${apiKey}`);
+logger.error(`Using key: ${apiKey}`); // NEVER DO THIS
 
 // ✅ Always mask sensitive data
-console.log(`Using key: ${maskKey(apiKey)}`); // sk-...xxx
+logger.info(`Using key: ${maskKey(apiKey)}`); // sk-...xxx
 
 function maskKey(key: string): string {
   if (key.length < 8) return '****';
@@ -638,9 +638,9 @@ perf: Improve query performance
 **NEVER use time references in code, documentation, or planning:**
 - ❌ "Week X", "Month X", "QX 20XX"
 - ❌ "This will take X weeks"
-- ❌ "By end of month/week/quarter"
+- ❌ "By specific time/date/deadline"
 - ❌ "Sprint X-X"
-- ❌ Comments like `// TODO: Fix by Friday`
+- ❌ Comments like `// TODO: Fix by specific date`
 
 **ALWAYS use phase-based progression:**
 - ✅ "Phase 1: MVP (Confidence: 85%)"
@@ -804,7 +804,7 @@ export function Component({ prop1, prop2 }: Props) {
 ### Pre-Launch Essentials (Free, Do Now)
 Critical items that cost nothing but prevent disasters:
 
-- **Remove all console.log statements** - Use proper logging instead
+- **Remove all console statements** - Use proper logging instead
 - **Delete commented-out code** - Keep git history, not dead code
 - **Remove hardcoded API keys** - Use environment variables
 - **Generic error messages** - No stack traces in production
@@ -865,7 +865,7 @@ Before committing code:
 - [ ] All functions documented
 - [ ] Error cases handled
 - [ ] Tests written for new features
-- [ ] No console.log statements
+- [ ] No console statements (use logger)
 - [ ] API keys masked in logs
 - [ ] Input validation present
 - [ ] Used proper TypeScript patterns

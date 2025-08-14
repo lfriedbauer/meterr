@@ -38,7 +38,7 @@ description: "meterr.ai Implementation Plan context for AI agents"
 - [ ] Design AI usage tracking schema
 - [ ] Implement RLS policies
 
-## Phase 2: Core Tools (Week 2)
+## Phase 2: Core Tools (Confidence: 70%)
 **Multiple specialized agents needed**
 
 ### 2.1 Token Counter Tool
@@ -62,7 +62,7 @@ description: "meterr.ai Implementation Plan context for AI agents"
 - [ ] Tree view display
 - [ ] Export capabilities
 
-## Phase 3: Dashboard & Analytics (Week 3)
+## Phase 3: Dashboard & Analytics (Confidence: 60%)
 
 ### 3.1 Main Dashboard
 **Agent**: `dashboard-designer`

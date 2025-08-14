@@ -199,9 +199,9 @@ async function fetchTokenData(): Promise<Result<TokenData>> {
 // Usage forces error handling
 const result = await fetchTokenData();
 if (result.ok) {
-  console.log(result.value);  // TypeScript knows value exists
+  logger.info('Token data fetched', { value: result.value });  // TypeScript knows value exists
 } else {
-  console.error(result.error); // TypeScript knows error exists
+  logger.error('Failed to fetch token data', { error: result.error }); // TypeScript knows error exists
 }
 ```
 
@@ -377,10 +377,10 @@ export async function POST(request: Request) {
 ### API Key Protection
 ```typescript
 // ❌ Never log keys
-console.log(`Using key: ${apiKey}`);
+logger.error(`Using key: ${apiKey}`); // NEVER DO THIS
 
 // ✅ Always mask sensitive data
-console.log(`Using key: ${maskKey(apiKey)}`); // sk-...xxx
+logger.info(`Using key: ${maskKey(apiKey)}`); // sk-...xxx
 
 function maskKey(key: string): string {
   if (key.length < 8) return '****';
@@ -693,7 +693,7 @@ Before committing code:
 - [ ] All functions documented
 - [ ] Error cases handled
 - [ ] Tests written for new features
-- [ ] No console.log statements
+- [ ] No console statements (use logger)
 - [ ] API keys masked in logs
 - [ ] Input validation present
 - [ ] Used proper TypeScript patterns

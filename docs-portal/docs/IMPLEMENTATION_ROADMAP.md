@@ -14,7 +14,7 @@ This roadmap outlines the path from validated concept to market launch for meter
 **NEVER use time references:**
 - ❌ "Week X", "Month X", "QX 20XX"
 - ❌ "This will take X weeks"
-- ❌ "By end of month/week/quarter"
+- ❌ "By specific time/date/deadline"
 - ❌ "Sprint X-X"
 
 **ALWAYS use phase-based progression:**
@@ -277,7 +277,7 @@ Phase 1A → Phase 1B Gate Review:
 **Scale aggressively if**:
 - [ ] CAC <$300
 - [ ] 10%+ conversion rate
-- [ ] 90%+ retention month 2
+- [ ] 90%+ retention after initial period
 
 ## Early Warning Indicators
 

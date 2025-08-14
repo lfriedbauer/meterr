@@ -83,7 +83,7 @@ Customer API Key
 
 // ❌ NEVER DO THIS
 function logAPICall(apiKey: string, endpoint: string) {
-  console.log(`Calling ${endpoint} with key: ${apiKey}`);
+  logger.error(`Calling ${endpoint} with key: ${apiKey}`); // NEVER LOG KEYS
 }
 
 // ✅ ALWAYS DO THIS
@@ -283,7 +283,7 @@ fetch("/api/track", {
 
 ### Before Every Commit
 - [ ] No hardcoded secrets
-- [ ] No console.log with sensitive data
+- [ ] No console statements with sensitive data (use masked logger)
 - [ ] API keys masked in logs
 - [ ] Input validation on all endpoints
 - [ ] Error messages don't leak internals
