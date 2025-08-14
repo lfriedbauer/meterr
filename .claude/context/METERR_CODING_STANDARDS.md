@@ -153,6 +153,22 @@ async function fetchUserData(id: string): Promise<Result<User>> {
 }
 ```
 
+### Financial Calculations (MANDATORY)
+
+```typescript
+// ALWAYS use BigNumber.js for monetary values
+import { BigNumber } from 'bignumber.js';
+
+// ✅ REQUIRED for all cost calculations
+const cost = new BigNumber(tokens)
+  .multipliedBy(rate)
+  .dividedBy(1000)
+  .toFixed(6); // Always 6 decimal places
+
+// ❌ FORBIDDEN - JavaScript numbers lose precision
+const cost = tokens * rate / 1000; // NEVER DO THIS
+```
+
 ### Bundle Optimization (MANDATORY)
 
 #### Tree Shaking

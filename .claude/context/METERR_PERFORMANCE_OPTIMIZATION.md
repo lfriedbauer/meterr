@@ -56,7 +56,7 @@ const WORKER_POOL_SIZE = 32;
 
 class WorkerPool {
   private workers: Worker[] = [];
-  private queue: Array<{ task: any; resolve: Function; reject: Function }> = [];
+  private queue: Array<{ task: unknown; resolve: Function; reject: Function }> = [];
   private activeWorkers = 0;
   
   constructor(workerScript: string) {
@@ -68,7 +68,7 @@ class WorkerPool {
     }
   }
   
-  async execute<T>(task: any): Promise<T> {
+  async execute<T>(task: unknown): Promise<T> {
     return new Promise((resolve, reject) => {
       this.queue.push({ task, resolve, reject });
       this.processQueue();
@@ -135,10 +135,10 @@ const CACHE_CONFIG = {
 };
 
 class MegaCache {
-  private cache = new Map<string, { data: any; size: number; timestamp: number }>();
+  private cache = new Map<string, { data: unknown; size: number; timestamp: number }>();
   private totalSize = 0;
   
-  set(key: string, value: any): void {
+  set(key: string, value: unknown): void {
     const size = this.getObjectSize(value);
     
     // With 256GB RAM, we rarely need to evict
@@ -177,7 +177,7 @@ const DEV_DB_CONFIG = {
   memory: true, // Use RAM for database
   readonly: false,
   timeout: 5000,
-  verbose: process.env.DEBUG ? console.log : null
+  verbose: process.env.DEBUG ? logger.debug : null
 };
 
 // For development: entire DB in memory
@@ -286,7 +286,9 @@ const dbPool = new Pool({
   options: '-c max_parallel_workers_per_gather=16 -c max_parallel_workers=32'
 });
 
-// REQUIRED: Bulk operations
+// REQUIRED: Bulk operations with BigNumber for costs
+import { BigNumber } from 'bignumber.js';
+
 async function bulkInsertTokens(tokens: Token[]): Promise<void> {
   const BATCH_SIZE = 10000; // Large batches with your RAM
   
@@ -300,7 +302,7 @@ async function bulkInsertTokens(tokens: Token[]): Promise<void> {
     dbPool.query(
       `INSERT INTO tokens (id, user_id, count, cost) 
        VALUES ${batch.map(() => '($1, $2, $3, $4)').join(',')}`,
-      batch.flatMap(t => [t.id, t.userId, t.count, t.cost])
+      batch.flatMap(t => [t.id, t.userId, t.count, new BigNumber(t.cost).toFixed(6)])
     )
   ));
 }
