@@ -39,10 +39,12 @@ This guide establishes testing standards for meterr.ai to ensure reliable, high-
 
 ### Test Structure Pattern
 ```typescript
+import { BigNumber } from 'bignumber.js';
+
 // Follow AAA pattern: Arrange, Act, Assert
 describe('TokenCalculator', () => {
   describe('calculateCost()', () => {
-    it('should calculate cost correctly for GPT-4', () => {
+    it('should calculate cost correctly for GPT-4 using BigNumber', () => {
       // Arrange
       const calculator = new TokenCalculator();
       const tokens = 1000;
@@ -51,8 +53,8 @@ describe('TokenCalculator', () => {
       // Act
       const cost = calculator.calculateCost(tokens, model);
       
-      // Assert
-      expect(cost).toBe(0.03); // $0.03 for 1000 tokens
+      // Assert (cost returns BigNumber string)
+      expect(cost).toBe('0.030000'); // $0.03 for 1000 tokens with 6 decimal precision
     });
     
     it('should throw error for invalid model', () => {
@@ -66,6 +68,34 @@ describe('TokenCalculator', () => {
         calculator.calculateCost(tokens, invalidModel);
       }).toThrow('Unsupported model: invalid-model');
     });
+  });
+});
+```
+
+### Testing Financial Calculations
+```typescript
+import { BigNumber } from 'bignumber.js';
+
+describe('Financial Calculations', () => {
+  it('should use BigNumber for all monetary values', () => {
+    // NEVER use JavaScript numbers for money
+    // ❌ const price = 0.1 + 0.2; // 0.30000000000000004
+    
+    // ✅ Always use BigNumber
+    const price = new BigNumber('0.1').plus('0.2');
+    expect(price.toString()).toBe('0.3');
+  });
+  
+  it('should maintain 6 decimal precision for costs', () => {
+    const tokens = 1500;
+    const ratePerMillion = 30; // $30 per million tokens
+    
+    const cost = new BigNumber(tokens)
+      .dividedBy(1_000_000)
+      .multipliedBy(ratePerMillion)
+      .toFixed(6);
+      
+    expect(cost).toBe('0.045000');
   });
 });
 ```

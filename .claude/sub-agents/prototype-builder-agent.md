@@ -15,6 +15,8 @@ active
 ## Mission
 Build iterative prototypes based on AI feedback throughout the night
 
+> **Financial Precision**: All cost calculations in prototypes must use BigNumber.js for accurate decimal arithmetic.
+
 ## Current Build Queue
 
 ### Priority 1: Enhanced Token Calculator

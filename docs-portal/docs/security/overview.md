@@ -9,6 +9,8 @@ description: "METERR Security Guide documentation for Meterr.ai"
 
 # METERR Security Guide
 
+> **Financial Security**: All monetary calculations use BigNumber.js to prevent floating-point precision errors. See [Coding Standards](../coding-standards.md) for implementation.
+
 <!-- audience: human -->
 ## Overview (Detailed)
 

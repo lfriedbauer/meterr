@@ -9,6 +9,8 @@ description: "METERR Monitoring Guide documentation for Meterr.ai"
 
 # METERR Monitoring Guide
 
+> **Cost Precision**: All financial metrics and cost calculations use BigNumber.js for accurate decimal arithmetic.
+
 <!-- audience: human -->
 ## Overview (Detailed)
 

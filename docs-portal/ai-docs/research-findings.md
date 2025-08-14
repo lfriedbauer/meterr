@@ -10,6 +10,8 @@ description: "meterr.ai Technology Stack Research Findings context for AI agents
 ## Executive Summary
 Based on multi-agent research, we recommend a hybrid architecture optimizing for developer experience, cost efficiency, and scalability.
 
+> **Financial Accuracy**: All cost calculations and savings projections in our platform use BigNumber.js for precise decimal arithmetic, ensuring accurate billing and reporting.
+
 ## Recommended Stack
 
 ### Core Technologies

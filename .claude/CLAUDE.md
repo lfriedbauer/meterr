@@ -479,5 +479,32 @@ Every time you touch code:
 
 ---
 
+## 13) Performance and Optimization Context
+
+### Code Quality Standards
+**See: `.claude/context/METERR_CODING_STANDARDS.md`**
+- TypeScript patterns (satisfies, utility types, destructuring)
+- React optimization (memo, hooks, dynamic imports)
+- API patterns (response helpers, middleware)
+- Functional programming (Result types)
+- Bundle optimization rules
+
+### Hardware Optimization
+**See: `.claude/context/METERR_PERFORMANCE_OPTIMIZATION.md`**
+- Parallel processing (32 CPU threads)
+- GPU acceleration (RTX 5070 Ti CUDA)
+- Memory utilization (256GB RAM)
+- Build optimization
+- Database optimization
+
+### Apply These Patterns
+1. **ALWAYS** check both context files before generating code
+2. **ALWAYS** use hardware-optimized configurations
+3. **ALWAYS** follow code quality standards
+4. **NEVER** generate unoptimized code
+5. **NEVER** ignore available hardware capabilities
+
+---
+
 *This document is the complete reference for world-class AI programming on meterr.ai*
 *Follow these standards religiously for consistent, high-quality code*

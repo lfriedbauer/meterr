@@ -8,6 +8,8 @@ description: "Scaling Strategy for meterr.ai documentation for Meterr.ai"
 ---
 
 ## Overview
+
+> **Financial Precision**: All cost calculations and financial metrics in our scaling architecture use BigNumber.js for accurate decimal arithmetic. See [Coding Standards](../coding-standards.md) for implementation details.
 This document outlines the scaling strategy for meterr.ai from MVP to enterprise-scale platform.
 
 ## Current Scale (MVP)

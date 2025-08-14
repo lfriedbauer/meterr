@@ -23,13 +23,25 @@ const nextConfig: NextConfig = {
     pagesBufferLength: 5,
   },
   
-  // Experimental features for performance
+  // Experimental features for performance - Optimized for 32 CPU cores
   experimental: {
     scrollRestoration: true,
     optimizePackageImports: [
       "@meterr/ui",
       "lucide-react",
     ],
+    // Use all 32 CPU cores
+    cpus: 32,
+    workerThreads: true,
+    parallelServerCompiles: true,
+    parallelServerBuildTraces: true,
+    optimizeCss: true,
+    turbo: {
+      resolveAlias: {
+        underscore: 'lodash',
+        mocha: { browser: 'mocha/browser-entry.js' }
+      }
+    }
   },
   
   // Server-side package handling
@@ -55,14 +67,31 @@ const nextConfig: NextConfig = {
     },
   ],
   
-  // Webpack optimizations
+  // Webpack optimizations - Enhanced for 256GB RAM & 32 threads
   webpack: (config, { isServer }) => {
+    // Parallel processing with all 32 threads
+    config.parallelism = 32;
+    
+    // Massive cache for fast rebuilds (using available RAM)
+    config.cache = {
+      type: 'filesystem',
+      allowCollectingMemory: true,
+      memoryCacheSize: 4 * 1024 * 1024 * 1024, // 4GB memory cache
+      compression: false, // No compression (we have 256GB RAM)
+      hashAlgorithm: 'xxhash64', // Faster hashing
+      idleTimeout: 60000,
+      idleTimeoutForInitialStore: 0,
+      maxMemoryGenerations: 1
+    };
+    
     // Optimize bundle size
     config.optimization = {
       ...config.optimization,
       moduleIds: "deterministic",
       splitChunks: {
         chunks: "all",
+        maxAsyncRequests: 32,
+        maxInitialRequests: 32,
         cacheGroups: {
           default: false,
           vendors: false,

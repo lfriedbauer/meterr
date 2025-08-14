@@ -59,6 +59,8 @@ CREATE INDEX CONCURRENTLY idx_costs_user_month
 
 ### Query Patterns
 ```typescript
+import { BigNumber } from 'bignumber.js';
+
 // ✅ Efficient: Use specific columns and limits
 const recentTokens = await db
   .select(['id', 'count', 'cost', 'created_at'])
@@ -66,6 +68,12 @@ const recentTokens = await db
   .where('user_id', userId)
   .orderBy('created_at', 'desc')
   .limit(100);
+
+// Process cost values with BigNumber for accuracy
+const processedTokens = recentTokens.map(token => ({
+  ...token,
+  cost: new BigNumber(token.cost).toFixed(6)
+}));
 
 // ❌ Inefficient: SELECT * without limits
 const allTokens = await db

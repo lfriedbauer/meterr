@@ -164,12 +164,23 @@ Automated reports include:
 
 ### Cost Savings Tracking
 ```sql
--- Calculate customer savings
+-- Calculate customer savings (costs stored as DECIMAL for precision)
+-- Process results with BigNumber.js in application code
 SELECT 
   SUM(optimized_cost - original_cost) as total_savings,
   AVG((original_cost - optimized_cost) / original_cost * 100) as avg_savings_percent
 FROM usage_logs
 WHERE optimized = true;
+```
+
+```typescript
+import { BigNumber } from 'bignumber.js';
+
+// Process savings data with financial precision
+const processedSavings = {
+  totalSavings: new BigNumber(result.total_savings).toFixed(6),
+  avgSavingsPercent: new BigNumber(result.avg_savings_percent).toFixed(2)
+};
 ```
 
 ### Usage Patterns

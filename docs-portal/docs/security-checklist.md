@@ -91,12 +91,20 @@ function sanitizeObject(obj: unknown): unknown {
 
 ### SQL Injection Prevention
 ```typescript
+import { BigNumber } from 'bignumber.js';
+
 // ✅ Always use parameterized queries
 async function getUserTokens(userId: string): Promise<Token[]> {
-  return db.query(
+  const rows = await db.query(
     'SELECT id, count, cost FROM tokens WHERE user_id = $1 ORDER BY created_at DESC',
     [userId]
   );
+  
+  // Ensure cost values use BigNumber for financial accuracy
+  return rows.map(row => ({
+    ...row,
+    cost: new BigNumber(row.cost).toFixed(6)
+  }));
 }
 
 // ❌ Never concatenate user input

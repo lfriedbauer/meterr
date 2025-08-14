@@ -206,15 +206,22 @@ const getCosts = await fetch('https://api.meterr.ai/v1/costs', {
 });
 
 const costs = await getCosts.json();
-// Returns:
+// Returns (costs as strings for BigNumber.js precision):
 // {
-//   "openai": { "total": 145.23, "tokens": 1500000 },
-//   "anthropic": { "total": 89.45, "tokens": 890000 },
-//   "google": { "total": 67.89, "tokens": 750000 },
-//   "azure": { "total": 134.56, "tokens": 1400000 },
-//   "mistral": { "total": 45.67, "tokens": 650000 },
-//   "cohere": { "total": 34.12, "tokens": 450000 }
+//   "openai": { "total": "145.230000", "tokens": 1500000 },
+//   "anthropic": { "total": "89.450000", "tokens": 890000 },
+//   "google": { "total": "67.890000", "tokens": 750000 },
+//   "azure": { "total": "134.560000", "tokens": 1400000 },
+//   "mistral": { "total": "45.670000", "tokens": 650000 },
+//   "cohere": { "total": "34.120000", "tokens": 450000 }
 // }
+
+// Process with BigNumber for accurate calculations:
+import { BigNumber } from 'bignumber.js';
+const totalCost = Object.values(costs)
+  .reduce((sum, provider) => 
+    sum.plus(provider.total), new BigNumber(0))
+  .toFixed(6);
 ```
 
 ## Core Endpoints

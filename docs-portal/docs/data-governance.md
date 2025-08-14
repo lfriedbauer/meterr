@@ -147,7 +147,7 @@ const RETENTION_POLICIES = {
   ERROR_LOGS: '1 year',            // For debugging
   PERFORMANCE_LOGS: '6 months',    // For optimization
   
-  // Financial data
+  // Financial data (requires BigNumber.js for processing)
   BILLING_RECORDS: '7 years',      // Tax/legal requirements
   PAYMENT_METHODS: '1 year',       // After last use
   
@@ -234,6 +234,8 @@ setInterval(() => {
 
 ### Right to Access (Article 15)
 ```typescript
+import { BigNumber } from 'bignumber.js';
+
 class GDPRService {
   async generateDataExport(userId: string): Promise<UserDataExport> {
     const userData = await this.collectUserData(userId);
@@ -270,10 +272,16 @@ class GDPRService {
       db('user_preferences').where('user_id', userId).first()
     ]);
     
+    // Process billing amounts with BigNumber for accuracy
+    const processedBilling = billing.map(record => ({
+      ...record,
+      amount: new BigNumber(record.amount).toFixed(6)
+    }));
+    
     return {
       profile,
       apiCalls,
-      billingHistory: billing,
+      billingHistory: processedBilling,
       preferences
     };
   }
