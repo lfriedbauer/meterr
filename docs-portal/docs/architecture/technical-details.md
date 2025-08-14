@@ -20,14 +20,54 @@ meterr.ai tracks AI API usage and costs in real-time across OpenAI, Anthropic, G
 
 ## Architecture Overview
 
-```
-Customer App → meterr SDK → meterr API → AI Provider (OpenAI/Anthropic/etc)
-                    ↓
-              Token Counter (GPU-accelerated)
-                    ↓
-              Cost Calculator
-                    ↓
-              Analytics Dashboard
+### High-Level Data Flow
+<!-- Accessibility: This diagram shows the complete data flow from customer applications through meterr.ai to AI providers -->
+```mermaid
+graph LR
+    subgraph "Customer Environment"
+        CA[Customer App]
+        SDK[meterr SDK]
+    end
+    
+    subgraph "Meterr Platform"
+        API[meterr API]
+        TC[Token Counter<br/>GPU-accelerated]
+        CC[Cost Calculator]
+        AD[Analytics Dashboard]
+    end
+    
+    subgraph "AI Providers"
+        OAI[OpenAI]
+        ANT[Anthropic]
+        GOO[Google AI]
+        AZR[Azure OpenAI]
+        MIS[Mistral]
+        COH[Cohere]
+    end
+    
+    CA --> SDK
+    SDK --> API
+    API --> TC
+    TC --> CC
+    CC --> AD
+    API --> OAI
+    API --> ANT
+    API --> GOO
+    API --> AZR
+    API --> MIS
+    API --> COH
+    
+    classDef customer fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef platform fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef provider fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    
+    class CA,SDK customer
+    class API,TC,CC,AD platform
+    class OAI,ANT,GOO,AZR,MIS,COH provider
+    
+    %% Alt text for accessibility
+    accTitle: Meterr.ai Architecture Data Flow
+    accDescr: Shows how customer applications connect through meterr SDK to the API, which processes tokens, calculates costs, and connects to multiple AI providers including OpenAI, Anthropic, Google, Azure, Mistral, and Cohere.
 ```
 
 ## Current Project Structure
@@ -94,9 +134,86 @@ All agent interactions follow a strict 5-phase protocol:
 ```
 
 ### Hierarchy Enforcement
-- **Meta Agents** (3): Orchestrator, Spawner, Research Coordinator
-- **Primary Agents** (7): Architect, Builder, Validator, Scribe, Product Manager, Operations Engineer, Marketing
-- **Specialist Agents** (1): Skeptic
+
+#### AI Agent Workflow Visualization
+<!-- Accessibility: This diagram illustrates the multi-agent system hierarchy and communication flow -->
+```mermaid
+graph TD
+    subgraph "Leadership"
+        CEO[CEO of meterr.ai]
+    end
+    
+    subgraph "Meta Agents - .claude/agents/"
+        ORC[<a href='#orchestrator'>Orchestrator</a><br/>Coordinates all agents]
+        SPAWN[<a href='#spawner'>Spawner</a><br/>Creates sub-agents]
+        RC[<a href='#research'>Research Coordinator</a><br/>Manages research]
+    end
+    
+    subgraph "Primary Agents - .claude/agents/"
+        ARCH[<a href='#architect'>Architect</a><br/>System design]
+        BUILD[<a href='#builder'>Builder</a><br/>Implementation]
+        VAL[<a href='#validator'>Validator</a><br/>Quality assurance]
+        SCRIBE[<a href='#scribe'>Scribe</a><br/>Documentation]
+        PM[<a href='#product-manager'>Product Manager</a><br/>Feature planning]
+        OPS[<a href='#operations'>Operations Engineer</a><br/>DevOps/CI/CD]
+        MKT[<a href='#marketing'>Marketing</a><br/>Market analysis]
+    end
+    
+    subgraph "Specialist Agents - .claude/agents/"
+        SKEP[<a href='#skeptic'>Skeptic</a><br/>Critical review]
+        PD[Product Design]
+        SEC[Security Auditor]
+        PERF[Performance Tester]
+        CS[Customer Success]
+        DE[Data Engineer]
+    end
+    
+    subgraph "Sub-Agents (72hr lifespan)"
+        API[API Documenter<br/>Active: 71.5hrs]
+        FEAT[Feature Specialists]
+        INFRA[Infrastructure Specialists]
+    end
+    
+    CEO --> ORC
+    ORC --> ARCH
+    ORC --> BUILD
+    ORC --> VAL
+    ORC --> SCRIBE
+    ORC --> PM
+    ORC --> OPS
+    ORC --> MKT
+    ORC --> SEC
+    ORC --> PERF
+    ORC --> CS
+    ORC --> DE
+    ORC --> PD
+    RC --> SKEP
+    SPAWN --> API
+    SPAWN --> FEAT
+    SPAWN --> INFRA
+    SCRIBE --> API
+    
+    classDef meta fill:#e1f5fe,stroke:#01579b,stroke-width:3px
+    classDef primary fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef specialist fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef subagent fill:#f1f8e9,stroke:#33691e,stroke-width:1px,stroke-dasharray: 5 5
+    classDef leader fill:#ffebee,stroke:#c62828,stroke-width:3px
+    
+    class CEO leader
+    class ORC,SPAWN,RC meta
+    class ARCH,BUILD,VAL,SCRIBE,PM,OPS,MKT primary
+    class SKEP,PD,SEC,PERF,CS,DE specialist
+    class API,FEAT,INFRA subagent
+    
+    %% Alt text for accessibility
+    accTitle: Multi-Agent System Hierarchy
+    accDescr: Hierarchical structure showing CEO at top, directing Orchestrator meta-agent, which coordinates Primary agents (Architect, Builder, Validator, Scribe, Product Manager, Operations Engineer, Marketing) and Specialist agents. Spawner creates temporary sub-agents with 72-hour lifespans. All agent definitions are in .claude/agents/ directory.
+```
+
+#### Agent Categories
+- **Meta Agents** (3): [Orchestrator](.claude/agents/orchestrator.md), [Spawner](.claude/agents/spawner.md), [Research Coordinator](.claude/agents/research-coordinator.md)
+- **Primary Agents** (7): [Architect](.claude/agents/architect.md), [Builder](.claude/agents/builder.md), [Validator](.claude/agents/validator.md), [Scribe](.claude/agents/scribe.md), [Product Manager](.claude/agents/product-manager.md), [Operations Engineer](.claude/agents/operations-engineer.md), [Marketing](.claude/agents/marketing.md)
+- **Specialist Agents** (6): [Skeptic](.claude/agents/skeptic.md), [Product Design](.claude/agents/product-design.md), [Security Auditor](.claude/agents/security-auditor.md), [Performance Tester](.claude/agents/performance-tester.md), [Customer Success](.claude/agents/customer-success.md), [Data Engineer](.claude/agents/data-engineer.md)
 - **Sub-Agents**: Spawned as needed, auto-terminate after 72hrs
 
 ### Constraints
@@ -241,6 +358,37 @@ Located in `apps/app/gateway-prototype/`:
 - Unified library approach
 - Webhook events system
 
+## Database Optimizations (2025-08-14)
+
+### 1. Real-time Publications
+- **Enabled Tables**: token_usage, api_costs, alerts, budgets
+- **Latency Target**: <100ms for dashboard updates
+- **Materialized Views**: Hourly cost aggregations with 5-minute refresh
+- **Indexes**: Optimized for user_id and timestamp queries
+- **Implementation**: `infrastructure/supabase/migrations/001_enable_realtime.sql`
+
+### 2. Field-Level Encryption (pg_crypto)
+- **Algorithm**: AES-256-GCM via pgp_sym_encrypt
+- **Protected Fields**:
+  - api_keys.key_value and key_hash
+  - organizations.billing_details
+  - users.payment_info
+- **Key Management**: Supabase Vault with 90-day rotation
+- **Audit Trail**: All encryption operations logged
+- **Implementation**: `infrastructure/supabase/migrations/002_enable_encryption.sql`
+
+### 3. Automated Backup Strategy
+- **Frequency**:
+  - Incremental: Every 6 hours (7-day retention)
+  - Daily: Every 24 hours (30-day retention)
+  - Weekly: Every week (90-day retention)
+  - Monthly: Every month (365-day retention)
+  - Compliance: Daily (7-year retention for GDPR)
+- **GDPR Compliance**: 30-day deletion with anonymization
+- **Monitoring**: Backup health dashboard with failure alerts
+- **Storage**: S3-compatible with compression
+- **Implementation**: `infrastructure/supabase/backup-config.sql`
+
 ## Data Flow
 
 ### 1. Token Tracking Flow
@@ -318,6 +466,56 @@ User Login → Supabase Auth → JWT Token → API Access
 - ✅ Foreign key constraints on auth.users implemented
 - ⚠️ RLS missing on critical tables (token_usage, api_keys, organizations, team_members)
 - Action Required: Enable RLS policies for complete multi-tenant isolation
+
+### Enhanced Security Monitoring (2025-08-14)
+
+#### 1. Supabase Edge Functions - Rate Limiting & TLS
+- **TLS 1.3 Enforcement**: All edge functions require HTTPS with TLS 1.3 minimum
+- **Rate Limiting Tiers**:
+  - Free: 100 requests/hour
+  - Pro: 1,000 requests/hour
+  - Enterprise: 10,000 requests/hour
+- **DDoS Protection**: Automatic blocking after rate limit violations
+- **Implementation**: `infrastructure/supabase/functions/rate-limiter/`
+
+#### 2. OWASP Top 10 Vulnerability Scanning
+- **Coverage**: All proxy endpoints in `gateway-prototype/`
+- **Checks Implemented**:
+  - A01: Broken Access Control
+  - A02: Cryptographic Failures
+  - A03: Injection attacks
+  - A04: Insecure Design
+  - A05: Security Misconfiguration
+  - A07: Authentication Failures
+  - A08: Data Integrity
+  - A09: Logging Failures
+  - A10: SSRF Protection
+- **Scan Frequency**: Every deployment + nightly scheduled scans
+- **Configuration**: `apps/app/security/owasp-scan-config.ts`
+
+#### 3. OpenTelemetry Cost Anomaly Detection
+- **Real-time Monitoring**: Tracks cost patterns per user
+- **Anomaly Thresholds**:
+  - Cost spike: 3σ deviation triggers medium alert
+  - Token spike: 3σ deviation triggers investigation
+  - Frequency spike: 5x normal rate triggers rate limiting
+  - Pattern change: Unusual model usage triggers review
+- **Machine Learning**: Adaptive baselines using exponential moving average
+- **Alert Severity Levels**:
+  - Low (2x): Log only
+  - Medium (3x): Alert team
+  - High (5x): Temporary block + investigation
+  - Critical (10x): Immediate block + escalation
+- **Implementation**: `apps/app/lib/telemetry/cost-anomaly-detector.ts`
+
+#### 4. Security Headers Configuration
+```
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Content-Security-Policy: default-src 'self'
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+```
 
 ## Performance Optimizations
 

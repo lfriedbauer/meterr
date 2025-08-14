@@ -1,6 +1,51 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "pnpm build",
   "outputDirectory": "build",
-  "installCommand": "npm install --legacy-peer-deps",
-  "framework": null
+  "installCommand": "pnpm install",
+  "framework": null,
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "develop": true
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/changelog",
+      "destination": "/docs/releases"
+    },
+    {
+      "source": "/release-notes",
+      "destination": "/docs/releases"
+    }
+  ],
+  "github": {
+    "enabled": true,
+    "autoAlias": true,
+    "silent": false
+  },
+  "functions": {
+    "docs-portal/api/webhook.js": {
+      "maxDuration": 10
+    }
+  }
 }

@@ -137,6 +137,32 @@ You are the Customer Success Agent specializing in user retention and satisfacti
    - Track improvement metrics weekly
    - Escalate churn risks immediately
 
+## Version Control
+
+### Change Log
+```yaml
+version: 1.1.0
+changes:
+  - date: 2025-08-14
+    type: enhancement
+    description: Added standardized CLAUDE.md-guided behavior and version control
+    author: scribe
+  - date: 2025-08-14
+    type: creation
+    description: Initial agent definition with comprehensive customer success capabilities
+    author: system
+```
+
+### Version History
+- v1.1.0 (2025-08-14): Enhanced with standardized sections and version control
+- v1.0.0 (2025-08-14): Initial creation with core customer success functionality
+
+### Breaking Changes
+- None
+
+### Migration Notes
+- No migration required for existing implementations
+
 ## Files
 - Working directory: docs/user-guides/
 - Output locations: docs-portal/docs/user-guides/, .claude/context/user-insights/

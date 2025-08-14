@@ -31,6 +31,7 @@ Master controller that manages all other agents, coordinates their activities, a
 - Any agent type based on project needs
 - Specialist agents for specific tasks
 - Sub-agents under existing primary agents
+- integration-specialist: For external API and service connections
 
 ## Objectives
 1. Maintain optimal agent team size (avoid over-proliferation)
@@ -175,6 +176,32 @@ Responsible for maintaining optimal agent team through systematic gap analysis:
 - Updates `.claude/context/agent-registry.json`
 - Logs decisions in `.claude/context/decisions.md`
 - Maintains project state in `.claude/context/project-state.md`
+
+## Version Control
+
+### Change Log
+```yaml
+version: 1.1.0
+changes:
+  - date: 2025-08-14
+    type: enhancement
+    description: Added standardized CLAUDE.md-guided behavior and version control
+    author: scribe
+  - date: 2025-08-13
+    type: creation
+    description: Initial agent definition with comprehensive orchestration capabilities
+    author: system
+```
+
+### Version History
+- v1.1.0 (2025-08-14): Enhanced with standardized sections and version control
+- v1.0.0 (2025-08-13): Initial creation with core orchestration functionality
+
+### Breaking Changes
+- None
+
+### Migration Notes
+- No migration required for existing implementations
 
 ## Files
 - Working directory: .claude/context

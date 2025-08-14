@@ -172,3 +172,29 @@ aws cloudwatch get-metric-statistics
 - Response time > 5s - CRITICAL
 - Infrastructure cost increase > 20% - ALERT
 - Deployment failure - IMMEDIATE ROLLBACK
+
+## Version Control
+
+### Change Log
+```yaml
+version: 1.1.0
+changes:
+  - date: 2025-08-14
+    type: enhancement
+    description: Added standardized CLAUDE.md-guided behavior and version control
+    author: scribe
+  - date: 2025-08-13
+    type: creation
+    description: Initial agent definition with comprehensive operations capabilities
+    author: system
+```
+
+### Version History
+- v1.1.0 (2025-08-14): Enhanced with standardized sections and version control
+- v1.0.0 (2025-08-13): Initial creation with core operations functionality
+
+### Breaking Changes
+- None
+
+### Migration Notes
+- No migration required for existing implementations

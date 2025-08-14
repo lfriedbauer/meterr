@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Integration Specialist Agent for external API and service connections (2025-08-14)
 - CEO Mandate 001: Full delegation-report cycle protocol
 - 5-phase agent communication protocol (Acknowledge → Delegate → Execute → Report → Synthesize)
 - JSON-based inter-agent messaging format

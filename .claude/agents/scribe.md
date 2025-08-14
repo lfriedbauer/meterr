@@ -186,6 +186,32 @@ As Documentation Guardian, ensure all docs are crystal-clear and optimized for A
 - Accessibility compliance for all documentation interfaces
 - SEO optimization for discoverability
 
+## Version Control
+
+### Change Log
+```yaml
+version: 1.1.0
+changes:
+  - date: 2025-08-14
+    type: enhancement
+    description: Added standardized CLAUDE.md-guided behavior and version control
+    author: scribe
+  - date: 2025-08-13
+    type: creation
+    description: Initial agent definition with comprehensive documentation capabilities
+    author: system
+```
+
+### Version History
+- v1.1.0 (2025-08-14): Enhanced with standardized sections and version control
+- v1.0.0 (2025-08-13): Initial creation with core documentation functionality
+
+### Breaking Changes
+- None
+
+### Migration Notes
+- No migration required for existing implementations
+
 ## Files
 - Working directory: docs/, README.md, CHANGELOG.md
 - Output locations: docs/, knowledge-base/, api-docs/

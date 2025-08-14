@@ -23,31 +23,86 @@ Meterr.ai is built with a scalable, multi-tenant architecture designed to handle
 
 ```mermaid
 graph TB
-    subgraph "Frontend Layer"
-        A[Next.js App] --> B[Marketing Site]
-        A --> C[Admin Dashboard]
+    subgraph "Client Layer"
+        U[Users] --> W[Web App<br/>Next.js 15]
+        U --> M[Mobile App<br/>React Native]
+        U --> SDK[SDKs<br/>Node/Python]
     end
     
-    subgraph "API Layer"
-        D[API Gateway] --> E[Auth Service]
-        D --> F[Cost Tracking Service]
-        D --> G[Integration Service]
+    subgraph "Edge Network"
+        CDN[Vercel Edge<br/>Global CDN]
+        EF[Edge Functions<br/><200ms]
+    end
+    
+    subgraph "API Gateway"
+        AG[API Gateway<br/>Rate Limiting]
+        AUTH[Supabase Auth<br/>JWT/RLS]
+        CACHE[Redis Cache<br/>Session Store]
+    end
+    
+    subgraph "Microservices"
+        TS[Token Service<br/>Count & Track]
+        CS[Cost Service<br/>Calculate & Alert]
+        AS[Analytics Service<br/>Reports & Insights]
+        IS[Integration Service<br/>AI Providers]
     end
     
     subgraph "Data Layer"
-        H[Supabase PostgreSQL] --> I[Redis Cache]
-        H --> J[S3 Storage]
+        PG[(PostgreSQL<br/>Supabase)]
+        DDB[(DynamoDB<br/>Token Logs)]
+        S3[(S3 Storage<br/>Reports)]
+        KIN[Kinesis<br/>Streaming]
     end
     
     subgraph "AI Providers"
-        K[OpenAI] 
-        L[Anthropic]
-        M[Google AI]
+        OAI[OpenAI API]
+        ANT[Anthropic API]
+        GCP[Google AI]
+        AZR[Azure OpenAI]
     end
     
-    A --> D
-    F --> H
-    G --> K
+    subgraph "Infrastructure"
+        LAMB[AWS Lambda<br/>Analytics]
+        MON[Monitoring<br/>OpenTelemetry]
+        ALT[Alerts<br/>PagerDuty]
+    end
+    
+    W --> CDN
+    M --> CDN
+    SDK --> AG
+    CDN --> EF
+    EF --> AG
+    AG --> AUTH
+    AG --> CACHE
+    AUTH --> TS
+    AUTH --> CS
+    AUTH --> AS
+    AUTH --> IS
+    TS --> PG
+    TS --> DDB
+    CS --> PG
+    AS --> PG
+    AS --> S3
+    IS --> OAI
+    IS --> ANT
+    IS --> GCP
+    IS --> AZR
+    DDB --> KIN
+    KIN --> LAMB
+    LAMB --> S3
+    MON --> ALT
+    
+    classDef client fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef edge fill:#fff3e0,stroke:#ff6f00,stroke-width:2px
+    classDef service fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef data fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef ai fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
+    class U,W,M,SDK client
+    class CDN,EF edge
+    class TS,CS,AS,IS service
+    class PG,DDB,S3,KIN data
+    class OAI,ANT,GCP,AZR ai
     G --> L
     G --> M
 ```

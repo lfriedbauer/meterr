@@ -46,6 +46,177 @@ const data = await response.json();
 console.log(data);
 ```
 
+## Multi-Provider Token Tracking
+
+Meterr supports token tracking across all major AI providers with unified API endpoints:
+
+### OpenAI Integration
+```javascript
+// Track OpenAI GPT-4 usage
+const trackOpenAI = await fetch('https://api.meterr.ai/v1/track', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    provider: 'openai',
+    model: 'gpt-4',
+    input_tokens: 1500,
+    output_tokens: 500,
+    endpoint: '/v1/chat/completions',
+    metadata: { user_id: 'user_123', session: 'chat_456' }
+  })
+});
+```
+
+### Anthropic Integration
+```javascript
+// Track Anthropic Claude usage
+const trackAnthropic = await fetch('https://api.meterr.ai/v1/track', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    provider: 'anthropic',
+    model: 'claude-3-opus',
+    input_tokens: 2000,
+    output_tokens: 800,
+    endpoint: '/v1/messages',
+    metadata: { user_id: 'user_123', purpose: 'analysis' }
+  })
+});
+```
+
+### Google AI Integration
+```javascript
+// Track Google Gemini usage
+const trackGoogle = await fetch('https://api.meterr.ai/v1/track', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    provider: 'google',
+    model: 'gemini-pro',
+    input_tokens: 1200,
+    output_tokens: 600,
+    endpoint: '/v1beta/models/gemini-pro:generateContent',
+    metadata: { user_id: 'user_123', project: 'research' }
+  })
+});
+```
+
+### Azure OpenAI Integration
+```python
+# Track Azure OpenAI usage with Python SDK
+import requests
+
+response = requests.post(
+    'https://api.meterr.ai/v1/track',
+    headers={
+        'Authorization': 'Bearer YOUR_API_KEY',
+        'Content-Type': 'application/json'
+    },
+    json={
+        'provider': 'azure',
+        'model': 'gpt-4-turbo',
+        'input_tokens': 1800,
+        'output_tokens': 700,
+        'endpoint': '/openai/deployments/gpt4/chat/completions',
+        'metadata': {
+            'deployment': 'production',
+            'region': 'eastus'
+        }
+    }
+)
+```
+
+### Mistral Integration
+```typescript
+// Track Mistral AI usage with TypeScript
+interface TokenUsage {
+  provider: string;
+  model: string;
+  input_tokens: number;
+  output_tokens: number;
+  endpoint: string;
+  metadata?: Record<string, any>;
+}
+
+const trackMistral = async (): Promise<void> => {
+  const usage: TokenUsage = {
+    provider: 'mistral',
+    model: 'mistral-large',
+    input_tokens: 900,
+    output_tokens: 400,
+    endpoint: '/v1/chat/completions',
+    metadata: { team: 'engineering' }
+  };
+
+  await fetch('https://api.meterr.ai/v1/track', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(usage)
+  });
+};
+```
+
+### Cohere Integration
+```python
+# Track Cohere usage
+import meterr  # pip install meterr
+
+client = meterr.Client(api_key="YOUR_API_KEY")
+
+client.track_usage(
+    provider="cohere",
+    model="command-r-plus",
+    input_tokens=1100,
+    output_tokens=550,
+    endpoint="/v1/generate",
+    metadata={
+        "task": "summarization",
+        "language": "en"
+    }
+)
+```
+
+## Unified Cost Analysis
+
+Get aggregated costs across all providers:
+
+```javascript
+// Fetch cost analysis for all providers
+const getCosts = await fetch('https://api.meterr.ai/v1/costs', {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY'
+  },
+  params: {
+    start_date: '2025-08-01',
+    end_date: '2025-08-14',
+    group_by: 'provider'
+  }
+});
+
+const costs = await getCosts.json();
+// Returns:
+// {
+//   "openai": { "total": 145.23, "tokens": 1500000 },
+//   "anthropic": { "total": 89.45, "tokens": 890000 },
+//   "google": { "total": 67.89, "tokens": 750000 },
+//   "azure": { "total": 134.56, "tokens": 1400000 },
+//   "mistral": { "total": 45.67, "tokens": 650000 },
+//   "cohere": { "total": 34.12, "tokens": 450000 }
+// }
+```
+
 ## Core Endpoints
 
 ### Usage Tracking
