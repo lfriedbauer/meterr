@@ -2,7 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Performance optimizations for 100k+ users
-  output: "standalone",
+  // Note: 'output: standalone' removed due to Windows symlink permission issues
+  // Vercel automatically optimizes the build without this setting
   poweredByHeader: false,
   compress: true,
   
@@ -24,22 +25,18 @@ const nextConfig: NextConfig = {
   
   // Experimental features for performance
   experimental: {
-    optimizeCss: true,
     scrollRestoration: true,
     optimizePackageImports: [
       "@meterr/ui",
       "lucide-react",
-      "@supabase/supabase-js",
     ],
-    serverComponentsExternalPackages: [
-      "@supabase/supabase-js",
-      "@prisma/client",
-    ],
-    // Incremental cache for better performance
-    incrementalCacheHandlerPath: process.env.NODE_ENV === "production"
-      ? require.resolve("./cache-handler.js")
-      : undefined,
   },
+  
+  // Server-side package handling
+  serverExternalPackages: [
+    "@supabase/supabase-js",
+    "@prisma/client",
+  ],
   
   // Headers for security and caching
   headers: async () => [
@@ -77,11 +74,11 @@ const nextConfig: NextConfig = {
             enforce: true,
           },
           lib: {
-            test(module) {
+            test(module: any) {
               return module.size() > 160000 &&
                 /node_modules[\\/]/.test(module.identifier());
             },
-            name(module) {
+            name(module: any) {
               const hash = require("crypto")
                 .createHash("sha1")
                 .update(module.identifier())
@@ -98,10 +95,10 @@ const nextConfig: NextConfig = {
             priority: 20,
           },
           shared: {
-            name(module, chunks) {
+            name(module: any, chunks: any) {
               return require("crypto")
                 .createHash("sha1")
-                .update(chunks.reduce((acc, chunk) => acc + chunk.name, ""))
+                .update(chunks.reduce((acc: string, chunk: any) => acc + chunk.name, ""))
                 .digest("hex") + (isServer ? "-server" : "-client");
             },
             priority: 10,
@@ -131,9 +128,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: process.env.NODE_ENV === "development",
   },
-  
-  // SWC minification for better performance
-  swcMinify: true,
 };
 
 export default nextConfig;

@@ -58,7 +58,7 @@ function analyzePromptComplexity(prompt: string): string[] {
 
 function selectOptimalModel(requirements: string[], maxCost?: number): string {
   const suitableModels = Object.entries(MODEL_CAPABILITIES)
-    .filter(([_, config]) => {
+    .filter(([, config]) => {
       // Check if model supports all requirements
       const meetsRequirements = requirements.every(req => 
         config.capabilities.includes(req)
@@ -78,7 +78,7 @@ function selectOptimalModel(requirements: string[], maxCost?: number): string {
 export async function POST(request: NextRequest) {
   try {
     const body: RoutingRequest = await request.json();
-    const { prompt, requirements, maxCost, preferredProvider } = body;
+    const { prompt, requirements, maxCost } = body;
     
     // Analyze prompt if requirements not provided
     const finalRequirements = requirements || analyzePromptComplexity(prompt);
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
         model: selectedModel,
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
-        stream: body.stream || false,
+        stream: false,
       });
       
       response = completion.choices[0].message.content;
@@ -163,13 +163,13 @@ export async function POST(request: NextRequest) {
       },
     });
     
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Smart routing error:', error);
     
     return NextResponse.json(
       { 
         success: false, 
-        error: error.message || 'Failed to route request',
+        error: error instanceof Error ? error.message : 'Failed to route request',
         fallback: 'Consider using direct API calls if smart routing fails',
       },
       { status: 500 }

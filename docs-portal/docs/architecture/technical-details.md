@@ -361,6 +361,16 @@ User Login → Supabase Auth → JWT Token → API Access
 }
 ```
 
+### Build Configuration Notes
+- **Standalone Output**: Removed from next.config.ts due to Windows symlink permission issues (EPERM)
+- **Vercel Deployment**: Automatically optimizes builds without explicit standalone configuration
+- **Windows Development**: Build succeeds without elevated permissions after removing standalone mode
+- **Build Fixes Applied** (2025-08-14):
+  - Removed conflicting `@supabase/supabase-js` from transpilePackages
+  - Moved to `serverExternalPackages` for proper SSR handling
+  - Excluded prototype directories from TypeScript compilation
+  - Fixed TypeScript strict mode violations
+
 ### Deployment Pipeline
 1. Push to GitHub
 2. Turbo cache check (10x faster builds)

@@ -69,12 +69,25 @@ export default function TokenCalculator() {
   const [outputText, setOutputText] = useState("");
   const [monthlyUsage, setMonthlyUsage] = useState(1000);
   const [selectedModels, setSelectedModels] = useState<string[]>(["GPT-4 Turbo", "Claude 3.5 Sonnet"]);
-  const [calculations, setCalculations] = useState<any[]>([]);
+  const [calculations, setCalculations] = useState<Array<{
+    provider: string;
+    model: string;
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    singleCallCost: string;
+    monthlyCost: string;
+    subscriptionCost: number;
+    savings: string;
+    percentSaved: string;
+    recommendation: string;
+  }>>([]);
 
   useEffect(() => {
     if (inputText || outputText) {
       calculateCosts();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputText, outputText, monthlyUsage, selectedModels]);
 
   const calculateCosts = () => {

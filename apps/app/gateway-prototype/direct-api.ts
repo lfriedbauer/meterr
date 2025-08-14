@@ -45,7 +45,7 @@ class MeterrDirectAPI {
       'gpt-3.5-turbo': { input: 0.0005, output: 0.0015 }
     };
     
-    const model = response.model;
+    const model = response.model as keyof typeof pricing;
     const usage = response.usage;
     
     if (!pricing[model] || !usage) return 0;
@@ -69,9 +69,9 @@ class MeterrDirectAPI {
   }
 }
 
-// Usage - customer uses our API instead of OpenAI SDK
-const meterr = new MeterrDirectAPI(openaiKey, meterrKey);
-const response = await meterr.chatCompletion({
-  model: 'gpt-4',
-  messages: [{ role: 'user', content: 'Hello' }]
-});
+// Usage example - customer uses our API instead of OpenAI SDK
+// const meterr = new MeterrDirectAPI(openaiKey, meterrKey);
+// const response = await meterr.chatCompletion({
+//   model: 'gpt-4',
+//   messages: [{ role: 'user', content: 'Hello' }]
+// });
