@@ -3,7 +3,19 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(npx tsx:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:helicone.ai)",
+      "WebFetch(domain:vellum.ai)",
+      "WebFetch(domain:langfuse.com)",
+      "WebFetch(domain:portkey.ai)",
+      "WebFetch(domain:baserun.ai)",
+      "WebFetch(domain:www.wandb.ai)",
+      "WebFetch(domain:www.cohere.com)",
+      "WebFetch(domain:stripe.com)",
+      "WebFetch(domain:linear.app)",
+      "WebFetch(domain:wandb.ai)",
+      "WebFetch(domain:www.helicone.ai)",
+      "WebFetch(domain:www.vellum.ai)"
     ],
     "deny": [],
     "ask": []
