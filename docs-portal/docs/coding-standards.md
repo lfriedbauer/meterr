@@ -199,9 +199,9 @@ async function fetchTokenData(): Promise<Result<TokenData>> {
 // Usage forces error handling
 const result = await fetchTokenData();
 if (result.ok) {
-  console.log(result.value);  // TypeScript knows value exists
+  logger.info('Token data fetched', { value: result.value });  // TypeScript knows value exists
 } else {
-  console.error(result.error); // TypeScript knows error exists
+  logger.error('Failed to fetch token data', { error: result.error }); // TypeScript knows error exists
 }
 ```
 
@@ -636,10 +636,10 @@ perf: Improve query performance
 ### Phase-Based Progression Rules
 
 **NEVER use time references in code, documentation, or planning:**
-- ❌ "Week 1", "Month 2", "Q3 2025"
-- ❌ "This will take 2 weeks"
-- ❌ "By end of month"
-- ❌ "Sprint 1-3"
+- ❌ "Week X", "Month X", "QX 20XX"
+- ❌ "This will take X weeks"
+- ❌ "By end of month/week/quarter"
+- ❌ "Sprint X-X"
 - ❌ Comments like `// TODO: Fix by Friday`
 
 **ALWAYS use phase-based progression:**
@@ -711,7 +711,7 @@ export function basicTokenCount(text: string): number {
 // - No production use
 // - Clear warnings
 
-export function experimentalFeature(): any {
+export function experimentalFeature(): never {
   // WARNING: Experimental - do not use in production
   // Confidence: 40% - needs major refactoring
   throw new Error('Feature not ready for production');

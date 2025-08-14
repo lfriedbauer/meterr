@@ -108,7 +108,7 @@ interface LogData {
   email?: string;
   apiKey?: string;
   ip?: string;
-  [key: string]: any;
+  metadata?: Record<string, unknown>;
 }
 
 function createMaskedLog(data: LogData): LogData {

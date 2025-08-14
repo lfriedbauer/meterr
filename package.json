@@ -1,7 +1,8 @@
 {
   "name": "meterr",
-  "version": "1.0.0",
+  "version": "0.1.0-mvp",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "pnpm run dev:marketing & pnpm run dev:app",
     "dev:marketing": "pnpm --filter @meterr/marketing dev",
@@ -42,18 +43,25 @@
     "env:setup": "cp .env.example .env && echo 'Please add your API keys to .env'",
     "skeptic": "tsx apps/app/scripts/skeptical-validator.ts",
     "dialogue": "tsx apps/app/scripts/agent-dialogue.ts",
-    "validate-claims": "npm run skeptic && npm run dialogue"
+    "validate-claims": "npm run skeptic && npm run dialogue",
+    "check:docs": "node scripts/check-docs-consistency.js",
+    "check:docs-consistency": "node scripts/check-docs-consistency.js",
+    "docs:validate": "pnpm check:docs-consistency",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
     "@types/node": "^20.0.0",
+    "dotenv": "^16.3.1",
+    "glob": "^11.0.3",
+    "husky": "^9.1.7",
     "tsx": "^4.7.0",
-    "dotenv": "^16.3.1"
+    "typescript": "^5.0.0",
+    "yaml": "^2.8.1"
   },
   "dependencies": {
-    "openai": "^4.24.1",
     "@anthropic-ai/sdk": "^0.17.0",
     "@google/generative-ai": "^0.2.0",
-    "axios": "^1.6.5"
+    "axios": "^1.6.5",
+    "openai": "^4.24.1"
   }
 }

@@ -25,7 +25,7 @@ This checklist provides a revenue-based approach to security for meterr.ai, focu
 <!-- audience: ai -->
 ## Implementation Priority Matrix
 
-### Free Security Wins (Week 1)
+### Free Security Wins (Phase 1A)
 Critical security measures that cost nothing but prevent major vulnerabilities:
 
 #### ✅ Environment Variables
@@ -259,7 +259,7 @@ export async function auditLog(
   action: string,
   userId: string,
   resource: string,
-  details?: any
+  details?: Record<string, unknown>
 ): Promise<void> {
   await db('audit_logs').insert({
     action,
@@ -375,7 +375,7 @@ export interface DisputeProcess {
 
 export async function handleBillingDispute(
   userId: string,
-  disputeDetails: any
+  disputeDetails: Record<string, unknown>
 ): Promise<void> {
   const auditTrail = await getAuditTrail(userId, disputeDetails.period);
   const providerData = await getProviderBillingData(disputeDetails.period);
@@ -392,7 +392,7 @@ export async function handleBillingDispute(
 
 ## Implementation Checklist
 
-### Week 1 (Free Security Wins)
+### Phase 1A (Free Security Wins)
 - [ ] Environment variables configured ✓
 - [ ] HTTPS enforced (Vercel default) ✓
 - [ ] Input validation with Zod ✓
@@ -402,20 +402,20 @@ export async function handleBillingDispute(
 - [ ] Console.log statements removed
 - [ ] Hardcoded secrets removed
 
-### Month 1 ($1K+ MRR)
+### Phase 1 Complete ($1K+ MRR)
 - [ ] API key hashing implemented
 - [ ] Request logging setup
 - [ ] Security headers configured
 - [ ] Backup restoration tested
 - [ ] Basic monitoring alerts
 
-### Month 3 ($10K+ MRR)
+### Phase 2 Complete ($10K+ MRR)
 - [ ] Error tracking (Sentry) integrated
 - [ ] Audit logging for sensitive operations
 - [ ] Security incident response plan
 - [ ] Regular security reviews scheduled
 
-### Month 12 ($50K+ MRR)
+### Phase 3 Complete ($50K+ MRR)
 - [ ] Consider SOC 2 preparation
 - [ ] Evaluate penetration testing needs
 - [ ] Assess enterprise customer requirements

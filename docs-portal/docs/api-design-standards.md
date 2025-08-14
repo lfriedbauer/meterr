@@ -272,7 +272,7 @@ interface PaginatedResponse<T> {
 ### Implementation
 ```typescript
 async function paginateResults<T>(
-  query: any,
+  query: QueryBuilder<T>,
   params: PaginationParams
 ): Promise<PaginatedResponse<T>> {
   const page = params.page ?? 1;
@@ -307,7 +307,7 @@ interface APIError {
   error: string;      // Human-readable message
   code: string;       // Machine-readable code
   field?: string;     // For validation errors
-  details?: any;      // Additional context (dev only)
+  details?: Record<string, unknown>;  // Additional context (dev only)
   requestId: string;  // For debugging
 }
 ```

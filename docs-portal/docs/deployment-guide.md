@@ -137,8 +137,8 @@ export default nextConfig;
 #### 1. Prepare Release
 ```bash
 # Create release branch
-git checkout -b release/v1.2.0
-git push -u origin release/v1.2.0
+git checkout -b release/v0.2.0
+git push -u origin release/v0.2.0
 
 # Update version
 npm version minor # or patch/major
@@ -148,7 +148,7 @@ git log --oneline --since="last-release" > CHANGELOG.md
 
 # Commit changes
 git add .
-git commit -m "chore: prepare release v1.2.0"
+git commit -m "chore: prepare release v0.2.0"
 ```
 
 #### 2. Deploy to Staging

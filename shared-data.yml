@@ -1,0 +1,178 @@
+# Shared Documentation Data Source
+# Single source of truth for facts that appear across documentation
+# Last updated: 2025-01-14
+
+# Version Information
+current_version: "v0.1.0-mvp"
+phase: "MVP"
+confidence_level: "85%"
+
+# Supported AI Providers
+supported_providers:
+  primary:
+    - openai
+    - anthropic
+    - google
+  secondary:
+    - azure_openai
+    - mistral
+    - cohere
+  planned:
+    - aws_bedrock
+    - hugging_face
+    - replicate
+    - together_ai
+    - groq
+
+# Technology Stack
+tech_stack:
+  frontend: "Next.js 15"
+  database: "Supabase"
+  auth: "Supabase Auth"
+  hosting: "Vercel"
+  cdn: "Vercel Edge Network"
+  monitoring: "Sentry"
+  analytics:
+    web_vitals: "Vercel Analytics"
+    product: "PostHog"
+    phase_activation:
+      vercel_analytics: "Phase 1"  # Active now
+      posthog: "Phase 2"           # When you need deeper insights
+  language: "TypeScript"
+  package_manager: "pnpm"
+  monorepo:
+    workspace_manager: "pnpm workspaces"
+    build_orchestrator: "Turborepo"
+
+# Pricing Model
+pricing:
+  model: "Pay What You Save"
+  percentage: "20%"
+  savings_target: "25-40%"
+  tiers:
+    free:
+      name: "Free Tier"
+      description: "Basic tracking"
+      limits: "100 API calls/day"
+    professional:
+      name: "Professional"
+      description: "Full profitability dashboard"
+      pricing: "20% of savings"
+    enterprise:
+      name: "Enterprise"
+      description: "Custom features"
+      pricing: "Custom"
+
+# Performance Budgets
+performance:
+  api:
+    response_time_p95: 200  # ms
+    payload_max: 1048576    # 1MB in bytes
+  frontend:
+    bundle_size_max: 512000  # 500KB in bytes
+    first_load_max: 3000     # ms
+  database:
+    query_time_p95: 50       # ms
+
+# Development Methodology
+methodology:
+  approach: "Phase-based"
+  phases:
+    - name: "Phase 1: MVP"
+      confidence: "85%"
+      status: "in_progress"
+    - name: "Phase 2: Pilot"
+      confidence: "70%"
+      status: "planned"
+    - name: "Phase 3: Scale"
+      confidence: "60%"
+      status: "planned"
+
+# Financial Calculation
+financial:
+  library: "BigNumber.js"
+  precision: 6  # decimal places
+  currency: "USD"
+
+# Repository Structure
+project_structure:
+  apps:
+    - app          # Main Next.js application
+    - marketing    # Marketing website
+    - admin        # Admin dashboard
+  packages:
+    - "@meterr/ui"          # Shared UI components
+    - "@meterr/database"    # Database schemas
+    - "@meterr/llm-client"  # LLM API client
+  docs:
+    - "docs-portal/docs"     # Human documentation
+    - "docs-portal/ai-docs"  # AI-optimized docs
+    - ".claude"              # Claude-specific docs
+
+# Security Standards
+security:
+  encryption: "AES-256"
+  api_keys: "environment_variables"
+  auth_provider: "Supabase Auth"
+  compliance:
+    - "GDPR ready"
+    - "SOC 2 preparation"
+
+# Testing Requirements
+testing:
+  unit_coverage_target: "80%"
+  frameworks:
+    - "Jest"
+    - "React Testing Library"
+    - "Playwright"
+  
+# Development Environment  
+development:
+  cpu: "AMD Ryzen 9 9950X (32 threads)"
+  gpu: "NVIDIA RTX 5070 Ti (16GB VRAM)"
+  ram: "256GB DDR5"
+  os: "Windows 11 Pro"
+  cuda: "v13.0"
+
+# Deployment
+deployment:
+  platform: "Vercel"
+  database: "Supabase"
+  edge_functions: "Vercel Edge Functions"
+  ci_cd: "GitHub Actions"
+
+# Domains
+domains:
+  marketing: "meterr.ai"
+  app: "app.meterr.ai"
+  docs: "docs.meterr.ai"
+
+# API Endpoints
+api_endpoints:
+  production: "api.meterr.ai"
+  staging: "staging-api.meterr.ai"
+  local: "localhost:3000/api"
+
+# Contact & Support
+contact:
+  website: "https://meterr.ai"
+  github: "https://github.com/lfriedbauer/meterr"
+  support_email: "support@meterr.ai"
+
+# Document Naming Conventions
+naming_conventions:
+  business_docs: "UPPERCASE"  # e.g., MVP_SPEC.md
+  technical_docs: "lowercase"  # e.g., api-guide.md
+  separators: 
+    files: "hyphen"  # e.g., error-handling.md
+    directories: "hyphen"  # e.g., docs-portal
+
+# Common Acronyms
+acronyms:
+  MVP: "Minimum Viable Product"
+  API: "Application Programming Interface"
+  ROI: "Return on Investment"
+  LLM: "Large Language Model"
+  MRR: "Monthly Recurring Revenue"
+  CAC: "Customer Acquisition Cost"
+  NPS: "Net Promoter Score"

@@ -123,7 +123,7 @@ class CacheManager {
     return value ? JSON.parse(value) : null;
   }
   
-  async set(key: string, value: any, ttlSeconds: number): Promise<void> {
+  async set<T>(key: string, value: T, ttlSeconds: number): Promise<void> {
     await redis.setex(key, ttlSeconds, JSON.stringify(value));
   }
   
@@ -196,7 +196,7 @@ setInterval(() => {
 // Weak references for temporary objects
 const weakMap = new WeakMap();
 
-function associateTemporaryData(obj: object, data: any) {
+function associateTemporaryData<T>(obj: object, data: T): void {
   weakMap.set(obj, data); // Automatically cleaned when obj is GC'd
 }
 ```

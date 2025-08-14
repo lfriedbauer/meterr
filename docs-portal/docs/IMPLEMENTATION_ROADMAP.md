@@ -12,10 +12,10 @@ This roadmap outlines the path from validated concept to market launch for meter
 ### Phase-Based Progression Rules
 
 **NEVER use time references:**
-- ❌ "Week 1", "Month 2", "Q3 2025"
-- ❌ "This will take 2 weeks"
-- ❌ "By end of month"
-- ❌ "Sprint 1-3"
+- ❌ "Week X", "Month X", "QX 20XX"
+- ❌ "This will take X weeks"
+- ❌ "By end of month/week/quarter"
+- ❌ "Sprint X-X"
 
 **ALWAYS use phase-based progression:**
 - ✅ "Phase 1: MVP (Confidence: 85%)"

@@ -68,7 +68,7 @@ function validateAndSanitize<T>(schema: z.ZodSchema<T>, data: unknown): T {
   return result.data;
 }
 
-function sanitizeObject(obj: any): any {
+function sanitizeObject(obj: unknown): unknown {
   if (typeof obj === 'string') {
     return DOMPurify.sanitize(obj);
   }
@@ -78,7 +78,7 @@ function sanitizeObject(obj: any): any {
   }
   
   if (typeof obj === 'object' && obj !== null) {
-    const sanitized: any = {};
+    const sanitized: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
       sanitized[key] = sanitizeObject(value);
     }
@@ -351,7 +351,7 @@ function sanitizeFilename(filename: string): string {
 }
 
 // NoSQL injection prevention
-function sanitizeMongoQuery(query: any): any {
+function sanitizeMongoQuery(query: Record<string, unknown>): Record<string, unknown> {
   if (typeof query !== 'object' || query === null) return query;
   
   const sanitized: any = {};
@@ -430,7 +430,7 @@ interface SecurityEvent {
   ip: string;
   userAgent: string;
   timestamp: Date;
-  details: any;
+  details: Record<string, unknown>;
 }
 
 class SecurityMonitor {

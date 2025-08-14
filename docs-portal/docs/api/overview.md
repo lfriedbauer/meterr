@@ -43,7 +43,7 @@ const response = await fetch('https://api.meterr.ai/v1/usage', {
 });
 
 const data = await response.json();
-console.log(data);
+logger.info('API response', { data });
 ```
 
 ## Multi-Provider Token Tracking

@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+# Documentation consistency check
+echo "📝 Checking documentation consistency..."
+pnpm check:docs-consistency
+
+# Type checking
+echo "🔍 Running type checks..."
+pnpm typecheck
+
+# Linting
+echo "✨ Running linter..."
+pnpm lint
+
+echo "✅ All pre-commit checks passed!"
