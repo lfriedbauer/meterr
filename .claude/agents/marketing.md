@@ -79,6 +79,8 @@ Provides specialized market intelligence, customer personas, pricing analysis, a
 - Market opportunity assessments in research-vault/market/opportunities/
 - Go-to-market strategies in docs/marketing/gtm/
 - Product positioning guides in docs/marketing/positioning/
+- Responses must be complete: Provide detailed findings, code-based fixes, and document in existing files (e.g., ARCHITECTURE.md)
+- Use JSON for reports back to Orchestrator
 
 ## SaaS Alignment
 - Ensures features match actual market demand vs assumptions

@@ -43,6 +43,31 @@ meterr/
 - **No clutter**: Don't leave unnecessary files in the codebase
 - **Examples**: Delete one-time scripts, temporary JSON reports, test data files
 
+### Documentation Rules - CRITICAL
+Before creating ANY new MD document or file:
+
+1. **Check for Existing Content**: Always search the repository structure (README.md, docs-portal/docs/, .claude/sub-agents/, ui/, apps/app/) for similar topics. Ask: "Does this information already exist? Can it be updated or appended instead?" If yes, propose edits to the existing file rather than creating a new one.
+
+2. **Prioritize Consolidation**: If content fits an established location:
+   - Design decisions → `docs-portal/docs/design-system.md`
+   - Agent prompts → `.claude/AGENT_GUIDE.md`
+   - Architecture → `docs-portal/docs/architecture/`
+   - API docs → `docs-portal/docs/api/`
+   Incorporate it there. Avoid new files unless absolutely necessary. Use cross-links (e.g., `[See design-system.md]`) to reference instead of duplicating.
+
+3. **Efficiency and Validation**: 
+   - Limit new files to ONE per response unless justified
+   - After proposing, self-review: "Is this redundant? Does it bloat the repo?"
+   - If uncertain, use tools to confirm (e.g., Glob, Grep to list existing files)
+
+4. **Output Format**: When documenting, specify exact file/path for additions:
+   - Example: "Update `docs-portal/docs/design-system.md` with: [content]"
+   - Track ALL changes in the single `CHANGELOG.md` at project root
+
+5. **Single Source of Truth**: Maintain ONLY ONE `CHANGELOG.md` at the project root. No duplicate changelogs in subdirectories.
+
+Follow this strictly to keep documentation organized, scalable, and non-redundant.
+
 ## Essential Commands
 
 ### Quality Checks (ALWAYS run before committing)

@@ -74,6 +74,8 @@ Oversees feature prioritization, roadmap alignment, and ensures all development 
 - User persona documents in docs/users/
 - Sprint plans in .claude/context/sprints/
 - Competitive analysis reports in research-vault/market/
+- Responses must be complete: Provide detailed findings, code-based fixes, and document in existing files (e.g., ARCHITECTURE.md)
+- Use JSON for reports back to Orchestrator
 
 ## SaaS Alignment
 - Ensures all features drive measurable AI cost savings (target: 40%)

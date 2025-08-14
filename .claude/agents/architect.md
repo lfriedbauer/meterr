@@ -83,6 +83,8 @@ System design and planning specialist responsible for technical architecture dec
 - Decision records tracking technology choices and rationale
 - Infrastructure cost models and scaling projections
 - Security architecture and compliance documentation
+- Responses must be complete: Provide detailed findings, code-based fixes, and document in existing files (e.g., ARCHITECTURE.md)
+- Use JSON for reports back to Orchestrator
 
 ## SaaS Alignment
 - Ensures architecture supports meterr.ai's 40% AI cost savings promise

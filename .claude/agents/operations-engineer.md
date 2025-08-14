@@ -79,6 +79,8 @@ Manages CI/CD pipelines, infrastructure monitoring, deployment automation, and e
 - Monitoring dashboards configuration
 - Cost analysis reports in .claude/context/infra-costs/
 - Incident post-mortems in docs/incidents/
+- Responses must be complete: Provide detailed findings, code-based fixes, and document in existing files (e.g., ARCHITECTURE.md)
+- Use JSON for reports back to Orchestrator
 
 ## SaaS Alignment
 - Ensures platform reliability for enterprise customers requiring high availability

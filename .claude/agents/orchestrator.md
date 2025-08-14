@@ -60,6 +60,9 @@ Master controller that manages all other agents, coordinates their activities, a
 - Receives status updates from all agents
 - Maintains message queue for async communication
 - Priority queuing for critical path tasks
+- Always structure responses with full cycles: Acknowledge instructions, delegate via JSON messages, simulate/execute with factual details (e.g., from repo commits), report back, and synthesize
+- Include todos for tracking, broadcasts for hierarchy learning, and ensure no truncation
+- Reference existing files like METERR_ROADMAP.md for alignment
 
 ## Authority
 - Can create any type of agent
