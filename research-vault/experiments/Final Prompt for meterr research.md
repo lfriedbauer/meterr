@@ -108,7 +108,7 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
 - **Output**: Questions documented in `research-vault/experiments/[date]/research-questions.md`
 
 **Step 3: Competitor Discovery & Analysis**
-- **To**: Marketing Agent + Skeptic Agent + Research Coordinator
+- **To**: Marketing Agent + Skeptic Agent + Research Coordinator + Integration Specialist
 - **Task**: First DISCOVER competitors, then analyze:
   
   **Phase A - Competitor Discovery:**
@@ -156,6 +156,16 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
   - Strengths and weaknesses
   - Why customers choose them
   - Why customers leave them
+  
+  **Phase D - Integration Capabilities** (Integration Specialist leads):
+  - Number and types of AI provider integrations
+  - API architecture (REST, GraphQL, WebSockets)
+  - SDK availability and language support
+  - Webhook capabilities for real-time events
+  - Rate limiting and quota management strategies
+  - Authentication methods supported (OAuth, API keys, JWT)
+  - Data export/import capabilities
+  - Third-party app marketplace or plugin system
   
 - **Output**: 
   - Complete competitor landscape in `/competitor-discovery.md`
@@ -213,7 +223,7 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
 ### Phase 2: Feature Prioritization & Platform Evolution
 
 **Step 5: Platform Assessment & Pivot Analysis (Balance Consulting Appeal)**
-- **To**: Product Manager + Architect + Builder
+- **To**: Product Manager + Architect + Builder + Integration Specialist
 - **Task**: Evaluate current platform vs. market needs:
   
   **What We've Built:**
@@ -221,6 +231,14 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
   - Smart router API
   - Cost calculator
   - Basic dashboard
+  
+  **Integration Analysis (Integration Specialist Focus):**
+  - Which providers do competitors support?
+  - What webhooks and real-time features do they offer?
+  - How do they handle rate limiting and quotas?
+  - What's their API gateway architecture?
+  - Do they offer SDKs or just REST APIs?
+  - How do they manage multi-provider authentication?
   
   **What Market Might Want Instead (Based on Competitor Gaps):**
   - If competitors focus on observability → We focus on optimization
@@ -233,6 +251,9 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
   - Compliance/audit system
   - Model performance comparison
   - Automated cost optimization
+  - **Seamless multi-provider integration** (Integration Specialist priority)
+  - **Real-time usage webhooks** (Integration Specialist priority)
+  - **Unified API gateway** (Integration Specialist priority)
   
   **Pivot Decision Framework:**
   - Keep: Features with strong market validation
@@ -393,7 +414,7 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
 - **Output**: Comprehensive pricing study with hybrid analysis in `research-vault/experiments/[date]/pricing-hybrid-study.md`
 
 **Step 11: Go-to-Market Strategy Development**
-- **To**: Marketing Agent + Architect + Operations Engineer
+- **To**: Marketing Agent + Architect + Operations Engineer + Integration Specialist
 - **Task**: Define go-to-market approach:
   
   **Open Source vs. Private Decision:**
@@ -429,6 +450,13 @@ As the CEO of meterr.ai, I instruct the Orchestrator Agent to coordinate the fol
   - Cold outreach vs. inbound
   - Community-led vs. sales-led
   - Free tier vs. trial approach
+  
+  **Integration Partnership Strategy** (Integration Specialist leads):
+  - Partner with AI providers for marketplace listings
+  - Build official integrations for popular tools (Zapier, Make)
+  - Create developer-friendly SDKs and API documentation
+  - Establish webhook templates for common use cases
+  - Design plugin architecture for community extensions
   
 - **Output**: Go-to-market strategy in `docs/GO_TO_MARKET.md`
 
@@ -642,6 +670,7 @@ Confidence = (Data Sources × Quality × Consistency) / Total Possible Score
 - **Security Auditor**: Assess enterprise requirements
 - **Performance Tester**: Validate scalability claims
 - **Data Engineer**: Analytics and metrics setup
+- **Integration Specialist**: External API connections and provider integrations
 
 ## Key Focus Areas
 
