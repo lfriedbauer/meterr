@@ -6,17 +6,23 @@
 import { trace, metrics, SpanStatusCode } from '@opentelemetry/api'
 import { MeterProvider } from '@opentelemetry/sdk-metrics'
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node'
-import { Resource } from '@opentelemetry/resources'
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
+import { resourceFromAttributes } from '@opentelemetry/resources'
+import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions'
 
 // Initialize OpenTelemetry
-const resource = new Resource({
-  [SemanticResourceAttributes.SERVICE_NAME]: 'meterr-cost-monitor',
-  [SemanticResourceAttributes.SERVICE_VERSION]: '1.0.0',
+const resource = resourceFromAttributes({
+  [SEMRESATTRS_SERVICE_NAME]: 'meterr-cost-monitor',
+  [SEMRESATTRS_SERVICE_VERSION]: '1.0.0',
 })
 
+// Initialize providers and register them
 const tracerProvider = new NodeTracerProvider({ resource })
 const meterProvider = new MeterProvider({ resource })
+
+// Register the providers
+tracerProvider.register()
+// Set the global meter provider
+metrics.setGlobalMeterProvider(meterProvider)
 
 const tracer = trace.getTracer('cost-anomaly-detector')
 const meter = metrics.getMeter('cost-metrics')
@@ -265,7 +271,11 @@ export class CostAnomalyDetector {
     }
   }
 
-  private updateBaseline(userId: string, request: any) {
+  private updateBaseline(userId: string, request: {
+    cost: number
+    inputTokens: number
+    outputTokens: number
+  }) {
     const baseline = this.baselines.get(userId)
     if (!baseline) return
     
