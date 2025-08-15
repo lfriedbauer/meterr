@@ -23,27 +23,13 @@ const nextConfig: NextConfig = {
     pagesBufferLength: 5,
   },
   
-  // Experimental features for performance - Optimized for 32 CPU cores
+  // Experimental features for performance
   experimental: {
     scrollRestoration: true,
     optimizePackageImports: [
       "@meterr/ui",
       "lucide-react",
     ],
-    // Use all 32 CPU cores
-    cpus: 32,
-    workerThreads: true,
-    // Note: parallelServerCompiles and parallelServerBuildTraces removed
-    // as they require specific build worker configurations
-    optimizeCss: true,
-  },
-  
-  // Turbopack configuration (moved from experimental.turbo)
-  turbopack: {
-    resolveAlias: {
-      underscore: 'lodash',
-      mocha: { browser: 'mocha/browser-entry.js' }
-    }
   },
   
   // Server-side package handling
@@ -76,10 +62,10 @@ const nextConfig: NextConfig = {
   
   // Build time optimizations
   eslint: {
-    ignoreDuringBuilds: process.env.NODE_ENV === "development",
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    ignoreBuildErrors: process.env.NODE_ENV === "development",
+    ignoreBuildErrors: false,
   },
 };
 
