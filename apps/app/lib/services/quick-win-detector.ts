@@ -181,12 +181,12 @@ export class QuickWinDetector {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+    // Try multiple date field names for compatibility
     const { data, error } = await this.supabase
       .from('usage_patterns')
       .select('*')
       .eq('customer_id', customerId)
-      .gte('usage_timestamp', thirtyDaysAgo.toISOString())
-      .order('usage_timestamp', { ascending: false });
+      .order('timestamp', { ascending: false });
 
     if (error) {
       console.error('Error fetching patterns:', error);

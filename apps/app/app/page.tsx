@@ -231,7 +231,7 @@ export default function Dashboard() {
 
           {step === 3 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6">Step 3: Your Quick Win</h2>
+              <h2 className="text-2xl font-bold mb-6">Step 3: Your Optimization Insights</h2>
               
               {loading ? (
                 <div className="text-center py-12">
@@ -240,39 +240,89 @@ export default function Dashboard() {
                 </div>
               ) : quickWin ? (
                 <div className="space-y-6">
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
-                    <h3 className="text-xl font-bold text-green-800 mb-2">{quickWin.title}</h3>
-                    <p className="text-gray-700 mb-4">{quickWin.description}</p>
-                    
-                    <div className="grid grid-cols-2 gap-4 mb-4">
+                  {quickWin.insights ? (
+                    // Advanced insights view
+                    <>
+                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
+                        <h3 className="text-xl font-bold text-blue-800 mb-4">{quickWin.title}</h3>
+                        <p className="text-gray-700 mb-4">{quickWin.description}</p>
+                        
+                        <div className="bg-white p-4 rounded-lg mb-4">
+                          <p className="text-sm text-gray-500">Total Savings Potential</p>
+                          <p className="text-3xl font-bold text-green-600">
+                            ${quickWin.totalSavings?.toLocaleString() || '0'}/month
+                          </p>
+                        </div>
+
+                        {quickWin.insights.map((insight: any, idx: number) => (
+                          <div key={idx} className="bg-white p-4 rounded-lg mb-4 border-l-4 border-blue-500">
+                            <div className="flex justify-between items-start mb-2">
+                              <h4 className="font-bold text-gray-800">{insight.title}</h4>
+                              <span className={`px-2 py-1 text-xs rounded ${
+                                insight.implementation_effort === 'low' ? 'bg-green-100 text-green-800' :
+                                insight.implementation_effort === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {insight.implementation_effort} effort
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-2">{insight.description}</p>
+                            <div className="flex gap-4 text-sm mb-3">
+                              <span className="text-green-600 font-medium">
+                                Save ${insight.savings_potential.toLocaleString()}/mo
+                              </span>
+                              <span className="text-blue-600">
+                                ROI in {insight.roi_days} days
+                              </span>
+                            </div>
+                            <div className="bg-gray-50 p-3 rounded">
+                              <p className="text-xs font-medium text-gray-700 mb-2">Recommendations:</p>
+                              <ul className="text-xs text-gray-600 space-y-1">
+                                {insight.specific_recommendations?.map((rec: string, i: number) => (
+                                  <li key={i}>• {rec}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    // Basic quick win view
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+                      <h3 className="text-xl font-bold text-green-800 mb-2">{quickWin.title}</h3>
+                      <p className="text-gray-700 mb-4">{quickWin.description}</p>
+                      
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="bg-white p-4 rounded-lg">
+                          <p className="text-sm text-gray-500">Monthly Savings</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            ${quickWin.monthlySavings?.toLocaleString() || '0'}
+                          </p>
+                        </div>
+                        <div className="bg-white p-4 rounded-lg">
+                          <p className="text-sm text-gray-500">Annual Savings</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            ${quickWin.annualSavings?.toLocaleString() || '0'}
+                          </p>
+                        </div>
+                      </div>
+
                       <div className="bg-white p-4 rounded-lg">
-                        <p className="text-sm text-gray-500">Monthly Savings</p>
-                        <p className="text-2xl font-bold text-green-600">
-                          ${quickWin.monthlySavings?.toLocaleString() || '0'}
+                        <p className="text-sm font-medium text-gray-700 mb-2">Implementation:</p>
+                        <code className="block p-3 bg-gray-100 rounded text-sm">
+                          {quickWin.implementation?.codeSnippet || 'model: "gpt-4o-mini"'}
+                        </code>
+                      </div>
+
+                      <div className="mt-4 pt-4 border-t border-green-200">
+                        <p className="text-sm text-gray-600">
+                          Confidence: {quickWin.confidencePercentage || 95}% | 
+                          Risk: {quickWin.riskLevel || 'Low'}
                         </p>
                       </div>
-                      <div className="bg-white p-4 rounded-lg">
-                        <p className="text-sm text-gray-500">Annual Savings</p>
-                        <p className="text-2xl font-bold text-green-600">
-                          ${quickWin.annualSavings?.toLocaleString() || '0'}
-                        </p>
-                      </div>
                     </div>
-
-                    <div className="bg-white p-4 rounded-lg">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Implementation:</p>
-                      <code className="block p-3 bg-gray-100 rounded text-sm">
-                        {quickWin.implementation?.codeSnippet || 'model: "gpt-4o-mini"'}
-                      </code>
-                    </div>
-
-                    <div className="mt-4 pt-4 border-t border-green-200">
-                      <p className="text-sm text-gray-600">
-                        Confidence: {quickWin.confidencePercentage || 95}% | 
-                        Risk: {quickWin.riskLevel || 'Low'}
-                      </p>
-                    </div>
-                  </div>
+                  )}
 
                   <div className="bg-blue-50 p-6 rounded-xl border border-blue-200">
                     <h4 className="font-bold text-blue-900 mb-2">How it works:</h4>
@@ -285,20 +335,64 @@ export default function Dashboard() {
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <p className="text-gray-600">
-                    No Quick Win found yet. This usually means:
-                  </p>
-                  <ul className="mt-4 text-left max-w-md mx-auto space-y-2 text-sm text-gray-500">
-                    <li>• You need more API usage data (10+ calls)</li>
-                    <li>• Your usage is already optimized</li>
-                    <li>• Try adding more usage history</li>
-                  </ul>
+                <div className="py-12">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
+                    <h3 className="font-bold text-yellow-800 mb-2">Upload Your Usage Data for Deep Analysis</h3>
+                    <p className="text-sm text-yellow-700 mb-4">
+                      Export your usage CSV from OpenAI or Anthropic dashboard to get:
+                    </p>
+                    <ul className="space-y-2 text-sm text-yellow-700">
+                      <li>✓ Token efficiency analysis</li>
+                      <li>✓ Batch processing opportunities</li>
+                      <li>✓ Caching recommendations</li>
+                      <li>✓ Smart routing strategies</li>
+                      <li>✓ Prompt optimization tips</li>
+                    </ul>
+                    <div className="mt-4">
+                      <input
+                        type="file"
+                        accept=".csv"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setLoading(true);
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            formData.append('provider', provider);
+                            
+                            try {
+                              const res = await fetch(`/api/customers/${customerId}/import-csv`, {
+                                method: 'POST',
+                                body: formData
+                              });
+                              
+                              if (res.ok) {
+                                const data = await res.json();
+                                if (data.insights && data.insights.length > 0) {
+                                  setQuickWin({
+                                    title: 'Advanced Optimization Insights',
+                                    description: `Found ${data.insights.length} optimization opportunities`,
+                                    insights: data.insights,
+                                    totalSavings: data.totalSavingsPotential
+                                  });
+                                }
+                              }
+                            } catch (err) {
+                              console.error('Error importing CSV:', err);
+                            } finally {
+                              setLoading(false);
+                            }
+                          }
+                        }}
+                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                      />
+                    </div>
+                  </div>
                   <button
                     onClick={generateQuickWin}
-                    className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                    className="w-full px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
                   >
-                    Retry Analysis
+                    Try Basic Analysis (Limited)
                   </button>
                 </div>
               )}
