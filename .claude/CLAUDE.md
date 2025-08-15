@@ -6,17 +6,25 @@
 
 **Goal:** Ship correct, secure, maintainable code with minimal duplication.
 
-**Prime Directive:** *Every line of code is a liability. Search → Reuse → Build the minimum.*
+**Prime Directive:** *Every line of code is a liability. FlexSearch → Reuse → Build the minimum.*
+
+**🎯 ORCHESTRATOR ENFORCEMENT ACTIVE**
+- All development decisions subject to orchestrator approval
+- FlexSearch must be used BEFORE writing any new code
+- Agent hierarchy must be respected at all times
+- See `.claude/ORCHESTRATOR_DIRECTIVES.md` for full details
 
 ---
 
-## 1) Critical Rules (The Five Commandments)
+## 1) Critical Rules (The Seven Commandments)
 
-1. **NO `any` TYPES** - Use explicit, exported TypeScript types and interfaces
-2. **BIGNUM FOR MONEY** - All financial calculations use BigNumber.js (never float/parseFloat)
-3. **SEARCH BEFORE CREATE** - Run searches before writing new code; reuse/extend existing patterns
-4. **NO CONSOLE.LOG** - Use structured logger (info/warn/error) with context
-5. **TEST EVERYTHING PUBLIC** - Each exported function requires comprehensive tests
+1. **FLEXSEARCH FIRST** - Use `pnpm research:search` BEFORE writing ANY new code
+2. **NO `any` TYPES** - Use explicit, exported TypeScript types and interfaces
+3. **BIGNUM FOR MONEY** - All financial calculations use BigNumber.js (never float/parseFloat)
+4. **SEARCH BEFORE CREATE** - Run searches before writing new code; reuse/extend existing patterns
+5. **NO CONSOLE.LOG** - Use structured logger (info/warn/error) with context
+6. **TEST EVERYTHING PUBLIC** - Each exported function requires comprehensive tests
+7. **ORCHESTRATOR RULES** - Follow agent hierarchy; lower priority cannot override higher
 
 ### Instant Failure Triggers
 ```typescript
@@ -29,6 +37,14 @@ catch(e) {}                   // Banned: Handle errors properly
 TODO: Complete in Phase 2     // Banned: Use phase-based planning
 ```
 
+### Documentation Location Rules
+- **ALL documentation MUST go in `docs-portal/`** - Never create `/docs` folder
+- **Human-readable docs:** `docs-portal/docs/`
+- **AI-specific docs:** `docs-portal/ai-docs/`
+- **Blog posts:** `docs-portal/blog/`
+- **NEVER create documentation files outside docs-portal**
+- **Violations will be caught by pre-commit hooks**
+
 ---
 
 ## 2) Performance Limits (Non-Negotiable)
@@ -39,34 +55,54 @@ TODO: Complete in Phase 2     // Banned: Use phase-based planning
 
 ---
 
-## 3) Mandatory Workflow
+## 3) Mandatory Workflow - ORCHESTRATOR ENFORCED
 
-### A. Before Writing ANY Code
+### A. Before Writing ANY Code - FLEXSEARCH-FIRST MANDATE
 ```bash
-# 1. Pull latest and check recent work
+# 🚨 MANDATORY: Use FlexSearch BEFORE writing new code
+# 1. Search existing solutions with research coordinator
+pnpm research:search "authentication"  # Find tools/libraries
+pnpm orchestrate:status               # Verify orchestrator active
+
+# 2. Pull latest and check recent work
 git pull --rebase origin main
 git log --oneline -20 -- "packages/*" "app/api"
 
-# 2. Search for similar implementations
+# 3. Search for similar implementations IN ORDER:
+# a) FlexSearch tool registry (REQUIRED FIRST)
+pnpm research:search "FEATURE_NAME"
+# b) Local codebase search
 find . -type f -name "*.ts" -o -name "*.tsx" | xargs grep -l "FUNCTION_NAME"
 grep -r "similar_feature" packages/ --include="*.ts"
-
-# 3. Check existing patterns and utilities
+# c) Pattern search
 grep -r "Result<\|z\.object\|BigNumber" packages/ --include="*.ts"
 ls packages/*/src/utils/
 ```
 
-**Decision Tree:**
+**ORCHESTRATOR Decision Tree (ENFORCED):**
 ```
 Feature request
     ↓
+🔍 FLEXSEARCH FIRST → Tool exists? → YES → USE TOOL (No code!)
+    ↓ NO
 Similar code exists? → YES → Reuse/extend existing
     ↓ NO
 Library solves this? → YES → Use library
     ↓ NO
+Get Orchestrator approval → NO → STOP (Find alternative)
+    ↓ YES
 Is this MVP Phase 1? → NO → Defer to later phase
     ↓ YES
 Build minimal version with validation, errors, tests, types
+```
+
+### 🎯 ORCHESTRATOR HIERARCHY (RESPECT THIS!)
+```
+Priority 10: Orchestrator → OVERRIDES ALL DECISIONS
+Priority 8:  Architect   → Defines patterns YOU FOLLOW
+Priority 7:  Researcher  → Finds solutions YOU USE
+Priority 6:  Reviewer    → CAN BLOCK your code
+Priority 5:  Developer   → MUST FOLLOW all above
 ```
 
 ### B. While Writing Code
@@ -278,6 +314,11 @@ export const FEATURES = {
 
 ### Automated Sweeps (Run Regularly)
 ```bash
+# 🚨 FIRST: Check if solution already exists
+pnpm research:search "FEATURE_YOU_NEED"
+pnpm research:quick  # Find tools with <2hr setup
+pnpm orchestrate:status  # Verify orchestrator compliance
+
 # Find banned patterns
 grep -r ": any\|console\.log" --include="*.ts" --include="*.tsx"
 
@@ -292,6 +333,9 @@ grep -r "SELECT \*\|findMany()" --include="*.ts"
 
 # Find security issues
 grep -r "eval\|innerHTML\|dangerouslySetInnerHTML" --include="*.ts" --include="*.tsx"
+
+# Find code written without FlexSearch check
+git log --grep="feat:" --since="2025-01-15" | grep -v "research:search"
 ```
 
 ### Quality Checklist (All Must Pass)
@@ -353,6 +397,12 @@ const ERROR_MESSAGES = {
 
 ### Search Commands (Use Before Creating)
 ```bash
+# 🚨 MANDATORY FIRST STEP: FlexSearch for existing solutions
+pnpm research:search "WHAT_YOU_NEED"       # Search tool registry
+pnpm research:quick                        # Find quick-win tools
+pnpm orchestrate                          # Get orchestrator guidance
+
+# Then search local codebase:
 # Find existing token/cost code
 grep -r "calculateCost\|calculateToken\|tokenCount" packages/
 
