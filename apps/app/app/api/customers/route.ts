@@ -48,19 +48,18 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (existing) {
-      // Return existing customer instead of error
-      return NextResponse.json(
-        { 
-          message: 'Welcome back! Continuing with your existing account.',
-          existingCustomer: {
-            id: existing.id,
-            email: existing.email,
-            companyName: existing.company_name,
-            status: existing.status
-          }
+      // Return existing customer with 200 status (not an error)
+      return NextResponse.json({
+        success: true,
+        message: 'Welcome back! Continuing with your existing account.',
+        customer: {
+          id: existing.id,
+          email: existing.email,
+          companyName: existing.company_name,
+          status: existing.status
         },
-        { status: 409 }
-      );
+        existingCustomer: true
+      });
     }
 
     // Create new customer
