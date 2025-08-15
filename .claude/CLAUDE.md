@@ -497,12 +497,21 @@ Every time you touch code:
 - Build optimization
 - Database optimization
 
+### Development Decisions
+**See: `.claude/context/METERR_DEVELOPMENT_DECISIONS.md`**
+- Version and dependency management
+- Language selection (TypeScript vs Python vs Node)
+- External code evaluation
+- Performance profiling decisions
+- Testing strategy
+
 ### Apply These Patterns
-1. **ALWAYS** check both context files before generating code
+1. **ALWAYS** check all three context files before generating code
 2. **ALWAYS** use hardware-optimized configurations
 3. **ALWAYS** follow code quality standards
-4. **NEVER** generate unoptimized code
-5. **NEVER** ignore available hardware capabilities
+4. **ALWAYS** apply development decision criteria
+5. **NEVER** generate unoptimized code
+6. **NEVER** ignore available hardware capabilities
 
 ---
 
