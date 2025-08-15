@@ -48,3 +48,8 @@ next-env.d.ts
 
 # OS
 Thumbs.db
+# Build caches
+.turbo
+.nx
+*.cache
+.next/cache

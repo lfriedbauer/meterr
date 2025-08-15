@@ -1,0 +1,77 @@
+{
+  "name": "Helicone Cost Tracking",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "helicone-webhook",
+        "responseMode": "onReceived",
+        "responseData": "{ \"received\": true }"
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Validate Helicone signature\nconst crypto = require('crypto');\nconst payload = JSON.stringify($input.all()[0].json);\nconst signature = $input.all()[0].headers['x-helicone-signature'];\nconst secret = process.env.HELICONE_WEBHOOK_SECRET || 'test-secret';\n\nconst expectedSignature = `sha256=${crypto.createHmac('sha256', secret).update(payload).digest('hex')}`;\n\nif (signature !== expectedSignature) {\n  throw new Error('Invalid signature');\n}\n\nreturn $input.all();"
+      },
+      "name": "Validate Signature",
+      "type": "n8n-nodes-base.function",
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "llm_usage",
+        "columns": "request_id,model,tokens,cost,user_id,timestamp",
+        "values": "={{ $json.data.request_id }},={{ $json.data.model }},={{ $json.data.total_tokens }},={{ $json.data.cost }},={{ $json.data.user_id }},={{ $now }}"
+      },
+      "name": "Store in Database",
+      "type": "n8n-nodes-base.postgres",
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.data.cost }}",
+              "operation": "largerEqual",
+              "value2": 10
+            }
+          ]
+        }
+      },
+      "name": "Check Cost Threshold",
+      "type": "n8n-nodes-base.if",
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "channel": "#alerts",
+        "text": "⚠️ High LLM cost detected!\nModel: {{ $json.data.model }}\nCost: ${{ $json.data.cost }}\nUser: {{ $json.data.user_id }}"
+      },
+      "name": "Send Slack Alert",
+      "type": "n8n-nodes-base.slack",
+      "position": [1050, 200]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Validate Signature"}]]
+    },
+    "Validate Signature": {
+      "main": [[{"node": "Store in Database"}]]
+    },
+    "Store in Database": {
+      "main": [[{"node": "Check Cost Threshold"}]]
+    },
+    "Check Cost Threshold": {
+      "main": [
+        [{"node": "Send Slack Alert"}],
+        []
+      ]
+    }
+  }
+}

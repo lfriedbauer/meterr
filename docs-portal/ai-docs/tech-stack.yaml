@@ -1,0 +1,41 @@
+# Technology Stack - meterr.ai
+# Token-optimized reference
+
+frontend:
+  framework: Next.js 15
+  ui: shadcn/ui, Tailwind CSS
+  state: Zustand
+  validation: Zod
+
+backend:
+  runtime: Node.js 20+
+  api: Next.js API Routes
+  database: Supabase (PostgreSQL + Vector)
+  auth: Supabase Auth
+
+integrations:
+  monitoring: Helicone, OpenLLMetry
+  payments: Stripe
+  analytics: PostHog
+  webhooks: n8n
+
+languages:
+  primary: TypeScript (strict mode)
+  secondary: Python (ML/analysis)
+
+deployment:
+  platform: Vercel
+  database: Supabase Cloud
+  monitoring: Grafana + Prometheus
+
+development:
+  package_manager: pnpm
+  build: Turbo/Nx
+  testing: Jest, Playwright
+  linting: Biome
+
+key_libraries:
+  money: BigNumber.js
+  search: FlexSearch
+  ai: OpenAI SDK, Anthropic SDK
+  errors: neverthrow (Result types)

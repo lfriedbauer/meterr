@@ -1,0 +1,68 @@
+name: Low-Code Compliance Check
+on: [pull_request]
+
+jobs:
+  check-compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Check for forbidden patterns
+        run: node ./tools/enforcement/scripts/detect-forbidden-patterns.cjs
+      
+      - name: Verify FlexSearch usage
+        run: |
+          if git diff origin/main --name-only | grep -E '\.(js|jsx|ts|tsx)$' | xargs grep -l "search" | xargs grep -L "FlexSearch\|flexsearch\|@research:search"; then
+            echo "❌ Search implementation without FlexSearch detected"
+            echo "Please use FlexSearch for search features or add @research:search comment"
+            exit 1
+          fi
+      
+      - name: Check tool usage verification
+        if: always()
+        run: |
+          if [ -f "./tools/enforcement/scripts/verify-tool-usage.cjs" ]; then
+            node ./tools/enforcement/scripts/verify-tool-usage.cjs
+          fi
+      
+      - name: Comment on PR
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## ⚠️ Low-Code Compliance Issues Detected
+              
+              Your PR violates our low-code/search-first policy. Please:
+              
+              ### Required Actions:
+              1. Run \`pnpm research:search\` before implementing search features
+              2. Use FlexSearch for all search functionality
+              3. Try v0.dev for UI components before custom coding
+              
+              ### Add Evidence Comments:
+              - \`// @research:search\` - After researching existing solutions
+              - \`// @v0:component-name\` - For v0.dev generated UI
+              - \`// @flexsearch:feature\` - For FlexSearch implementations
+              - \`// @approved\` - Only with architecture team approval
+              
+              ### Resources:
+              - [FlexSearch Documentation](https://github.com/nextapps-de/flexsearch)
+              - [v0.dev](https://v0.dev)
+              - [Low-Code Guidelines](./docs/low-code-guidelines.md)`
+            });

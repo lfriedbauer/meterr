@@ -15,9 +15,16 @@
       "WebFetch(domain:linear.app)",
       "WebFetch(domain:wandb.ai)",
       "WebFetch(domain:www.helicone.ai)",
-      "WebFetch(domain:www.vellum.ai)"
+      "WebFetch(domain:www.vellum.ai)",
+      "Bash(./reorganize-enforcement.bat)",
+      "Bash(./update-references.bat)",
+      "Bash(mv:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "defaultMode": "acceptEdits"
   }
 }

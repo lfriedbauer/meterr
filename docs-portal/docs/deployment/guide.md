@@ -32,6 +32,95 @@ meterr.ai deploys on **Vercel** for global edge performance and automatic scalin
 
 ### Production
 - **URL**: https://meterr.ai (marketing), https://app.meterr.ai (dashboard)
+
+## Quick Setup Steps
+
+### 1. Deploy Schema to Supabase
+
+1. Go to your Supabase dashboard: https://app.supabase.com
+2. Open SQL Editor
+3. Run these commands in order:
+
+```sql
+-- Enable extensions
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- Set encryption key (replace with your own 32-character key)
+SET app.encryption_key = 'your-32-character-encryption-key';
+```
+
+4. Copy and paste the entire contents of:
+   - `infrastructure/supabase/migrations/003_quick_win_schema.sql`
+   - `infrastructure/supabase/migrations/004_vector_search_functions.sql`
+
+### 2. Test the Setup
+
+```bash
+cd apps/app
+npm run test:setup
+```
+
+This will verify:
+- ✅ Database tables created
+- ✅ Vector extension working
+- ✅ RPC functions available
+- ✅ Customer creation working
+
+### 3. Start Development Server
+
+```bash
+npm run dev
+```
+
+Visit http://localhost:3001
+
+### 4. Test API Endpoints
+
+```bash
+npm run test:api
+```
+
+### 5. Test Metrics Framework
+
+```bash
+npm run test:metrics
+```
+
+This will test:
+- ✅ "Bring Your Own Metrics" API endpoints
+- ✅ Google Analytics integration
+- ✅ Stripe revenue tracking
+- ✅ Custom endpoint support
+- ✅ Metrics validation system
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Vector extension not found**
+   - Make sure you ran `CREATE EXTENSION IF NOT EXISTS vector;`
+
+2. **RPC functions failing**
+   - Run the vector search functions migration
+
+3. **API key validation failing**
+   - Check your OpenAI API key has sufficient credits
+   - Ensure it's not a restricted key
+
+4. **No Quick Win found**
+   - Need at least 10+ usage patterns
+   - Customer needs GPT-4 usage to optimize
+   - Try with mock data first
+
+### Debug Mode
+
+Add to `.env.local`:
+```
+NODE_ENV=development
+DEBUG=meterr:*
+```
 <!-- /audience -->
 
 <!-- audience: ai -->
@@ -41,12 +130,20 @@ meterr.ai deploys on **Vercel** for global edge performance and automatic scalin
 
 ## Platform
 - Vercel (edge deployment)
-- Supabase (database)
+- Supabase (database with vector extension)
 - DynamoDB (logs)
 
 ## Environments
-- Dev: localhost:3000
+- Dev: localhost:3000 (localhost:3001 for app)
 - Preview: PR deployments
+- Production: meterr.ai (marketing), app.meterr.ai (dashboard)
+
+## Quick Commands
+```bash
+npm run test:setup     # Verify database setup
+npm run test:api       # Test API endpoints
+npm run test:metrics   # Test metrics framework
+```
 <!-- /audience -->
 
 # METERR Deployment Guide

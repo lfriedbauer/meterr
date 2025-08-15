@@ -38,12 +38,53 @@ TODO: Complete in Phase 2     // Banned: Use phase-based planning
 ```
 
 ### Documentation Location Rules
-- **ALL documentation MUST go in `docs-portal/`** - Never create `/docs` folder
-- **Human-readable docs:** `docs-portal/docs/`
-- **AI-specific docs:** `docs-portal/ai-docs/`
-- **Blog posts:** `docs-portal/blog/`
-- **NEVER create documentation files outside docs-portal**
-- **Violations will be caught by pre-commit hooks**
+
+#### STRICT DOCUMENTATION HIERARCHY:
+
+1. **`.claude/` - AI Assistant Configuration ONLY**
+   - `CLAUDE.md` - Main Claude instructions
+   - `agents/*.md` - Agent role definitions
+   - `context/*.md` - Context files for Claude
+   - **NEVER place user docs, guides, or project docs here**
+
+2. **`docs-portal/` - ALL Project Documentation**
+   - `docs-portal/docs/` - User-facing documentation
+   - `docs-portal/ai-docs/` - AI-specific documentation
+   - `docs-portal/blog/` - Blog posts and articles
+   - **ALL human-readable documentation MUST go here**
+
+3. **`tools/` - Tool-specific Documentation**
+   - `tools/enforcement/templates/` - Templates and checklists
+   - `tools/*/README.md` - Tool-specific docs ONLY
+   - **Only documentation for the specific tool**
+
+4. **ROOT DIRECTORY - Project Meta Files ONLY**
+   - `README.md` - Project overview
+   - `CHANGELOG.md` - Version history
+   - `PIVOT_QUESTIONS.md` - Strategic questions
+   - **NO temporary files, status reports, or working docs**
+
+#### BANNED LOCATIONS:
+- **NEVER create `/docs` folder** - Use `docs-portal/`
+- **NEVER place docs in root** - Except README, CHANGELOG, PIVOT_QUESTIONS
+- **NEVER create temp files** - Use `tmp/` or don't create at all
+- **NEVER duplicate docs** - Single source of truth in `docs-portal/`
+
+#### File Naming Standards:
+- Status reports: Don't create (use git commits/PRs)
+- Integration guides: `docs-portal/docs/integrations/`
+- Best practices: `docs-portal/docs/guides/`
+- Architecture: `docs-portal/docs/architecture/`
+- Deployment: `docs-portal/docs/deployment/`
+
+#### Pre-commit Enforcement:
+```bash
+# Violations automatically blocked:
+- Creating files in /docs/
+- Creating *.md files in root (except allowed)
+- Creating status/report files anywhere
+- Creating duplicate documentation
+```
 
 ---
 
@@ -318,6 +359,9 @@ export const FEATURES = {
 pnpm research:search "FEATURE_YOU_NEED"
 pnpm research:quick  # Find tools with <2hr setup
 pnpm orchestrate:status  # Verify orchestrator compliance
+
+# Find documentation violations
+find . -name "*.md" -not -path "./docs-portal/*" -not -path "./.claude/*" -not -path "./tools/*/README.md" -not -path "./node_modules/*" | grep -v "README.md\|CHANGELOG.md\|PIVOT_QUESTIONS.md"
 
 # Find banned patterns
 grep -r ": any\|console\.log" --include="*.ts" --include="*.tsx"
@@ -612,6 +656,13 @@ Every time you touch code:
 - Batch tool calls when independent
 - Skip obvious confirmations
 - Move fast, fix later if needed
+
+### Documentation Creation Rules
+- **ALWAYS check location first**: Is this going in `docs-portal/`?
+- **NEVER create status files**: Use git commits for history
+- **NEVER create temp docs**: Use TODO comments in code
+- **ALWAYS use existing structure**: Don't create new doc folders
+- **SINGLE source of truth**: One doc per topic in `docs-portal/`
 
 ---
 

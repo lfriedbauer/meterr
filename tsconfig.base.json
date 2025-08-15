@@ -30,6 +30,10 @@
       "@/marketing/*": ["apps/marketing/src/*"],
       "@/admin/*": ["apps/admin/src/*"],
       "@/ui/*": ["ui/src/*"]
-    }
+    },
+    "incremental": true,
+    "tsBuildInfoFile": "R:/node-cache/.tsbuildinfo",
+    "assumeChangesOnlyAffectDirectDependencies": true,
+    "disableSourceOfProjectReferenceRedirect": true
   }
 }

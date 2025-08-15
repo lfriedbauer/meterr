@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": ".tsbuildinfo"
+  },
+  "include": [],
+  "references": [
+    { "path": "./apps/app" },
+    { "path": "./apps/marketing" },
+    { "path": "./apps/admin" },
+    { "path": "./packages/@meterr/ai" },
+    { "path": "./packages/@meterr/auth" },
+    { "path": "./packages/@meterr/config" },
+    { "path": "./packages/@meterr/database" },
+    { "path": "./packages/@meterr/llm-client" },
+    { "path": "./packages/@meterr/tools" },
+    { "path": "./ui" }
+  ]
+}

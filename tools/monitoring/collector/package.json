@@ -1,0 +1,17 @@
+{
+  "name": "meterr-metrics-collector",
+  "version": "1.0.0",
+  "description": "Metrics collector for meterr.ai low-code compliance",
+  "main": "collector.js",
+  "scripts": {
+    "start": "node collector.js",
+    "dev": "nodemon collector.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "prom-client": "^15.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

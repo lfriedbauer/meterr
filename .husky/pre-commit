@@ -1,33 +1,37 @@
 #!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
 
-# Documentation location check
-echo "📁 Checking documentation location..."
-if [ -d "docs" ]; then
-  echo "❌ Error: /docs folder detected!"
-  echo "   All documentation must be in /docs-portal/"
-  echo "   Please move any files from /docs to /docs-portal/docs/"
-  exit 1
+echo "🔍 Checking low-code compliance..."
+
+# Emergency bypass for hotfixes
+if [ -n "$EMERGENCY_BYPASS" ]; then
+    echo "🚨 EMERGENCY BYPASS: $EMERGENCY_BYPASS" | tee -a .emergency-bypasses.log
+    exit 0
 fi
 
-# Check for .md files outside docs-portal (excluding root README and .claude)
-MD_FILES=$(find . -name "*.md" -not -path "./docs-portal/*" -not -path "./node_modules/*" -not -path "./.claude/*" -not -path "./README.md" -not -path "./**/node_modules/*" -not -path "./.git/*" 2>/dev/null)
-if [ ! -z "$MD_FILES" ]; then
-  echo "❌ Error: Documentation files found outside /docs-portal/:"
-  echo "$MD_FILES"
-  echo "   Please move all documentation to /docs-portal/"
-  exit 1
+# Run forbidden pattern detection
+node ./tools/enforcement/scripts/detect-forbidden-patterns.cjs
+if [ $? -ne 0 ]; then
+    echo "❌ Forbidden patterns detected. Commit blocked."
+    exit 1
 fi
 
-# Documentation consistency check
-echo "📝 Checking documentation consistency..."
-pnpm check:docs-consistency
+# Run tool usage verification if it exists
+if [ -f "./tools/enforcement/scripts/verify-tool-usage.cjs" ]; then
+    node ./tools/enforcement/scripts/verify-tool-usage.cjs
+    if [ $? -ne 0 ]; then
+        echo "❌ Tool usage verification failed. Commit blocked."
+        exit 1
+    fi
+fi
 
-# Type checking
-echo "🔍 Running type checks..."
-pnpm typecheck
+# Run v0 compliance check if it exists
+if [ -f "./tools/enforcement/scripts/check-v0-compliance.cjs" ]; then
+    node ./tools/enforcement/scripts/check-v0-compliance.cjs
+    if [ $? -ne 0 ]; then
+        echo "❌ v0.dev compliance check failed. Commit blocked."
+        exit 1
+    fi
+fi
 
-# Linting
-echo "✨ Running linter..."
-pnpm lint
-
-echo "✅ All pre-commit checks passed!"
+echo "✅ Low-code compliance check passed!"

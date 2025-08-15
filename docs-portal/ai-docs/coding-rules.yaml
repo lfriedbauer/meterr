@@ -1,0 +1,46 @@
+# Coding Rules - meterr.ai
+# Essential rules only
+
+typescript:
+  forbidden:
+    - any type
+    - non-null assertions (!)
+    - type assertions (as)
+    - console.log
+    - parseFloat for money
+  required:
+    - strict mode
+    - explicit return types
+    - zod validation for inputs
+    - Result<T,E> for errors
+
+patterns:
+  money: BigNumber.js exclusively
+  validation: Zod schemas
+  errors: Return Result, don't throw
+  search: FlexSearch before custom
+  ui_complex: v0.dev if complexity >15
+  auth: Supabase only
+
+security:
+  - Never log API keys
+  - Always validate inputs
+  - Use row-level security
+  - Encrypt sensitive data
+  - No eval or dynamic code
+
+testing:
+  required:
+    - Public API functions
+    - Financial calculations
+    - Security boundaries
+  coverage:
+    - Minimum 80%
+    - Financial code 100%
+
+evidence:
+  required_comments:
+    - "@research:search" - Searched before coding
+    - "@v0:name" - Generated with v0.dev
+    - "@flexsearch:feature" - Using FlexSearch
+    - "@approved" - Custom code approved

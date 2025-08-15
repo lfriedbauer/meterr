@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meterr.ai Low-Code Compliance Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .card-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .card-unit {
+            font-size: 0.9em;
+            color: #999;
+        }
+        
+        .compliance-score {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: white;
+        }
+        
+        .compliance-score .card-value {
+            color: white;
+        }
+        
+        .time-saved {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .time-saved .card-value {
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+        }
+        
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        
+        .timestamp {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .highlight {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Meterr.ai Low-Code Compliance Dashboard</h1>
+        
+        <div id="dashboard" class="dashboard">
+            <div class="loading">Loading metrics...</div>
+        </div>
+        
+        <div id="timestamp" class="timestamp"></div>
+    </div>
+    
+    <button class="refresh-btn" onclick="loadDashboard()">🔄 Refresh</button>
+    
+    <script>
+        async function loadDashboard() {
+            const dashboardEl = document.getElementById('dashboard');
+            const timestampEl = document.getElementById('timestamp');
+            
+            try {
+                dashboardEl.innerHTML = '<div class="loading">Loading metrics...</div>';
+                
+                const response = await fetch('/dashboard');
+                const data = await response.json();
+                
+                dashboardEl.innerHTML = `
+                    <div class="card compliance-score ${data.complianceScore >= 80 ? 'highlight' : ''}">
+                        <div class="card-title">Compliance Score</div>
+                        <div class="card-value">${data.complianceScore}%</div>
+                        <div class="card-unit">Overall compliance</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">FlexSearch Implementations</div>
+                        <div class="card-value">${data.flexSearchImplementations}</div>
+                        <div class="card-unit">Search features</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">v0.dev Components</div>
+                        <div class="card-value">${data.v0Components}</div>
+                        <div class="card-unit">Generated UIs</div>
+                    </div>
+                    
+                    <div class="card time-saved">
+                        <div class="card-title">Time Saved</div>
+                        <div class="card-value">${data.totalTimeSaved}</div>
+                        <div class="card-unit">Hours saved</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">PR Compliance (Week)</div>
+                        <div class="card-value">${data.prComplianceWeek}%</div>
+                        <div class="card-unit">Last 7 days</div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">PR Compliance (Month)</div>
+                        <div class="card-value">${data.prComplianceMonth}%</div>
+                        <div class="card-unit">Last 30 days</div>
+                    </div>
+                `;
+                
+                timestampEl.textContent = `Last updated: ${new Date(data.timestamp).toLocaleString()}`;
+                
+            } catch (error) {
+                dashboardEl.innerHTML = `
+                    <div class="error">
+                        Failed to load metrics: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Load dashboard on page load
+        loadDashboard();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>

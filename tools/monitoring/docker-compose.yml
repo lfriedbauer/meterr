@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: meterr-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - monitoring-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: meterr-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=meterr123
+      - GF_INSTALL_PLUGINS=
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - monitoring-network
+
+  metrics-collector:
+    build: 
+      context: ./collector
+      dockerfile: Dockerfile
+    container_name: meterr-metrics
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - REPO_NAME=meterr-ai/meterr
+      - NODE_ENV=production
+    volumes:
+      - ../enforcement/scripts:/app/scripts:ro
+      - ../../.v0-generations.json:/app/.v0-generations.json
+      - ../../.v0-stats.json:/app/.v0-stats.json
+    networks:
+      - monitoring-network
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  monitoring-network:
+    driver: bridge

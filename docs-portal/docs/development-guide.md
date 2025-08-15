@@ -14,6 +14,43 @@ You have an exceptional setup for meterr.ai development:
 - **GPU**: RTX 5070 Ti (16GB) - Accelerates token processing by 100x
 - **RAM**: 256GB - Run everything locally without constraints
 
+## Available Infrastructure & Tools (January 15, 2025)
+
+### 🎯 Core Monitoring
+- **OpenLLMetry**: Direct LLM tracking without proxy (`apps/app/lib/telemetry/`)
+- **Langfuse**: Self-hosted observability platform (`tools/monitoring/langfuse/`)
+- **Socket.io**: Real-time alerts server (`tools/realtime/socket-server/`)
+- **n8n**: Workflow automation (Docker service)
+- **Prometheus + Grafana**: Metrics monitoring (`tools/monitoring/`)
+
+### 📊 Analytics & Visualization
+- **Recharts**: React charts for dashboards (installed in `apps/app`)
+- **Lightweight Charts**: High-performance financial charts
+- **TanStack Table**: Virtualized tables for millions of rows
+- **AG Grid Community**: Enterprise grid features
+
+### 🎨 UI Components
+- **shadcn/ui**: Customizable component library (7 components installed)
+- **Intro.js**: Product tours and onboarding
+- **Anime.js**: Smooth animations
+- **Sonner**: Toast notifications
+
+### 📝 Forms & Data
+- **React Hook Form + Zod**: Fast, validated forms
+- **CSV/Excel export**: Data export capabilities
+
+### 🔧 Development Tools
+- **Nx**: Parallel builds with 32-thread utilization
+- **Biome**: Fast linting and formatting
+- **Knip**: Dead code detection
+- **Size-limit**: Bundle size monitoring
+- **Husky**: Git hooks for quality enforcement
+
+### 🗂️ External Tools
+- **ngrok**: Tunneling service (`tools/external/ngrok.zip`)
+- **ImDisk**: RAM disk utility (`tools/external/imdisk.zip`)
+- **Docker Compose**: Service orchestration
+
 ## Quick Start
 
 ```bash
@@ -73,22 +110,21 @@ For build and deployment commands, see [Deployment Guide](./METERR_DEPLOYMENT.md
 ### Token Tracking Architecture
 
 ```
-User's App → meterr.ai SDK → Our API → AI Provider (OpenAI, etc.)
-                ↓
-          Token Counter
-                ↓
-          Cost Calculator
-                ↓
-            Database
+User's App → AI Provider (OpenAI, etc.)
+     ↓
+OpenLLMetry instrumentation captures usage
+     ↓
+meterr dashboard displays costs
 ```
 
-Your RTX 5070 Ti accelerates the Token Counter step using CUDA.
+**Important:** meterr does NOT process tokens through our hardware. We track usage AFTER the AI provider processes them. The RTX 5070 Ti is for local development only (faster builds, local LLM testing).
 
-### Why Accuracy Matters
+### How meterr Actually Works
 
-- 0.1% token counting error = $30 per $30,000 in API costs
-- Across all customers, this adds up to thousands in discrepancies
-- We validate against each provider's official tokenizer
+- **We don't count tokens** - AI providers do that
+- **We track usage** - Via OpenLLMetry instrumentation or API callbacks  
+- **We calculate costs** - Based on provider's reported token counts
+- **No proxy needed** - Direct API calls, we observe the responses
 
 ### Database Structure
 
