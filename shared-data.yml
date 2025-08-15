@@ -47,7 +47,7 @@ tech_stack:
 # Pricing Model
 pricing:
   model: "Pay What You Save"
-  percentage: "20%"
+  percentage: "30%"
   savings_target: "25-40%"
   tiers:
     free:
