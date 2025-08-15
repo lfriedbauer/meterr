@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
 import { writeFileSync } from 'fs';
 import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config();
 
@@ -39,36 +39,36 @@ class BusinessModelTester {
 
   async testAllModels() {
     console.log('💼 Testing Business Models for Meterr.ai\n');
-    console.log('=' .repeat(60) + '\n');
+    console.log('='.repeat(60) + '\n');
 
     // Test Option 1: Freemium PLG
     await this.testFreemiumModel();
-    
+
     // Test Option 2: Usage-Based
     await this.testUsageBasedModel();
-    
+
     // Test Option 3: Open Source + Cloud
     await this.testOpenSourceModel();
-    
+
     // Test Alternative: Consulting/Service Model
     await this.testConsultingModel();
-    
+
     // Test Alternative: Chrome Extension Model
     await this.testChromeExtensionModel();
-    
+
     // Test Alternative: API Marketplace Model
     await this.testMarketplaceModel();
 
     // Compare all models
     await this.compareModels();
-    
+
     // Generate final recommendation
     await this.generateRecommendation();
   }
 
   async testFreemiumModel() {
     console.log('📊 Testing Freemium PLG Model...\n');
-    
+
     const prompt = `Analyze this freemium SaaS model for AI expense tracking:
     - Free: Track up to $500/month AI spend
     - Pro: $29/month (up to $5K/month)
@@ -89,7 +89,7 @@ class BusinessModelTester {
 
     const response = await this.client.queryGemini({ prompt });
     console.log(response.response.substring(0, 800));
-    
+
     this.models.push({
       name: 'Freemium PLG',
       pricing: 'Free/$29/$99/$499',
@@ -101,17 +101,17 @@ class BusinessModelTester {
         customers: 41,
         revenue: 22000,
         costs: 14000,
-        profit: 8000
+        profit: 8000,
       },
       viability: 'medium',
       risks: ['Low conversion rate', 'High free tier costs'],
-      advantages: ['Easy adoption', 'Word of mouth growth']
+      advantages: ['Easy adoption', 'Word of mouth growth'],
     });
   }
 
   async testUsageBasedModel() {
     console.log('\n📊 Testing Usage-Based Model...\n');
-    
+
     const prompt = `Analyze this usage-based model for AI expense tracking:
     - Free: Track up to $100/month
     - Then: 1% of AI spend tracked (e.g., $1000 spend = $10/month fee)
@@ -129,7 +129,7 @@ class BusinessModelTester {
 
     const response = await this.client.queryClaude({ prompt });
     console.log(response.response.substring(0, 800));
-    
+
     this.models.push({
       name: 'Usage-Based',
       pricing: '1% of AI spend',
@@ -141,17 +141,17 @@ class BusinessModelTester {
         customers: 200,
         revenue: 72000,
         costs: 28400,
-        profit: 43600
+        profit: 43600,
       },
       viability: 'high',
       risks: ['Revenue decreases if we succeed', 'Complex billing'],
-      advantages: ['Aligned incentives', 'Scales naturally']
+      advantages: ['Aligned incentives', 'Scales naturally'],
     });
   }
 
   async testOpenSourceModel() {
     console.log('\n📊 Testing Open Source + Cloud Model...\n');
-    
+
     const prompt = `Analyze this open source + cloud model:
     - Open source: Free self-hosted
     - Cloud Starter: $19/month
@@ -167,12 +167,12 @@ class BusinessModelTester {
     
     Is this sustainable? What's the real benefit?`;
 
-    const response = await this.client.queryOpenAI({ 
+    const response = await this.client.queryOpenAI({
       prompt,
-      model: 'gpt-4-turbo-preview' 
+      model: 'gpt-4-turbo-preview',
     });
     console.log(response.response.substring(0, 800));
-    
+
     this.models.push({
       name: 'Open Source + Cloud',
       pricing: 'Free OSS/$19/$79/$500',
@@ -184,17 +184,17 @@ class BusinessModelTester {
         customers: 100,
         revenue: 36000,
         costs: 64200,
-        profit: -28200
+        profit: -28200,
       },
       viability: 'low',
       risks: ['High maintenance cost', 'Low conversion', 'Support burden'],
-      advantages: ['Developer credibility', 'No vendor lock-in concerns']
+      advantages: ['Developer credibility', 'No vendor lock-in concerns'],
     });
   }
 
   async testConsultingModel() {
     console.log('\n📊 Testing Consulting/Service Model...\n');
-    
+
     const prompt = `What if we pivot to a consulting model:
     - AI Cost Optimization Audit: $2000 one-time
     - Ongoing monitoring & recommendations: $500/month
@@ -212,7 +212,7 @@ class BusinessModelTester {
 
     const response = await this.client.queryGemini({ prompt });
     console.log(response.response.substring(0, 800));
-    
+
     this.models.push({
       name: 'Consulting/Service',
       pricing: '$2000 audit + $500/month',
@@ -224,17 +224,17 @@ class BusinessModelTester {
         customers: 24,
         revenue: 120000,
         costs: 12000,
-        profit: 108000
+        profit: 108000,
       },
       viability: 'high',
       risks: ['Not scalable', 'Time intensive', 'Founder dependent'],
-      advantages: ['High margins', 'Immediate revenue', 'Deep customer insights']
+      advantages: ['High margins', 'Immediate revenue', 'Deep customer insights'],
     });
   }
 
   async testChromeExtensionModel() {
     console.log('\n📊 Testing Chrome Extension Model...\n');
-    
+
     const prompt = `Alternative: Chrome extension that sits on OpenAI/Claude dashboards:
     - Free: Basic tracking overlay
     - Pro: $4.99/month (export, analytics)
@@ -254,7 +254,7 @@ class BusinessModelTester {
 
     const response = await this.client.queryClaude({ prompt });
     console.log(response.response.substring(0, 800));
-    
+
     this.models.push({
       name: 'Chrome Extension',
       pricing: 'Free/$4.99/$19.99',
@@ -266,17 +266,17 @@ class BusinessModelTester {
         customers: 200,
         revenue: 12000,
         costs: 2200,
-        profit: 9800
+        profit: 9800,
       },
       viability: 'medium',
       risks: ['Low price ceiling', 'Platform dependent', 'Easy to copy'],
-      advantages: ['Simple to build', 'Low CAC', 'Viral potential']
+      advantages: ['Simple to build', 'Low CAC', 'Viral potential'],
     });
   }
 
   async testMarketplaceModel() {
     console.log('\n📊 Testing API Marketplace Model...\n');
-    
+
     const prompt = `Pivot idea: Become a marketplace/broker for AI APIs:
     - Aggregate multiple AI providers
     - Single API key for all providers
@@ -294,7 +294,7 @@ class BusinessModelTester {
 
     const response = await this.client.queryPerplexity({ prompt });
     console.log(response.response.substring(0, 800));
-    
+
     this.models.push({
       name: 'API Marketplace/Broker',
       pricing: '10% markup on usage',
@@ -306,23 +306,23 @@ class BusinessModelTester {
         customers: 50,
         revenue: 120000,
         costs: 22000,
-        profit: 98000
+        profit: 98000,
       },
       viability: 'high',
       risks: ['Provider TOS violations', 'Customer trust', 'Float management'],
-      advantages: ['Natural revenue model', 'Sticky product', 'Clear value']
+      advantages: ['Natural revenue model', 'Sticky product', 'Clear value'],
     });
   }
 
   async compareModels() {
     console.log('\n' + '='.repeat(60));
     console.log('📊 MODEL COMPARISON\n');
-    
+
     // Sort by profit
-    const sorted = [...this.models].sort((a, b) => 
-      b.yearOneProjection.profit - a.yearOneProjection.profit
+    const sorted = [...this.models].sort(
+      (a, b) => b.yearOneProjection.profit - a.yearOneProjection.profit
     );
-    
+
     console.log('Ranked by Year 1 Profit:\n');
     sorted.forEach((model, index) => {
       console.log(`${index + 1}. ${model.name}`);
@@ -337,10 +337,10 @@ class BusinessModelTester {
   async generateRecommendation() {
     console.log('='.repeat(60));
     console.log('🎯 FINAL RECOMMENDATION\n');
-    
+
     const prompt = `Based on these business models for AI expense tracking:
     
-    ${this.models.map(m => `${m.name}: Y1 Profit = $${m.yearOneProjection.profit}, Viability = ${m.viability}`).join('\n')}
+    ${this.models.map((m) => `${m.name}: Y1 Profit = $${m.yearOneProjection.profit}, Viability = ${m.viability}`).join('\n')}
     
     Considering:
     - We need sustainable revenue, not venture scale
@@ -356,26 +356,26 @@ class BusinessModelTester {
     
     Give me the brutal honest recommendation.`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log(response.response);
-    
+
     // Save full analysis
     const report = {
       timestamp: new Date().toISOString(),
       models: this.models,
-      recommendation: response.response
+      recommendation: response.response,
     };
-    
+
     const reportPath = path.join(
       process.cwd(),
       'research-results',
       `business-model-analysis-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
     );
-    
+
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
     console.log(`\n📁 Full analysis saved to: ${reportPath}`);
   }
@@ -384,7 +384,7 @@ class BusinessModelTester {
 async function explorePivots() {
   console.log('\n' + '='.repeat(60));
   console.log('🔄 EXPLORING PIVOT OPTIONS\n');
-  
+
   const client = new UnifiedLLMClient({
     openai: process.env.OPENAI_API_KEY,
     anthropic: process.env.ANTHROPIC_API_KEY,
@@ -416,13 +416,13 @@ async function explorePivots() {
 
 async function main() {
   const tester = new BusinessModelTester();
-  
+
   // Test all models
   await tester.testAllModels();
-  
+
   // Explore pivots
   await explorePivots();
-  
+
   console.log('\n✅ Business model analysis complete!');
 }
 

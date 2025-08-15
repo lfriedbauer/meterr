@@ -1,7 +1,15 @@
 'use client';
 
+import {
+  AlertCircle,
+  Check,
+  ChevronRight,
+  DollarSign,
+  TrendingDown,
+  Upload,
+  Zap,
+} from 'lucide-react';
 import { useState } from 'react';
-import { Upload, TrendingDown, Zap, DollarSign, ChevronRight, Check, AlertCircle } from 'lucide-react';
 
 export default function AnalyzePage() {
   const [file, setFile] = useState<File | null>(null);
@@ -24,7 +32,7 @@ export default function AnalyzePage() {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFile(e.dataTransfer.files[0]);
     }
@@ -38,18 +46,18 @@ export default function AnalyzePage() {
 
   const analyzeFile = async () => {
     if (!file) return;
-    
+
     setLoading(true);
     const formData = new FormData();
     formData.append('file', file);
     formData.append('provider', provider);
-    
+
     try {
       const response = await fetch('/api/analyze-csv', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
-      
+
       const data = await response.json();
       setAnalysis(data);
     } catch (error) {
@@ -68,7 +76,8 @@ export default function AnalyzePage() {
             AI Cost Analysis - <span className="text-green-400">Zero Setup Required</span>
           </h1>
           <p className="text-xl text-gray-300">
-            Upload your OpenAI or Anthropic usage CSV and get immediate 40-60% cost reduction insights
+            Upload your OpenAI or Anthropic usage CSV and get immediate 40-60% cost reduction
+            insights
           </p>
           <p className="text-lg text-green-400 mt-2">
             No API keys needed • No sign-up required • Results in seconds
@@ -138,8 +147,20 @@ export default function AnalyzePage() {
                 {loading ? (
                   <span className="flex items-center justify-center">
                     <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
                     </svg>
                     Analyzing your usage patterns...
                   </span>
@@ -182,11 +203,15 @@ export default function AnalyzePage() {
                 </div>
                 <div>
                   <p className="text-gray-300 text-sm">Projected Savings</p>
-                  <p className="text-3xl font-bold text-green-400">{analysis.summary.projectedSavings}</p>
+                  <p className="text-3xl font-bold text-green-400">
+                    {analysis.summary.projectedSavings}
+                  </p>
                 </div>
                 <div>
                   <p className="text-gray-300 text-sm">Savings Percentage</p>
-                  <p className="text-3xl font-bold text-yellow-400">{analysis.summary.savingsPercent}%</p>
+                  <p className="text-3xl font-bold text-yellow-400">
+                    {analysis.summary.savingsPercent}%
+                  </p>
                 </div>
                 <div>
                   <p className="text-gray-300 text-sm">ROI Timeline</p>
@@ -277,7 +302,9 @@ export default function AnalyzePage() {
 
             {/* Next Steps */}
             <div className="bg-gradient-to-r from-blue-900 to-purple-900 rounded-xl p-8 text-center">
-              <h2 className="text-3xl font-bold text-white mb-4">Ready to Save {analysis.summary.projectedSavings}/month?</h2>
+              <h2 className="text-3xl font-bold text-white mb-4">
+                Ready to Save {analysis.summary.projectedSavings}/month?
+              </h2>
               <p className="text-xl text-gray-300 mb-6">
                 Implement these optimizations with Meterr's automated platform
               </p>

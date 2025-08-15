@@ -6,9 +6,9 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -18,7 +18,9 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   console.error('❌ Missing Supabase configuration in .env.local');
-  console.error('Please copy .env.local.example to .env.local and fill in your Supabase credentials');
+  console.error(
+    'Please copy .env.local.example to .env.local and fill in your Supabase credentials'
+  );
   process.exit(1);
 }
 
@@ -31,7 +33,7 @@ async function setupSupabase() {
     // Step 1: Check connection
     console.log('1. Checking Supabase connection...');
     const { data, error } = await supabase.from('_prisma_migrations').select('id').limit(1);
-    
+
     if (!error || error.message.includes('does not exist')) {
       console.log('✅ Connected to Supabase\n');
     } else {
@@ -66,11 +68,11 @@ async function setupSupabase() {
     console.log('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
     console.log('CREATE EXTENSION IF NOT EXISTS pgcrypto;');
     console.log('--- END ---\n');
-    
+
     console.log('5. Then copy and paste the migration from:');
     console.log(`   ${migrationPath}`);
     console.log('\n6. Before running, set the encryption key:');
-    console.log('   SET app.encryption_key = \'your-encryption-key-here\';');
+    console.log("   SET app.encryption_key = 'your-encryption-key-here';");
     console.log('\n7. Run the migration\n');
 
     // Step 4: Generate helper files
@@ -87,7 +89,6 @@ async function setupSupabase() {
     console.log('2. Update your .env.local with the encryption key');
     console.log('3. Start the development server: npm run dev');
     console.log('4. Visit http://localhost:3000 to begin');
-
   } catch (error) {
     console.error('❌ Setup failed:', error);
     process.exit(1);
@@ -209,7 +210,7 @@ export interface SavingsValidation {
 }`;
 
   const typesPath = path.join(process.cwd(), 'lib', 'types', 'supabase.ts');
-  
+
   // Create directory if it doesn't exist
   const dir = path.dirname(typesPath);
   if (!fs.existsSync(dir)) {

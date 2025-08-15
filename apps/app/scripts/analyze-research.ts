@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, readdirSync, writeFileSync } from 'fs';
+import { readdirSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 
 interface ResearchResponse {
@@ -41,11 +41,20 @@ class ResearchAnalyzer {
 
   loadResults(resultsDir: string) {
     const files = readdirSync(resultsDir);
-    
+
     // Load most recent files of each type
-    const topDownFile = files.filter(f => f.startsWith('top-down')).sort().pop();
-    const bottomUpFile = files.filter(f => f.startsWith('bottom-up')).sort().pop();
-    const validationFile = files.filter(f => f.startsWith('validation')).sort().pop();
+    const topDownFile = files
+      .filter((f) => f.startsWith('top-down'))
+      .sort()
+      .pop();
+    const bottomUpFile = files
+      .filter((f) => f.startsWith('bottom-up'))
+      .sort()
+      .pop();
+    const validationFile = files
+      .filter((f) => f.startsWith('validation'))
+      .sort()
+      .pop();
 
     if (topDownFile) {
       const data = JSON.parse(readFileSync(path.join(resultsDir, topDownFile), 'utf-8'));
@@ -66,24 +75,45 @@ class ResearchAnalyzer {
   analyze(): AnalysisOutput {
     // Extract key themes using keyword frequency
     const allResponses = [
-      ...this.topDownResults.flatMap(r => r.responses),
-      ...this.bottomUpResults.flatMap(r => r.responses),
-      ...this.validationResults.flatMap(r => r.responses)
+      ...this.topDownResults.flatMap((r) => r.responses),
+      ...this.bottomUpResults.flatMap((r) => r.responses),
+      ...this.validationResults.flatMap((r) => r.responses),
     ];
 
     // Feature extraction
     const featureKeywords = [
-      'real-time', 'tracking', 'analytics', 'dashboard', 'automation',
-      'integration', 'alert', 'optimization', 'routing', 'caching',
-      'reporting', 'collaboration', 'api', 'export', 'budget'
+      'real-time',
+      'tracking',
+      'analytics',
+      'dashboard',
+      'automation',
+      'integration',
+      'alert',
+      'optimization',
+      'routing',
+      'caching',
+      'reporting',
+      'collaboration',
+      'api',
+      'export',
+      'budget',
     ];
 
     const features = this.extractThemes(allResponses, featureKeywords);
 
     // Market gap extraction
     const gapKeywords = [
-      'missing', 'lack', 'need', 'problem', 'struggle', 'waste',
-      'manual', 'tedious', 'expensive', 'slow', 'complex'
+      'missing',
+      'lack',
+      'need',
+      'problem',
+      'struggle',
+      'waste',
+      'manual',
+      'tedious',
+      'expensive',
+      'slow',
+      'complex',
     ];
 
     const gaps = this.extractThemes(allResponses, gapKeywords);
@@ -103,16 +133,16 @@ class ResearchAnalyzer {
       mvpFeatures: mvpFeatures.slice(0, 5),
       differentiators: this.extractDifferentiators(),
       risks: this.extractRisks(),
-      opportunities: this.extractOpportunities()
+      opportunities: this.extractOpportunities(),
     };
   }
 
   private extractThemes(responses: ResearchResponse[], keywords: string[]): string[] {
     const themes = new Map<string, number>();
-    
-    responses.forEach(response => {
+
+    responses.forEach((response) => {
       const text = response.response.toLowerCase();
-      keywords.forEach(keyword => {
+      keywords.forEach((keyword) => {
         if (text.includes(keyword)) {
           themes.set(keyword, (themes.get(keyword) || 0) + 1);
         }
@@ -131,15 +161,21 @@ class ResearchAnalyzer {
     const teamPrices: number[] = [];
     const enterprisePrices: number[] = [];
 
-    responses.forEach(response => {
+    responses.forEach((response) => {
       const text = response.response;
       const matches = [...text.matchAll(priceRegex)];
-      
-      matches.forEach(match => {
+
+      matches.forEach((match) => {
         const price = parseInt(match[1]);
-        if (text.toLowerCase().includes('solopreneur') || text.toLowerCase().includes('individual')) {
+        if (
+          text.toLowerCase().includes('solopreneur') ||
+          text.toLowerCase().includes('individual')
+        ) {
           soloprenerPrices.push(price);
-        } else if (text.toLowerCase().includes('enterprise') || text.toLowerCase().includes('large')) {
+        } else if (
+          text.toLowerCase().includes('enterprise') ||
+          text.toLowerCase().includes('large')
+        ) {
           enterprisePrices.push(price);
         } else {
           teamPrices.push(price);
@@ -148,15 +184,16 @@ class ResearchAnalyzer {
     });
 
     return {
-      solopreneur: soloprenerPrices.length > 0 
-        ? `$${Math.min(...soloprenerPrices)}-${Math.max(...soloprenerPrices)}/month`
-        : '$29-99/month',
-      smallTeam: teamPrices.length > 0
-        ? `$${Math.min(...teamPrices)}-${Math.max(...teamPrices)}/month`
-        : '$99-499/month',
-      enterprise: enterprisePrices.length > 0
-        ? `$${Math.min(...enterprisePrices)}+/month`
-        : '$999+/month'
+      solopreneur:
+        soloprenerPrices.length > 0
+          ? `$${Math.min(...soloprenerPrices)}-${Math.max(...soloprenerPrices)}/month`
+          : '$29-99/month',
+      smallTeam:
+        teamPrices.length > 0
+          ? `$${Math.min(...teamPrices)}-${Math.max(...teamPrices)}/month`
+          : '$99-499/month',
+      enterprise:
+        enterprisePrices.length > 0 ? `$${Math.min(...enterprisePrices)}+/month` : '$999+/month',
     };
   }
 
@@ -171,17 +208,17 @@ class ResearchAnalyzer {
       'Cost allocation by project',
       'Prompt caching system',
       'Export to CSV/Excel',
-      'Slack notifications'
+      'Slack notifications',
     ];
 
     // Score features based on mentions
     const featureScores = new Map<string, number>();
-    
-    features.forEach(feature => {
+
+    features.forEach((feature) => {
       let score = 0;
-      responses.forEach(response => {
+      responses.forEach((response) => {
         const keywords = feature.toLowerCase().split(' ');
-        const matchCount = keywords.filter(k => 
+        const matchCount = keywords.filter((k) =>
           response.response.toLowerCase().includes(k)
         ).length;
         score += matchCount;
@@ -203,7 +240,7 @@ class ResearchAnalyzer {
       'Compare subscription vs API costs',
       'Track ROI on AI investments',
       'Automatic model selection based on task',
-      'Cache repeated prompts to save money'
+      'Cache repeated prompts to save money',
     ];
   }
 
@@ -216,7 +253,7 @@ class ResearchAnalyzer {
       'Built for teams, not just individuals',
       'Integrates with existing workflows (Slack, Zapier)',
       'No code changes required - proxy approach',
-      'ROI dashboard for executives'
+      'ROI dashboard for executives',
     ];
   }
 
@@ -226,7 +263,7 @@ class ResearchAnalyzer {
       'Companies may be hesitant to proxy API calls',
       'Competition from provider-native solutions',
       'Price sensitivity in solopreneur market',
-      'Complex implementation for enterprise clients'
+      'Complex implementation for enterprise clients',
     ];
   }
 
@@ -237,13 +274,13 @@ class ResearchAnalyzer {
       'Potential acquisition target for larger platforms',
       'Expand to LLMOps and AI governance features',
       'White-label solution for consultancies',
-      'Integration marketplace for additional revenue'
+      'Integration marketplace for additional revenue',
     ];
   }
 
   generateProductSpec(): string {
     const analysis = this.analyze();
-    
+
     return `# Meterr.ai Product Specification
 Generated: ${new Date().toISOString()}
 
@@ -276,7 +313,7 @@ Based on comprehensive market research across multiple AI services, Meterr.ai sh
 ${analysis.mvpFeatures.map((f, i) => `${i + 1}. ${f}`).join('\n')}
 
 ## Key Differentiators
-${analysis.differentiators.map(d => `- ${d}`).join('\n')}
+${analysis.differentiators.map((d) => `- ${d}`).join('\n')}
 
 ## Technical Architecture
 \`\`\`
@@ -312,10 +349,10 @@ User -> Meterr Proxy -> AI Provider APIs
 - API for custom integrations
 
 ## Risks & Mitigation
-${analysis.risks.map(r => `- Risk: ${r}\n  Mitigation: [To be determined]`).join('\n')}
+${analysis.risks.map((r) => `- Risk: ${r}\n  Mitigation: [To be determined]`).join('\n')}
 
 ## Growth Opportunities
-${analysis.opportunities.map(o => `- ${o}`).join('\n')}
+${analysis.opportunities.map((o) => `- ${o}`).join('\n')}
 
 ## Success Metrics
 - Week 1: 100 signups, $5K MRR
@@ -440,28 +477,22 @@ At $99 average price point = $99,000 MRR by month 6
 async function main() {
   const analyzer = new ResearchAnalyzer();
   const resultsDir = path.join(process.cwd(), 'research-results');
-  
+
   console.log('📊 Analyzing research results...\n');
-  
+
   try {
     analyzer.loadResults(resultsDir);
-    
+
     // Generate product specification
     const productSpec = analyzer.generateProductSpec();
-    writeFileSync(
-      path.join(resultsDir, 'product-specification.md'),
-      productSpec
-    );
+    writeFileSync(path.join(resultsDir, 'product-specification.md'), productSpec);
     console.log('✅ Product specification generated: product-specification.md');
-    
+
     // Generate SpendCharm report
     const spendCharmReport = analyzer.generateSpendCharmReport();
-    writeFileSync(
-      path.join(resultsDir, 'spendcharm-enhancement-report.md'),
-      spendCharmReport
-    );
+    writeFileSync(path.join(resultsDir, 'spendcharm-enhancement-report.md'), spendCharmReport);
     console.log('✅ SpendCharm report generated: spendcharm-enhancement-report.md');
-    
+
     // Generate analysis summary
     const analysis = analyzer.analyze();
     writeFileSync(
@@ -469,22 +500,21 @@ async function main() {
       JSON.stringify(analysis, null, 2)
     );
     console.log('✅ Analysis summary generated: analysis-summary.json');
-    
+
     // Print key findings
     console.log('\n🎯 Key Findings:\n');
     console.log('Top Features Needed:');
-    analysis.topFeatures.slice(0, 5).forEach(f => console.log(`  - ${f}`));
-    
+    analysis.topFeatures.slice(0, 5).forEach((f) => console.log(`  - ${f}`));
+
     console.log('\nValidated Price Points:');
     console.log(`  - Solopreneur: ${analysis.pricePoints.solopreneur}`);
     console.log(`  - Small Team: ${analysis.pricePoints.smallTeam}`);
     console.log(`  - Enterprise: ${analysis.pricePoints.enterprise}`);
-    
+
     console.log('\nMVP Features:');
-    analysis.mvpFeatures.slice(0, 5).forEach(f => console.log(`  - ${f}`));
-    
+    analysis.mvpFeatures.slice(0, 5).forEach((f) => console.log(`  - ${f}`));
+
     console.log('\n📁 All reports saved to:', resultsDir);
-    
   } catch (error) {
     console.error('❌ Error analyzing results:', error);
     console.log('\nMake sure you have run the research executor first:');

@@ -4,14 +4,11 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'AI Profitability Dashboard - Meterr',
-  description: 'Your AI CFO - Maximize returns on AI investments with real-time profitability tracking',
+  description:
+    'Your AI CFO - Maximize returns on AI investments with real-time profitability tracking',
 };
 
-export default function ProfitabilityDashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ProfitabilityDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className={inter.className}>
       <style>{`

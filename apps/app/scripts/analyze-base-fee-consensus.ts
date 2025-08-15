@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
 import { writeFileSync } from 'fs';
 import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
 class BaseFeeAnalysis {
   private client: UnifiedLLMClient;
-  
+
   constructor() {
     this.client = new UnifiedLLMClient({
       openai: process.env.OPENAI_API_KEY,
@@ -21,8 +21,8 @@ class BaseFeeAnalysis {
 
   async analyzeBaseFeeNeed() {
     console.log('💰 ANALYZING BASE FEE NECESSITY\n');
-    console.log('=' .repeat(60) + '\n');
-    
+    console.log('='.repeat(60) + '\n');
+
     const pureModel = `
     Pure "Pay What You Save" Model:
     - $0 base fee
@@ -33,7 +33,7 @@ class BaseFeeAnalysis {
 
     // Ask each agent specifically about base fee
     console.log('🤔 Asking each agent about minimum base fee...\n');
-    
+
     // Claude - Financial perspective
     const claudePrompt = `As a CFO, analyze this pure performance model with $0 base fee:
     ${pureModel}
@@ -45,11 +45,11 @@ class BaseFeeAnalysis {
     4. At what point does the model break even?
     
     Give specific numbers with reasoning.`;
-    
+
     console.log('📊 CLAUDE (CFO Analysis):\n');
-    const claudeResponse = await this.client.queryClaude({ 
+    const claudeResponse = await this.client.queryClaude({
       prompt: claudePrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
     console.log(claudeResponse.response.substring(0, 1500));
     console.log('\n' + '-'.repeat(60) + '\n');
@@ -64,11 +64,11 @@ class BaseFeeAnalysis {
     4. Psychology: Does $0 base fee signal low value?
     
     Recommend a specific base fee with market justification.`;
-    
+
     console.log('📊 GPT-4 (Market Analysis):\n');
-    const gptResponse = await this.client.queryOpenAI({ 
+    const gptResponse = await this.client.queryOpenAI({
       prompt: gptPrompt,
-      model: 'gpt-4-turbo-preview'
+      model: 'gpt-4-turbo-preview',
     });
     console.log(gptResponse.response.substring(0, 1500));
     console.log('\n' + '-'.repeat(60) + '\n');
@@ -86,7 +86,7 @@ class BaseFeeAnalysis {
     What's the minimum monthly cost per customer?
     What base fee would cover this with reasonable margin?
     Show your calculation.`;
-    
+
     console.log('📊 GEMINI (Cost Analysis):\n');
     const geminiResponse = await this.client.queryGemini({ prompt: geminiPrompt });
     console.log(geminiResponse.response.substring(0, 1500));
@@ -102,7 +102,7 @@ class BaseFeeAnalysis {
     - Commission-based B2B tools
     
     What's the typical base fee to performance fee ratio?`;
-    
+
     console.log('📊 PERPLEXITY (Market Research):\n');
     const perplexityResponse = await this.client.queryPerplexity({ prompt: perplexityPrompt });
     console.log(perplexityResponse.response.substring(0, 1500));
@@ -112,12 +112,12 @@ class BaseFeeAnalysis {
       claude: claudeResponse.response,
       gpt: gptResponse.response,
       gemini: geminiResponse.response,
-      perplexity: perplexityResponse.response
+      perplexity: perplexityResponse.response,
     };
   }
 
   async testDifferentBaseFees() {
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log('🧪 TESTING DIFFERENT BASE FEE SCENARIOS\n');
 
     const scenarios = [
@@ -125,7 +125,7 @@ class BaseFeeAnalysis {
       { base: 49, performance: 20 },
       { base: 99, performance: 20 },
       { base: 199, performance: 15 },
-      { base: 299, performance: 10 }
+      { base: 299, performance: 10 },
     ];
 
     for (const scenario of scenarios) {
@@ -148,7 +148,7 @@ class BaseFeeAnalysis {
   }
 
   async calculateBreakeven() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('📈 BREAKEVEN ANALYSIS\n');
 
     const prompt = `Calculate the breakeven for Meterr.ai:
@@ -170,19 +170,19 @@ class BaseFeeAnalysis {
     
     Which model is most sustainable?`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log('Breakeven Analysis:\n');
     console.log(response.response);
-    
+
     return response.response;
   }
 
   async generateFinalRecommendation() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🎯 FINAL BASE FEE RECOMMENDATION\n');
 
     const prompt = `Based on all analysis, what should the base fee be?
@@ -197,53 +197,49 @@ class BaseFeeAnalysis {
     Give ONE specific number with clear reasoning.
     Don't say "it depends" - pick a number and defend it.`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log(response.response);
-    
+
     return response.response;
   }
 }
 
 async function main() {
   const analyzer = new BaseFeeAnalysis();
-  
+
   console.log('🚀 BASE FEE CONSENSUS ANALYSIS\n');
   console.log('Finding out why $99 base fee emerged...\n');
-  
+
   // Get each agent's perspective
   const perspectives = await analyzer.analyzeBaseFeeNeed();
-  
+
   // Test different scenarios
   await analyzer.testDifferentBaseFees();
-  
+
   // Calculate breakeven
   const breakeven = await analyzer.calculateBreakeven();
-  
+
   // Final recommendation
   const recommendation = await analyzer.generateFinalRecommendation();
-  
+
   // Save analysis
   const report = {
     timestamp: new Date().toISOString(),
     perspectives,
     breakeven,
-    recommendation
+    recommendation,
   };
-  
-  const reportPath = path.join(
-    process.cwd(),
-    'research-results',
-    'base-fee-analysis.json'
-  );
-  
+
+  const reportPath = path.join(process.cwd(), 'research-results', 'base-fee-analysis.json');
+
   writeFileSync(reportPath, JSON.stringify(report, null, 2));
   console.log(`\n📁 Base fee analysis saved to: ${reportPath}`);
-  
-  console.log('\n' + '=' .repeat(60));
+
+  console.log('\n' + '='.repeat(60));
   console.log('✅ ANALYSIS COMPLETE\n');
   console.log('The truth about the $99 base fee has been revealed.\n');
 }

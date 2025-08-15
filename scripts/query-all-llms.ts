@@ -1,7 +1,7 @@
-import { ResearchExecutor, ResearchQuery } from '../packages/@meterr/llm-client';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { ResearchExecutor, type ResearchQuery } from '../packages/@meterr/llm-client';
 
 // Load environment variables
 dotenv.config();
@@ -40,7 +40,7 @@ Please provide specific, actionable recommendations.`;
 
 async function main() {
   console.log('🚀 Starting multi-LLM documentation analysis...\n');
-  
+
   // Check which API keys are configured
   const config = {
     openai: process.env.OPENAI_API_KEY,
@@ -49,11 +49,11 @@ async function main() {
     perplexity: process.env.PERPLEXITY_API_KEY,
     xai: process.env.XAI_API_KEY,
   };
-  
+
   const configuredServices = Object.entries(config)
     .filter(([_, key]) => key && !key.includes('xxx'))
     .map(([service]) => service);
-  
+
   if (configuredServices.length === 0) {
     console.error('❌ No API keys configured!');
     console.log('\nPlease add your API keys to .env file:');
@@ -67,66 +67,70 @@ async function main() {
     console.log('- X.AI (Grok): https://x.ai/api');
     process.exit(1);
   }
-  
+
   console.log('✅ Configured services:', configuredServices.join(', '));
   console.log('\n📝 Query: Documentation structure analysis for meterr.ai\n');
-  
+
   // Initialize research executor
   const executor = new ResearchExecutor(config);
-  
+
   // Prepare research query
   const query: ResearchQuery = {
     prompt: DOCUMENTATION_ANALYSIS_PROMPT,
     temperature: 0.7,
     maxTokens: 3000,
   };
-  
+
   // Execute research across all configured LLMs
   console.log('🔄 Querying all configured LLMs...\n');
   const results = await executor.executeResearchPlan([query]);
-  
+
   // Create research output directory
   const outputDir = path.join(process.cwd(), 'research', 'documentation-analysis');
   await fs.mkdir(outputDir, { recursive: true });
-  
+
   // Save individual responses
   for (const [prompt, responses] of results.entries()) {
     console.log(`\n📊 Received ${responses.length} responses:\n`);
-    
+
     for (const response of responses) {
       console.log(`✅ ${response.service} (${response.model})`);
-      
+
       // Save individual response
       const filename = `${response.service.toLowerCase()}-response.md`;
       const filepath = path.join(outputDir, filename);
-      
+
       const content = `# ${response.service} Response
 Model: ${response.model}
 Timestamp: ${response.timestamp}
-${response.usage ? `\nTokens: ${response.usage.promptTokens} input, ${response.usage.completionTokens} output
-Cost: $${response.usage.totalCost.toFixed(4)}` : ''}
+${
+  response.usage
+    ? `\nTokens: ${response.usage.promptTokens} input, ${response.usage.completionTokens} output
+Cost: $${response.usage.totalCost.toFixed(4)}`
+    : ''
+}
 
 ## Response
 
 ${response.response}`;
-      
+
       await fs.writeFile(filepath, content);
       console.log(`   Saved to: research/documentation-analysis/${filename}`);
     }
   }
-  
+
   // Save combined results as JSON
   const jsonPath = path.join(outputDir, 'all-responses.json');
   await executor.saveResults(jsonPath);
-  
+
   // Create comparative analysis
   const analysisPath = path.join(outputDir, 'comparative-analysis.md');
   await createComparativeAnalysis(results, analysisPath);
-  
+
   // Calculate total cost
   const totalCost = executor.getTotalCost();
   console.log(`\n💰 Total cost: $${totalCost.toFixed(4)}`);
-  
+
   console.log('\n✅ Analysis complete!');
   console.log('\n📁 Results saved to: research/documentation-analysis/');
   console.log('   - Individual responses: [service]-response.md');
@@ -137,39 +141,39 @@ ${response.response}`;
 async function createComparativeAnalysis(results: Map<string, any[]>, filepath: string) {
   let content = '# Comparative Analysis of LLM Responses\n\n';
   content += `Generated: ${new Date().toISOString()}\n\n`;
-  
+
   for (const [_, responses] of results.entries()) {
     if (responses.length === 0) continue;
-    
+
     content += '## Summary by Service\n\n';
-    
+
     for (const response of responses) {
       content += `### ${response.service}\n`;
       content += `**Model:** ${response.model}\n\n`;
-      
+
       // Extract key points (first 500 chars as summary)
       const summary = response.response.substring(0, 500) + '...';
       content += `${summary}\n\n`;
       content += `[Full response](${response.service.toLowerCase()}-response.md)\n\n`;
       content += '---\n\n';
     }
-    
+
     // Common themes section
     content += '## Common Themes\n\n';
     content += '1. **Documentation Structure**: Most models recommend...\n';
     content += '2. **Tool Recommendations**: Commonly mentioned tools...\n';
     content += '3. **Best Practices**: Agreed upon practices...\n\n';
-    
+
     content += '## Key Differences\n\n';
     content += '- Service-specific recommendations\n';
     content += '- Unique insights per model\n\n';
-    
+
     content += '## Recommended Action Plan\n\n';
     content += '1. Start with Documentation Matrix Dashboard\n';
     content += '2. Implement single source of truth\n';
     content += '3. Use automated tools for synchronization\n';
   }
-  
+
   await fs.writeFile(filepath, content);
 }
 

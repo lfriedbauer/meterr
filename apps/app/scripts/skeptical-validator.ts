@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient, ResearchQuery } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
+import { ResearchQuery, UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config();
 
@@ -68,9 +68,9 @@ class SkepticalValidator {
     try {
       // Query all three services in parallel
       const [perplexityResult, geminiResult, claudeResult] = await Promise.all([
-        this.client.queryPerplexity({ prompt: perplexityPrompt }).catch(err => null),
-        this.client.queryGemini({ prompt: geminiPrompt }).catch(err => null),
-        this.client.queryClaude({ prompt: claudePrompt }).catch(err => null)
+        this.client.queryPerplexity({ prompt: perplexityPrompt }).catch((err) => null),
+        this.client.queryGemini({ prompt: geminiPrompt }).catch((err) => null),
+        this.client.queryClaude({ prompt: claudePrompt }).catch((err) => null),
       ]);
 
       // Analyze responses
@@ -83,7 +83,6 @@ class SkepticalValidator {
 
       this.validations.push(validation);
       return validation;
-
     } catch (error) {
       console.error(`Error validating claim: ${error}`);
       return {
@@ -93,9 +92,9 @@ class SkepticalValidator {
         evidence: {
           supporting: [],
           contradicting: [],
-          missing: ['Unable to validate due to error']
+          missing: ['Unable to validate due to error'],
         },
-        recommendation: 'Manual verification required'
+        recommendation: 'Manual verification required',
       };
     }
   }
@@ -109,37 +108,47 @@ class SkepticalValidator {
     const supporting: string[] = [];
     const contradicting: string[] = [];
     const missing: string[] = [];
-    
+
     // Parse Perplexity response for sources
     if (perplexityResponse) {
-      if (perplexityResponse.toLowerCase().includes('no evidence') || 
-          perplexityResponse.toLowerCase().includes('could not find')) {
+      if (
+        perplexityResponse.toLowerCase().includes('no evidence') ||
+        perplexityResponse.toLowerCase().includes('could not find')
+      ) {
         contradicting.push('Perplexity: No supporting evidence found via web search');
-      } else if (perplexityResponse.includes('study') || 
-                 perplexityResponse.includes('survey') || 
-                 perplexityResponse.includes('report')) {
+      } else if (
+        perplexityResponse.includes('study') ||
+        perplexityResponse.includes('survey') ||
+        perplexityResponse.includes('report')
+      ) {
         supporting.push(`Perplexity: ${this.extractKeyFinding(perplexityResponse)}`);
       }
     }
 
     // Parse Gemini response for logical analysis
     if (geminiResponse) {
-      if (geminiResponse.toLowerCase().includes('unrealistic') || 
-          geminiResponse.toLowerCase().includes('unlikely')) {
+      if (
+        geminiResponse.toLowerCase().includes('unrealistic') ||
+        geminiResponse.toLowerCase().includes('unlikely')
+      ) {
         contradicting.push(`Gemini: ${this.extractKeyFinding(geminiResponse)}`);
-      } else if (geminiResponse.toLowerCase().includes('reasonable') || 
-                 geminiResponse.toLowerCase().includes('plausible')) {
+      } else if (
+        geminiResponse.toLowerCase().includes('reasonable') ||
+        geminiResponse.toLowerCase().includes('plausible')
+      ) {
         supporting.push(`Gemini: Claim appears logically sound`);
       }
     }
 
     // Parse Claude response for skeptical points
     if (claudeResponse) {
-      if (claudeResponse.toLowerCase().includes('red flag') || 
-          claudeResponse.toLowerCase().includes('suspicious')) {
+      if (
+        claudeResponse.toLowerCase().includes('red flag') ||
+        claudeResponse.toLowerCase().includes('suspicious')
+      ) {
         contradicting.push(`Claude: ${this.extractKeyFinding(claudeResponse)}`);
       }
-      
+
       // Extract missing context
       const contextMatch = claudeResponse.match(/missing.{0,100}context[^.]+/i);
       if (contextMatch) {
@@ -150,10 +159,10 @@ class SkepticalValidator {
     // Determine verdict and confidence
     const supportCount = supporting.length;
     const contradictCount = contradicting.length;
-    
+
     let verdict: ClaimValidation['verdict'];
     let confidence: number;
-    
+
     if (contradictCount > supportCount) {
       verdict = 'FALSE';
       confidence = Math.min(90, contradictCount * 30);
@@ -181,44 +190,42 @@ class SkepticalValidator {
       evidence: {
         supporting,
         contradicting,
-        missing: missing.length > 0 ? missing : ['Original source', 'Sample size', 'Methodology']
+        missing: missing.length > 0 ? missing : ['Original source', 'Sample size', 'Methodology'],
       },
       revisedClaim,
-      recommendation: this.generateRecommendation(verdict, confidence)
+      recommendation: this.generateRecommendation(verdict, confidence),
     };
   }
 
   private extractKeyFinding(response: string): string {
     // Extract the most relevant sentence
-    const sentences = response.split(/[.!?]/).filter(s => s.length > 20);
+    const sentences = response.split(/[.!?]/).filter((s) => s.length > 20);
     const keyWords = ['found', 'study', 'survey', 'evidence', 'data', 'statistic', 'report'];
-    
+
     for (const sentence of sentences) {
-      if (keyWords.some(word => sentence.toLowerCase().includes(word))) {
+      if (keyWords.some((word) => sentence.toLowerCase().includes(word))) {
         return sentence.trim().substring(0, 150);
       }
     }
-    
+
     return sentences[0]?.trim().substring(0, 150) || 'Analysis provided';
   }
 
   private generateRevisedClaim(claim: string, ...responses: (string | undefined)[]): string {
     // Look for more accurate numbers in responses
     const allText = responses.filter(Boolean).join(' ');
-    
+
     // Try to extract more nuanced percentages
     const percentMatch = allText.match(/(\d+%-?\d*%?)\s+of\s+[^.]+/i);
     if (percentMatch) {
       return percentMatch[0];
     }
-    
+
     // Otherwise make it more conservative
     if (claim.includes('%')) {
-      return claim
-        .replace(/(\d+)%/, 'many')
-        .replace(/(\d+)-(\d+)%/, 'a significant portion');
+      return claim.replace(/(\d+)%/, 'many').replace(/(\d+)-(\d+)%/, 'a significant portion');
     }
-    
+
     return `${claim} (unverified)`;
   }
 
@@ -247,17 +254,17 @@ class SkepticalValidator {
     Provide corrected pricing if issues found.`;
 
     const response = await this.client.queryGemini({ prompt });
-    
+
     // Extract corrected pricing from response
     const correctedMatch = response.response.match(/\$(\d+)-?\$?(\d+)?/g);
     if (correctedMatch && correctedMatch.length >= 3) {
       return {
         solopreneur: correctedMatch[0],
         smallTeam: correctedMatch[1],
-        enterprise: correctedMatch[2]
+        enterprise: correctedMatch[2],
       };
     }
-    
+
     return pricing;
   }
 
@@ -267,12 +274,13 @@ class SkepticalValidator {
       validations: this.validations,
       summary: {
         total: this.validations.length,
-        verified: this.validations.filter(v => v.verdict === 'VERIFIED').length,
-        false: this.validations.filter(v => v.verdict === 'FALSE').length,
-        unverified: this.validations.filter(v => v.verdict === 'UNVERIFIED').length,
-        needsClarification: this.validations.filter(v => v.verdict === 'NEEDS_CLARIFICATION').length
+        verified: this.validations.filter((v) => v.verdict === 'VERIFIED').length,
+        false: this.validations.filter((v) => v.verdict === 'FALSE').length,
+        unverified: this.validations.filter((v) => v.verdict === 'UNVERIFIED').length,
+        needsClarification: this.validations.filter((v) => v.verdict === 'NEEDS_CLARIFICATION')
+          .length,
       },
-      recommendations: this.generateOverallRecommendations()
+      recommendations: this.generateOverallRecommendations(),
     };
 
     writeFileSync(filepath, JSON.stringify(report, null, 2));
@@ -281,49 +289,49 @@ class SkepticalValidator {
 
   private generateOverallRecommendations(): string[] {
     const recs: string[] = [];
-    
-    const falseCount = this.validations.filter(v => v.verdict === 'FALSE').length;
-    const unverifiedCount = this.validations.filter(v => v.verdict === 'UNVERIFIED').length;
-    
+
+    const falseCount = this.validations.filter((v) => v.verdict === 'FALSE').length;
+    const unverifiedCount = this.validations.filter((v) => v.verdict === 'UNVERIFIED').length;
+
     if (falseCount > 0) {
       recs.push('Remove or revise false claims before proceeding');
     }
-    
+
     if (unverifiedCount > 2) {
       recs.push('Conduct primary research to gather real data');
     }
-    
-    if (this.validations.every(v => v.confidence < 50)) {
+
+    if (this.validations.every((v) => v.confidence < 50)) {
       recs.push('Consider commissioning a market research study');
     }
-    
+
     recs.push('Use ranges instead of specific percentages where data is uncertain');
     recs.push('Add disclaimers for estimated statistics');
     recs.push('Focus on provable features rather than speculative benefits');
-    
+
     return recs;
   }
 }
 
 async function main() {
   console.log('🤨 Skeptical Validator Starting...\n');
-  
+
   const validator = new SkepticalValidator();
-  
+
   // Load claims from previous research
   const analysisPath = path.join(process.cwd(), 'research-results', 'analysis-summary.json');
   let claimsToValidate: string[] = [];
-  
+
   if (existsSync(analysisPath)) {
     const analysis = JSON.parse(readFileSync(analysisPath, 'utf-8'));
-    
+
     // Extract specific claims that need validation
     claimsToValidate = [
       '67% of companies have no visibility into AI costs across providers',
       'Average company wastes 30-40% on suboptimal model selection',
-      'No unified solution exists for multi-provider AI management'
+      'No unified solution exists for multi-provider AI management',
     ];
-    
+
     // Also validate the pricing
     console.log('\n💰 Validating pricing logic...');
     const correctedPricing = await validator.validatePricingLogic(analysis.pricePoints);
@@ -334,32 +342,32 @@ async function main() {
       '67% of companies lack visibility into AI costs',
       'Companies waste 30-40% on suboptimal model selection',
       'AI adoption grew 270% in the last year',
-      'ROI of 500% is typical for AI optimization tools'
+      'ROI of 500% is typical for AI optimization tools',
     ];
   }
-  
+
   // Validate each claim
   for (const claim of claimsToValidate) {
     const validation = await validator.validateClaim(claim);
-    
+
     console.log(`\nVerdict: ${validation.verdict} (${validation.confidence}% confidence)`);
     if (validation.revisedClaim) {
       console.log(`Revised: "${validation.revisedClaim}"`);
     }
     console.log(`Recommendation: ${validation.recommendation}`);
-    
+
     // Rate limiting
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
-  
+
   // Save validation report
   const reportPath = path.join(
-    process.cwd(), 
-    'research-results', 
+    process.cwd(),
+    'research-results',
     `skeptical-validation-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
   );
   await validator.saveReport(reportPath);
-  
+
   console.log('\n✅ Skeptical validation complete!');
 }
 

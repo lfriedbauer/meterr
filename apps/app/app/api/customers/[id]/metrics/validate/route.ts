@@ -3,7 +3,7 @@
  * Validates all customer metrics after AI optimizations are applied
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { MetricsManager } from '@/lib/services/metrics-manager';
 
@@ -22,16 +22,13 @@ function getMetricsManager() {
 
 const validateMetricsSchema = z.object({
   optimizationId: z.string().optional(),
-  testPeriodDays: z.number().min(1).max(90).default(7)
+  testPeriodDays: z.number().min(1).max(90).default(7),
 });
 
 /**
  * POST /api/customers/[id]/metrics/validate - Validate all metrics
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: customerId } = await params;
     const body = await request.json();
@@ -41,25 +38,27 @@ export async function POST(
 
     // Get all customer metrics
     const customerMetrics = await getMetricsManager().getCustomerMetrics(customerId);
-    
+
     if (customerMetrics.length === 0) {
-      return NextResponse.json({
-        success: false,
-        error: 'No metrics configured for validation',
-        suggestion: 'Add metrics first using POST /api/customers/{id}/metrics'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'No metrics configured for validation',
+          suggestion: 'Add metrics first using POST /api/customers/{id}/metrics',
+        },
+        { status: 400 }
+      );
     }
 
     // Validate all metrics
     const validationResults = await getMetricsManager().validateAllMetrics(customerId);
 
     // Calculate overall validation status
-    const passedCount = validationResults.filter(v => v.status === 'passed').length;
-    const warningCount = validationResults.filter(v => v.status === 'warning').length;
-    const failedCount = validationResults.filter(v => v.status === 'failed').length;
+    const passedCount = validationResults.filter((v) => v.status === 'passed').length;
+    const warningCount = validationResults.filter((v) => v.status === 'warning').length;
+    const failedCount = validationResults.filter((v) => v.status === 'failed').length;
 
-    const overallStatus = failedCount > 0 ? 'failed' : 
-                         warningCount > 0 ? 'warning' : 'passed';
+    const overallStatus = failedCount > 0 ? 'failed' : warningCount > 0 ? 'warning' : 'passed';
 
     // Generate recommendations based on results
     const recommendations = generateRecommendations(validationResults);
@@ -70,7 +69,7 @@ export async function POST(
       testPeriodDays,
       validationResults,
       overallStatus,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return NextResponse.json({
@@ -83,15 +82,14 @@ export async function POST(
           passed: passedCount,
           warnings: warningCount,
           failed: failedCount,
-          successRate: `${Math.round((passedCount / validationResults.length) * 100)}%`
+          successRate: `${Math.round((passedCount / validationResults.length) * 100)}%`,
         },
         results: validationResults,
         recommendations,
         testPeriod: `${testPeriodDays} days`,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -101,20 +99,14 @@ export async function POST(
     }
 
     console.error('Error validating metrics:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 /**
  * GET /api/customers/[id]/metrics/validate - Get validation history
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: customerId } = await params;
     const { searchParams } = new URL(request.url);
@@ -126,15 +118,11 @@ export async function GET(
     return NextResponse.json({
       success: true,
       validationHistory,
-      totalCount: validationHistory.length
+      totalCount: validationHistory.length,
     });
-
   } catch (error) {
     console.error('Error fetching validation history:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -144,15 +132,15 @@ export async function GET(
 function generateRecommendations(validationResults: any[]): string[] {
   const recommendations: string[] = [];
 
-  const failedMetrics = validationResults.filter(v => v.status === 'failed');
-  const warningMetrics = validationResults.filter(v => v.status === 'warning');
+  const failedMetrics = validationResults.filter((v) => v.status === 'failed');
+  const warningMetrics = validationResults.filter((v) => v.status === 'warning');
 
   if (failedMetrics.length > 0) {
     recommendations.push(
       `⚠️ ${failedMetrics.length} metrics failed validation. Quality may have been impacted by the optimization.`
     );
-    
-    failedMetrics.forEach(metric => {
+
+    failedMetrics.forEach((metric) => {
       recommendations.push(
         `• ${metric.metricName}: ${metric.percentageChange > 0 ? 'increased' : 'decreased'} by ${Math.abs(metric.percentageChange).toFixed(1)}% (baseline: ${metric.baselineValue})`
       );
@@ -179,12 +167,13 @@ function generateRecommendations(validationResults: any[]): string[] {
   }
 
   // Add specific guidance
-  const conversionMetrics = validationResults.filter(v => 
-    v.metricName.toLowerCase().includes('conversion') || 
-    v.metricName.toLowerCase().includes('revenue')
+  const conversionMetrics = validationResults.filter(
+    (v) =>
+      v.metricName.toLowerCase().includes('conversion') ||
+      v.metricName.toLowerCase().includes('revenue')
   );
 
-  if (conversionMetrics.some(m => m.status === 'failed')) {
+  if (conversionMetrics.some((m) => m.status === 'failed')) {
     recommendations.push(
       '🎯 Revenue/conversion metrics are critical. Consider A/B testing the optimization on a small portion of traffic first.'
     );
@@ -203,7 +192,7 @@ async function storeValidationResults(customerId: string, validationData: any): 
     console.log('Storing validation results:', {
       customerId,
       results: validationData.validationResults.length,
-      status: validationData.overallStatus
+      status: validationData.overallStatus,
     });
   } catch (error) {
     console.error('Error storing validation results:', error);
@@ -226,8 +215,8 @@ async function getValidationHistory(customerId: string, limit: number): Promise<
         passed: 3,
         warnings: 0,
         failed: 0,
-        optimizationId: 'opt_123'
-      }
+        optimizationId: 'opt_123',
+      },
     ];
   } catch (error) {
     console.error('Error fetching validation history:', error);

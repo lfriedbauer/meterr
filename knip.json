@@ -1,0 +1,29 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "apps/*/app/**/*.{ts,tsx}",
+    "apps/*/pages/**/*.{ts,tsx}",
+    "packages/*/src/index.{ts,tsx}",
+    "scripts/**/*.{ts,js}"
+  ],
+  "project": ["apps/**/*.{ts,tsx,js,jsx}", "packages/**/*.{ts,tsx,js,jsx}"],
+  "ignore": [
+    "**/*.test.{ts,tsx}",
+    "**/*.spec.{ts,tsx}",
+    "**/*.d.ts",
+    "node_modules/**",
+    ".next/**",
+    "dist/**",
+    "build/**"
+  ],
+  "ignoreDependencies": ["husky", "@types/node", "typescript"],
+  "ignoreExportsUsedInFile": true,
+  "workspaces": {
+    "apps/*": {
+      "entry": ["app/**/*.{ts,tsx}", "pages/**/*.{ts,tsx}", "src/index.{ts,tsx}"]
+    },
+    "packages/*": {
+      "entry": ["src/index.{ts,tsx}"]
+    }
+  }
+}

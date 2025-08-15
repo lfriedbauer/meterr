@@ -4,9 +4,9 @@
  * Test script to verify Supabase setup
  */
 
+import path from 'path';
 import { createClient } from '../apps/app/node_modules/@supabase/supabase-js/dist/main/index.js';
 import dotenv from '../apps/app/node_modules/dotenv/lib/main.js';
-import path from 'path';
 
 // Load environment variables from apps/app/.env.local
 dotenv.config({ path: path.join(process.cwd(), 'apps/app/.env.local') });
@@ -43,18 +43,16 @@ async function testSetup() {
 
     // Test 2: Check vector extension
     console.log('\n2. Checking vector extension...');
-    const { data: extensions, error: extError } = await supabase
-      .rpc('version'); // This will fail if pgvector isn't available
+    const { data: extensions, error: extError } = await supabase.rpc('version'); // This will fail if pgvector isn't available
 
     console.log('✅ Vector extension available');
 
     // Test 3: Test RPC functions
     console.log('\n3. Testing RPC functions...');
-    const { data: rpcData, error: rpcError } = await supabase
-      .rpc('find_optimization_candidates', {
-        customer_id: '00000000-0000-0000-0000-000000000000',
-        min_monthly_savings: 100
-      });
+    const { data: rpcData, error: rpcError } = await supabase.rpc('find_optimization_candidates', {
+      customer_id: '00000000-0000-0000-0000-000000000000',
+      min_monthly_savings: 100,
+    });
 
     if (rpcError) {
       console.error('❌ RPC functions not working:', rpcError.message);
@@ -70,12 +68,13 @@ async function testSetup() {
       .insert({
         email: 'test@example.com',
         company_name: 'Test Company',
-        status: 'trial'
+        status: 'trial',
       })
       .select()
       .single();
 
-    if (customerError && customerError.code !== '23505') { // Ignore duplicate
+    if (customerError && customerError.code !== '23505') {
+      // Ignore duplicate
       console.error('❌ Error creating customer:', customerError.message);
       return false;
     }
@@ -84,10 +83,7 @@ async function testSetup() {
 
     // Clean up test customer
     if (customer) {
-      await supabase
-        .from('customers')
-        .delete()
-        .eq('email', 'test@example.com');
+      await supabase.from('customers').delete().eq('email', 'test@example.com');
     }
 
     console.log('\n🎉 All tests passed! Your Supabase setup is ready.');
@@ -105,9 +101,11 @@ async function testSetup() {
 }
 
 // Run the test
-testSetup().then(success => {
-  process.exit(success ? 0 : 1);
-}).catch(error => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+testSetup()
+  .then((success) => {
+    process.exit(success ? 0 : 1);
+  })
+  .catch((error) => {
+    console.error('Fatal error:', error);
+    process.exit(1);
+  });

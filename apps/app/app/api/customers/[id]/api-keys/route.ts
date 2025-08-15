@@ -3,7 +3,7 @@
  * Handles storing and managing customer's API keys
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { ApiKeyManager } from '@/lib/services/api-key-manager';
 
@@ -30,10 +30,7 @@ const addApiKeySchema = z.object({
 /**
  * POST /api/customers/[id]/api-keys - Add API key
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: customerId } = await params;
     const body = await request.json();
@@ -42,20 +39,17 @@ export async function POST(
     const result = await getApiKeyManager().storeApiKey(customerId, {
       provider,
       keyName,
-      apiKey
+      apiKey,
     });
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
     return NextResponse.json({
       success: true,
       keyId: result.keyId,
-      message: `${provider} API key stored successfully`
+      message: `${provider} API key stored successfully`,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -67,9 +61,9 @@ export async function POST(
 
     console.error('Error adding API key:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }
     );
@@ -79,31 +73,25 @@ export async function POST(
 /**
  * GET /api/customers/[id]/api-keys - List API keys
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: customerId } = await params;
     const apiKeys = await getApiKeyManager().listApiKeys(customerId);
 
     return NextResponse.json({
       success: true,
-      apiKeys: apiKeys.map(key => ({
+      apiKeys: apiKeys.map((key) => ({
         id: key.id,
         provider: key.provider,
         keyName: key.keyName,
         keyHint: key.keyHint,
         isActive: key.isActive,
-        lastUsedAt: key.lastUsedAt
-      }))
+        lastUsedAt: key.lastUsedAt,
+      })),
     });
   } catch (error) {
     console.error('Error listing API keys:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -120,30 +108,21 @@ export async function DELETE(
     const keyId = searchParams.get('keyId');
 
     if (!keyId) {
-      return NextResponse.json(
-        { error: 'keyId parameter is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'keyId parameter is required' }, { status: 400 });
     }
 
     const result = await getApiKeyManager().revokeApiKey(customerId, keyId);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
     return NextResponse.json({
       success: true,
-      message: 'API key revoked successfully'
+      message: 'API key revoked successfully',
     });
   } catch (error) {
     console.error('Error revoking API key:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

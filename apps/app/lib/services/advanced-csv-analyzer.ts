@@ -3,7 +3,7 @@
  * Delivers 40-60% cost reduction through proprietary algorithms
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
 interface APICall {
@@ -19,7 +19,13 @@ interface APICall {
 }
 
 interface OptimizationStrategy {
-  type: 'semantic_dedup' | 'prompt_compression' | 'cross_cache' | 'model_routing' | 'batch_consolidation' | 'context_pruning';
+  type:
+    | 'semantic_dedup'
+    | 'prompt_compression'
+    | 'cross_cache'
+    | 'model_routing'
+    | 'batch_consolidation'
+    | 'context_pruning';
   name: string;
   description: string;
   potentialSavings: number;
@@ -64,7 +70,7 @@ export class AdvancedCSVAnalyzer {
   private supabase: SupabaseClient | null = null;
   private semanticCache: Map<string, SemanticCluster> = new Map();
   private patternLibrary: Map<string, any> = new Map();
-  
+
   constructor(supabaseUrl?: string, supabaseKey?: string) {
     if (supabaseUrl && supabaseKey) {
       this.supabase = createClient(supabaseUrl, supabaseKey);
@@ -75,7 +81,10 @@ export class AdvancedCSVAnalyzer {
   /**
    * Main analysis function - returns sophisticated insights WITHOUT API connection
    */
-  async analyzeCSV(csvContent: string, provider: 'openai' | 'anthropic'): Promise<{
+  async analyzeCSV(
+    csvContent: string,
+    provider: 'openai' | 'anthropic'
+  ): Promise<{
     totalCost: number;
     projectedSavings: number;
     savingsPercent: number;
@@ -85,7 +94,7 @@ export class AdvancedCSVAnalyzer {
   }> {
     // Parse CSV into structured data
     const apiCalls = this.parseCSV(csvContent, provider);
-    
+
     // Run sophisticated analysis algorithms in parallel
     const [
       semanticClusters,
@@ -93,14 +102,14 @@ export class AdvancedCSVAnalyzer {
       cachingPatterns,
       modelRoutingOptimizations,
       batchConsolidations,
-      contextPruningCandidates
+      contextPruningCandidates,
     ] = await Promise.all([
       this.detectSemanticDuplication(apiCalls),
       this.analyzePromptCompression(apiCalls),
       this.findCrossCachingOpportunities(apiCalls),
       this.optimizeModelRouting(apiCalls),
       this.identifyBatchConsolidation(apiCalls),
-      this.analyzeContextPruning(apiCalls)
+      this.analyzeContextPruning(apiCalls),
     ]);
 
     // Calculate total potential savings
@@ -123,9 +132,9 @@ export class AdvancedCSVAnalyzer {
           timeToImplement: '2-3 days',
           codeChanges: this.generateSemanticDedupCode(semanticClusters),
           risks: ['Slight staleness in cached responses', 'Need to handle cache invalidation'],
-          metrics: ['Cache hit rate', 'Response freshness', 'Cost per unique query']
+          metrics: ['Cache hit rate', 'Response freshness', 'Cost per unique query'],
         },
-        examples: this.getSemanticDedupExamples(semanticClusters)
+        examples: this.getSemanticDedupExamples(semanticClusters),
       });
     }
 
@@ -137,15 +146,15 @@ export class AdvancedCSVAnalyzer {
         name: 'Intelligent Prompt Compression',
         description: 'Compress verbose prompts using advanced techniques while maintaining quality',
         potentialSavings: compressionOpportunities.savings,
-        confidence: 0.90,
+        confidence: 0.9,
         implementation: {
           difficulty: 'easy',
           timeToImplement: '1 day',
           codeChanges: compressionOpportunities.codeChanges,
           risks: ['Minimal quality impact if done correctly'],
-          metrics: ['Average prompt length', 'Compression ratio', 'Quality scores']
+          metrics: ['Average prompt length', 'Compression ratio', 'Quality scores'],
         },
-        examples: compressionOpportunities.examples
+        examples: compressionOpportunities.examples,
       });
     }
 
@@ -163,9 +172,9 @@ export class AdvancedCSVAnalyzer {
           timeToImplement: '3-4 days',
           codeChanges: cachingPatterns.codeChanges,
           risks: ['Cache coherency', 'Storage costs'],
-          metrics: ['Cache utilization', 'Hit rate', 'Storage efficiency']
+          metrics: ['Cache utilization', 'Hit rate', 'Storage efficiency'],
         },
-        examples: cachingPatterns.examples
+        examples: cachingPatterns.examples,
       });
     }
 
@@ -183,9 +192,9 @@ export class AdvancedCSVAnalyzer {
           timeToImplement: '1-2 days',
           codeChanges: modelRoutingOptimizations.codeChanges,
           risks: ['Need to validate quality on cheaper models'],
-          metrics: ['Model distribution', 'Quality maintenance', 'Cost per request type']
+          metrics: ['Model distribution', 'Quality maintenance', 'Cost per request type'],
         },
-        examples: modelRoutingOptimizations.examples
+        examples: modelRoutingOptimizations.examples,
       });
     }
 
@@ -203,9 +212,9 @@ export class AdvancedCSVAnalyzer {
           timeToImplement: '2-3 days',
           codeChanges: batchConsolidations.codeChanges,
           risks: ['Increased latency for batched requests', 'Error handling complexity'],
-          metrics: ['Batch size', 'Latency impact', 'Error rates']
+          metrics: ['Batch size', 'Latency impact', 'Error rates'],
         },
-        examples: batchConsolidations.examples
+        examples: batchConsolidations.examples,
       });
     }
 
@@ -223,9 +232,9 @@ export class AdvancedCSVAnalyzer {
           timeToImplement: '4-5 days',
           codeChanges: contextPruningCandidates.codeChanges,
           risks: ['May miss edge cases', 'Requires careful testing'],
-          metrics: ['Context utilization', 'Pruning accuracy', 'Quality impact']
+          metrics: ['Context utilization', 'Pruning accuracy', 'Quality impact'],
         },
-        examples: contextPruningCandidates.examples
+        examples: contextPruningCandidates.examples,
       });
     }
 
@@ -241,7 +250,7 @@ export class AdvancedCSVAnalyzer {
       savingsPercent: Math.round((totalSavings / totalCost) * 100),
       strategies: strategies.sort((a, b) => b.potentialSavings - a.potentialSavings),
       immediateActions,
-      customInsights
+      customInsights,
     };
   }
 
@@ -249,8 +258,11 @@ export class AdvancedCSVAnalyzer {
    * Parse CSV content into structured API calls
    */
   private parseCSV(csvContent: string, provider: 'openai' | 'anthropic'): APICall[] {
-    const lines = csvContent.split('\n').filter(line => line.trim());
-    const headers = lines[0].toLowerCase().split(',').map(h => h.trim());
+    const lines = csvContent.split('\n').filter((line) => line.trim());
+    const headers = lines[0]
+      .toLowerCase()
+      .split(',')
+      .map((h) => h.trim());
     const calls: APICall[] = [];
 
     for (let i = 1; i < lines.length; i++) {
@@ -271,7 +283,7 @@ export class AdvancedCSVAnalyzer {
           outputTokens: parseInt(row.completion_tokens || row.output_tokens || '0'),
           cost: parseFloat(row.cost || '0'),
           latency: row.latency ? parseInt(row.latency) : undefined,
-          metadata: { original: row }
+          metadata: { original: row },
         });
       } else if (provider === 'anthropic') {
         calls.push({
@@ -283,7 +295,7 @@ export class AdvancedCSVAnalyzer {
           outputTokens: parseInt(row.output_tokens || '0'),
           cost: parseFloat(row.cost || '0'),
           latency: row.latency_ms ? parseInt(row.latency_ms) : undefined,
-          metadata: { original: row }
+          metadata: { original: row },
         });
       }
     }
@@ -298,10 +310,10 @@ export class AdvancedCSVAnalyzer {
     const result = [];
     let current = '';
     let inQuotes = false;
-    
+
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-      
+
       if (char === '"') {
         inQuotes = !inQuotes;
       } else if (char === ',' && !inQuotes) {
@@ -311,7 +323,7 @@ export class AdvancedCSVAnalyzer {
         current += char;
       }
     }
-    
+
     result.push(current);
     return result;
   }
@@ -321,11 +333,11 @@ export class AdvancedCSVAnalyzer {
    */
   private async detectSemanticDuplication(calls: APICall[]): Promise<SemanticCluster[]> {
     const clusters = new Map<string, SemanticCluster>();
-    
+
     for (const call of calls) {
       // Generate semantic hash (simplified - in production use embeddings)
       const semanticHash = this.generateSemanticHash(call.prompt);
-      
+
       if (clusters.has(semanticHash)) {
         const cluster = clusters.get(semanticHash)!;
         cluster.variations.push(call);
@@ -339,7 +351,7 @@ export class AdvancedCSVAnalyzer {
           canonicalPrompt: this.extractCanonicalPrompt(call.prompt),
           frequency: 1,
           totalCost: call.cost,
-          optimizationPotential: 0
+          optimizationPotential: 0,
         });
       }
     }
@@ -348,12 +360,12 @@ export class AdvancedCSVAnalyzer {
     for (const cluster of clusters.values()) {
       if (cluster.frequency > 1) {
         // Could cache after first call
-        cluster.optimizationPotential = cluster.totalCost * (1 - 1/cluster.frequency);
+        cluster.optimizationPotential = cluster.totalCost * (1 - 1 / cluster.frequency);
       }
     }
 
     return Array.from(clusters.values())
-      .filter(c => c.frequency > 1)
+      .filter((c) => c.frequency > 1)
       .sort((a, b) => b.optimizationPotential - a.optimizationPotential);
   }
 
@@ -368,14 +380,15 @@ export class AdvancedCSVAnalyzer {
       .replace(/[^a-z0-9\s]/g, '') // Remove punctuation
       .replace(/\s+/g, ' ') // Normalize whitespace
       .trim();
-    
+
     // Extract key concepts (simplified - use NLP in production)
-    const concepts = normalized.split(' ')
-      .filter(word => word.length > 3)
+    const concepts = normalized
+      .split(' ')
+      .filter((word) => word.length > 3)
       .sort()
       .slice(0, 10) // Top 10 meaningful words
       .join('|');
-    
+
     return crypto.createHash('md5').update(concepts).digest('hex');
   }
 
@@ -400,15 +413,17 @@ export class AdvancedCSVAnalyzer {
     const examples: OptimizationExample[] = [];
     const codeChanges: CodeChange[] = [];
 
-    for (const call of calls.slice(0, 100)) { // Analyze sample
+    for (const call of calls.slice(0, 100)) {
+      // Analyze sample
       const compressed = this.compressPrompt(call.prompt);
       const originalTokens = call.inputTokens;
       const compressedTokens = Math.floor(originalTokens * compressed.ratio);
-      
-      if (compressed.ratio < 0.8) { // 20%+ compression
+
+      if (compressed.ratio < 0.8) {
+        // 20%+ compression
         const savings = call.cost * (1 - compressed.ratio) * 0.5; // Input is ~50% of cost
         totalSavings += savings * (calls.length / 100); // Extrapolate
-        
+
         if (examples.length < 3) {
           examples.push({
             original: call,
@@ -416,10 +431,10 @@ export class AdvancedCSVAnalyzer {
               ...call,
               prompt: compressed.compressed,
               inputTokens: compressedTokens,
-              cost: call.cost * (1 - (1 - compressed.ratio) * 0.5)
+              cost: call.cost * (1 - (1 - compressed.ratio) * 0.5),
             },
             savingsPercent: Math.round((1 - compressed.ratio) * 50),
-            technique: compressed.technique
+            technique: compressed.technique,
           });
         }
       }
@@ -431,14 +446,14 @@ export class AdvancedCSVAnalyzer {
         file: 'lib/prompt-optimizer.ts',
         before: `const prompt = userInput;`,
         after: `const prompt = await compressPrompt(userInput);`,
-        explanation: 'Add prompt compression before API calls'
+        explanation: 'Add prompt compression before API calls',
       });
     }
 
     return {
       savings: totalSavings,
       examples,
-      codeChanges
+      codeChanges,
     };
   }
 
@@ -456,7 +471,7 @@ export class AdvancedCSVAnalyzer {
       .replace(/could you\s+/gi, '')
       .replace(/i would like you to\s+/gi, '')
       .replace(/\s+/g, ' ');
-    
+
     if (withoutRedundancy.length < compressed.length * 0.95) {
       compressed = withoutRedundancy;
       technique = 'Redundancy removal';
@@ -468,7 +483,7 @@ export class AdvancedCSVAnalyzer {
       .replace(/that is to say/gi, 'i.e.')
       .replace(/as soon as possible/gi, 'ASAP')
       .replace(/in other words/gi, 'i.e.');
-    
+
     if (abbreviated.length < compressed.length * 0.95) {
       compressed = abbreviated;
       technique += ', Abbreviation';
@@ -490,7 +505,7 @@ export class AdvancedCSVAnalyzer {
     return {
       compressed: compressed.trim(),
       ratio: compressed.length / original,
-      technique: technique || 'None applicable'
+      technique: technique || 'None applicable',
     };
   }
 
@@ -504,7 +519,7 @@ export class AdvancedCSVAnalyzer {
 
     // Find common substrings that appear in multiple requests
     const substringFrequency = new Map<string, number>();
-    
+
     for (const call of calls) {
       const substrings = this.extractMeaningfulSubstrings(call.prompt);
       for (const substr of substrings) {
@@ -520,22 +535,24 @@ export class AdvancedCSVAnalyzer {
 
     // Calculate savings from caching these patterns
     for (const [substring, frequency] of cachableSubstrings) {
-      const avgCostPerOccurrence = totalCost / calls.length * 0.1; // Assume 10% of cost
+      const avgCostPerOccurrence = (totalCost / calls.length) * 0.1; // Assume 10% of cost
       const cachingSavings = avgCostPerOccurrence * (frequency - 1) * 0.8; // 80% savings on cached
       totalSavings += cachingSavings;
     }
 
-    const codeChanges: CodeChange[] = [{
-      file: 'lib/response-cache.ts',
-      before: `const response = await callAPI(prompt);`,
-      after: `const response = await cachedCall(prompt, callAPI);`,
-      explanation: 'Implement response caching for common patterns'
-    }];
+    const codeChanges: CodeChange[] = [
+      {
+        file: 'lib/response-cache.ts',
+        before: `const response = await callAPI(prompt);`,
+        after: `const response = await cachedCall(prompt, callAPI);`,
+        explanation: 'Implement response caching for common patterns',
+      },
+    ];
 
     return {
       savings: totalSavings,
       examples,
-      codeChanges
+      codeChanges,
     };
   }
 
@@ -545,17 +562,18 @@ export class AdvancedCSVAnalyzer {
   private extractMeaningfulSubstrings(text: string): string[] {
     const substrings: string[] = [];
     const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
-    
+
     for (const sentence of sentences) {
       if (sentence.length > 50 && sentence.length < 500) {
         // Extract meaningful phrases
         const normalized = sentence.toLowerCase().trim();
-        if (!normalized.includes('{{') && !normalized.includes('}}')) { // Skip templates
+        if (!normalized.includes('{{') && !normalized.includes('}}')) {
+          // Skip templates
           substrings.push(normalized);
         }
       }
     }
-    
+
     return substrings;
   }
 
@@ -569,7 +587,7 @@ export class AdvancedCSVAnalyzer {
       'gpt-3.5-turbo': 0.002,
       'claude-3-opus': 0.015,
       'claude-3-sonnet': 0.003,
-      'claude-3-haiku': 0.00025
+      'claude-3-haiku': 0.00025,
     };
 
     let totalSavings = 0;
@@ -579,43 +597,45 @@ export class AdvancedCSVAnalyzer {
     for (const call of calls) {
       const complexity = this.assessComplexity(call);
       const optimalModel = this.selectOptimalModel(complexity, call.model);
-      
+
       if (optimalModel !== call.model) {
         const currentCost = call.cost;
         const optimalCost = this.calculateCostForModel(call, optimalModel, modelCosts);
         const savings = currentCost - optimalCost;
-        
+
         if (savings > 0) {
           totalSavings += savings;
           routingDecisions.set(call.model, optimalModel);
-          
+
           if (examples.length < 3) {
             examples.push({
               original: call,
               optimized: {
                 ...call,
                 model: optimalModel,
-                cost: optimalCost
+                cost: optimalCost,
               },
               savingsPercent: Math.round((savings / currentCost) * 100),
-              technique: `Route to ${optimalModel} based on complexity score ${complexity.score}`
+              technique: `Route to ${optimalModel} based on complexity score ${complexity.score}`,
             });
           }
         }
       }
     }
 
-    const codeChanges: CodeChange[] = [{
-      file: 'lib/model-router.ts',
-      before: `const model = 'gpt-4';`,
-      after: `const model = selectModelByComplexity(prompt);`,
-      explanation: 'Implement dynamic model selection based on request complexity'
-    }];
+    const codeChanges: CodeChange[] = [
+      {
+        file: 'lib/model-router.ts',
+        before: `const model = 'gpt-4';`,
+        after: `const model = selectModelByComplexity(prompt);`,
+        explanation: 'Implement dynamic model selection based on request complexity',
+      },
+    ];
 
     return {
       savings: totalSavings,
       examples,
-      codeChanges
+      codeChanges,
     };
   }
 
@@ -670,30 +690,34 @@ export class AdvancedCSVAnalyzer {
    */
   private selectOptimalModel(complexity: { score: number }, currentModel: string): string {
     const score = complexity.score;
-    
+
     // OpenAI models
     if (currentModel.includes('gpt')) {
       if (score <= 2) return 'gpt-3.5-turbo';
       if (score <= 4) return 'gpt-4-turbo';
       return 'gpt-4';
     }
-    
+
     // Anthropic models
     if (currentModel.includes('claude')) {
       if (score <= 2) return 'claude-3-haiku';
       if (score <= 4) return 'claude-3-sonnet';
       return 'claude-3-opus';
     }
-    
+
     return currentModel;
   }
 
   /**
    * Calculate cost for different model
    */
-  private calculateCostForModel(call: APICall, model: string, costs: Record<string, number>): number {
+  private calculateCostForModel(
+    call: APICall,
+    model: string,
+    costs: Record<string, number>
+  ): number {
     const costPerToken = costs[model] || 0.01;
-    return (call.inputTokens + call.outputTokens) * costPerToken / 1000;
+    return ((call.inputTokens + call.outputTokens) * costPerToken) / 1000;
   }
 
   /**
@@ -702,11 +726,11 @@ export class AdvancedCSVAnalyzer {
   private async identifyBatchConsolidation(calls: APICall[]): Promise<any> {
     // Group calls by time window (5 minute buckets)
     const timeBuckets = new Map<string, APICall[]>();
-    
+
     for (const call of calls) {
       const bucket = Math.floor(new Date(call.timestamp).getTime() / (5 * 60 * 1000));
       const key = bucket.toString();
-      
+
       if (!timeBuckets.has(key)) {
         timeBuckets.set(key, []);
       }
@@ -716,31 +740,33 @@ export class AdvancedCSVAnalyzer {
     // Find buckets with multiple similar calls
     let totalSavings = 0;
     const examples: OptimizationExample[] = [];
-    
+
     for (const [_, bucket] of timeBuckets) {
       if (bucket.length > 3) {
         // Could batch these calls
-        const batchCost = Math.max(...bucket.map(c => c.cost)); // Cost of most expensive
+        const batchCost = Math.max(...bucket.map((c) => c.cost)); // Cost of most expensive
         const individualCost = bucket.reduce((sum, c) => sum + c.cost, 0);
         const savings = individualCost - batchCost;
-        
+
         if (savings > 0) {
           totalSavings += savings * 0.5; // 50% of savings (accounting for OpenAI batch discount)
         }
       }
     }
 
-    const codeChanges: CodeChange[] = [{
-      file: 'lib/request-batcher.ts',
-      before: `await Promise.all(requests.map(r => callAPI(r)));`,
-      after: `await batchAPICall(requests);`,
-      explanation: 'Batch multiple requests into single API calls'
-    }];
+    const codeChanges: CodeChange[] = [
+      {
+        file: 'lib/request-batcher.ts',
+        before: `await Promise.all(requests.map(r => callAPI(r)));`,
+        after: `await batchAPICall(requests);`,
+        explanation: 'Batch multiple requests into single API calls',
+      },
+    ];
 
     return {
       savings: totalSavings,
       examples,
-      codeChanges
+      codeChanges,
     };
   }
 
@@ -750,15 +776,16 @@ export class AdvancedCSVAnalyzer {
   private async analyzeContextPruning(calls: APICall[]): Promise<any> {
     let totalSavings = 0;
     const examples: OptimizationExample[] = [];
-    
+
     for (const call of calls) {
       const prunedPrompt = this.pruneUnnecessaryContext(call.prompt, call.completion);
-      const reduction = 1 - (prunedPrompt.length / call.prompt.length);
-      
-      if (reduction > 0.1) { // 10%+ reduction
+      const reduction = 1 - prunedPrompt.length / call.prompt.length;
+
+      if (reduction > 0.1) {
+        // 10%+ reduction
         const savings = call.cost * reduction * 0.4; // Input is ~40% of cost
         totalSavings += savings;
-        
+
         if (examples.length < 3) {
           examples.push({
             original: call,
@@ -766,26 +793,28 @@ export class AdvancedCSVAnalyzer {
               ...call,
               prompt: prunedPrompt,
               inputTokens: Math.floor(call.inputTokens * (1 - reduction)),
-              cost: call.cost * (1 - reduction * 0.4)
+              cost: call.cost * (1 - reduction * 0.4),
             },
             savingsPercent: Math.round(reduction * 40),
-            technique: 'Context pruning'
+            technique: 'Context pruning',
           });
         }
       }
     }
 
-    const codeChanges: CodeChange[] = [{
-      file: 'lib/context-pruner.ts',
-      before: `const context = getAllContext();`,
-      after: `const context = pruneContext(getAllContext(), query);`,
-      explanation: 'Dynamically prune context based on query relevance'
-    }];
+    const codeChanges: CodeChange[] = [
+      {
+        file: 'lib/context-pruner.ts',
+        before: `const context = getAllContext();`,
+        after: `const context = pruneContext(getAllContext(), query);`,
+        explanation: 'Dynamically prune context based on query relevance',
+      },
+    ];
 
     return {
       savings: totalSavings,
       examples,
-      codeChanges
+      codeChanges,
     };
   }
 
@@ -796,22 +825,22 @@ export class AdvancedCSVAnalyzer {
     // Identify which parts of prompt were actually used in completion
     const promptWords = new Set(prompt.toLowerCase().split(/\s+/));
     const completionWords = new Set(completion.toLowerCase().split(/\s+/));
-    
+
     // Find overlap
-    const usedWords = new Set([...promptWords].filter(w => completionWords.has(w)));
+    const usedWords = new Set([...promptWords].filter((w) => completionWords.has(w)));
     const usageRatio = usedWords.size / promptWords.size;
-    
+
     if (usageRatio < 0.3) {
       // Very low usage - aggressive pruning
       const sentences = prompt.split(/[.!?]+/);
-      const relevantSentences = sentences.filter(s => {
+      const relevantSentences = sentences.filter((s) => {
         const words = s.toLowerCase().split(/\s+/);
-        return words.some(w => usedWords.has(w));
+        return words.some((w) => usedWords.has(w));
       });
-      
+
       return relevantSentences.join('. ');
     }
-    
+
     return prompt; // No pruning needed
   }
 
@@ -829,14 +858,15 @@ export class AdvancedCSVAnalyzer {
    * Generate code changes for semantic deduplication
    */
   private generateSemanticDedupCode(clusters: SemanticCluster[]): CodeChange[] {
-    return [{
-      file: 'lib/semantic-cache.ts',
-      before: `
+    return [
+      {
+        file: 'lib/semantic-cache.ts',
+        before: `
 const response = await openai.createCompletion({
   model: "gpt-4",
   prompt: userPrompt
 });`,
-      after: `
+        after: `
 const cacheKey = generateSemanticHash(userPrompt);
 const cached = await semanticCache.get(cacheKey);
 
@@ -851,80 +881,92 @@ const response = await openai.createCompletion({
 
 await semanticCache.set(cacheKey, response);
 return response;`,
-      explanation: 'Implement semantic caching to avoid duplicate API calls'
-    }];
+        explanation: 'Implement semantic caching to avoid duplicate API calls',
+      },
+    ];
   }
 
   /**
    * Get examples of semantic deduplication
    */
   private getSemanticDedupExamples(clusters: SemanticCluster[]): OptimizationExample[] {
-    return clusters.slice(0, 3).map(cluster => ({
+    return clusters.slice(0, 3).map((cluster) => ({
       original: cluster.variations[0],
       optimized: {
         ...cluster.variations[0],
-        cost: cluster.variations[0].cost / cluster.frequency // Amortized cost
+        cost: cluster.variations[0].cost / cluster.frequency, // Amortized cost
       },
-      savingsPercent: Math.round((1 - 1/cluster.frequency) * 100),
-      technique: `Cache response for ${cluster.frequency} similar requests`
+      savingsPercent: Math.round((1 - 1 / cluster.frequency) * 100),
+      technique: `Cache response for ${cluster.frequency} similar requests`,
     }));
   }
 
   /**
    * Generate custom insights using pattern analysis
    */
-  private async generateCustomInsights(calls: APICall[], strategies: OptimizationStrategy[]): Promise<string[]> {
+  private async generateCustomInsights(
+    calls: APICall[],
+    strategies: OptimizationStrategy[]
+  ): Promise<string[]> {
     const insights: string[] = [];
-    
+
     // Insight 1: Peak usage patterns
     const hourlyUsage = new Map<number, number>();
-    calls.forEach(call => {
+    calls.forEach((call) => {
       const hour = new Date(call.timestamp).getHours();
       hourlyUsage.set(hour, (hourlyUsage.get(hour) || 0) + call.cost);
     });
-    
-    const peakHour = Array.from(hourlyUsage.entries())
-      .sort((a, b) => b[1] - a[1])[0];
-    
+
+    const peakHour = Array.from(hourlyUsage.entries()).sort((a, b) => b[1] - a[1])[0];
+
     if (peakHour) {
-      insights.push(`Your peak usage is at ${peakHour[0]}:00 - consider pre-computing or caching during off-peak hours for 20% additional savings`);
+      insights.push(
+        `Your peak usage is at ${peakHour[0]}:00 - consider pre-computing or caching during off-peak hours for 20% additional savings`
+      );
     }
-    
+
     // Insight 2: Model distribution
     const modelUsage = new Map<string, number>();
-    calls.forEach(call => {
+    calls.forEach((call) => {
       modelUsage.set(call.model, (modelUsage.get(call.model) || 0) + 1);
     });
-    
-    const dominantModel = Array.from(modelUsage.entries())
-      .sort((a, b) => b[1] - a[1])[0];
-    
+
+    const dominantModel = Array.from(modelUsage.entries()).sort((a, b) => b[1] - a[1])[0];
+
     if (dominantModel && dominantModel[1] > calls.length * 0.7) {
-      insights.push(`${dominantModel[0]} accounts for ${Math.round(dominantModel[1]/calls.length*100)}% of usage - implementing model-specific optimizations could yield 15% more savings`);
+      insights.push(
+        `${dominantModel[0]} accounts for ${Math.round((dominantModel[1] / calls.length) * 100)}% of usage - implementing model-specific optimizations could yield 15% more savings`
+      );
     }
-    
+
     // Insight 3: Token efficiency
     const avgInputTokens = calls.reduce((sum, c) => sum + c.inputTokens, 0) / calls.length;
     const avgOutputTokens = calls.reduce((sum, c) => sum + c.outputTokens, 0) / calls.length;
     const ratio = avgInputTokens / avgOutputTokens;
-    
+
     if (ratio > 3) {
-      insights.push(`Your input/output token ratio is ${ratio.toFixed(1)}:1 - implementing prompt templates could reduce input tokens by 40%`);
+      insights.push(
+        `Your input/output token ratio is ${ratio.toFixed(1)}:1 - implementing prompt templates could reduce input tokens by 40%`
+      );
     }
-    
+
     // Insight 4: Repeated patterns
-    const patternCount = strategies.find(s => s.type === 'semantic_dedup')?.examples?.length || 0;
+    const patternCount = strategies.find((s) => s.type === 'semantic_dedup')?.examples?.length || 0;
     if (patternCount > 0) {
-      insights.push(`Found ${patternCount} repeated query patterns - implementing a query result cache would provide instant 25% savings`);
+      insights.push(
+        `Found ${patternCount} repeated query patterns - implementing a query result cache would provide instant 25% savings`
+      );
     }
-    
+
     // Insight 5: Cost anomalies
     const avgCost = calls.reduce((sum, c) => sum + c.cost, 0) / calls.length;
-    const expensive = calls.filter(c => c.cost > avgCost * 3).length;
+    const expensive = calls.filter((c) => c.cost > avgCost * 3).length;
     if (expensive > 0) {
-      insights.push(`${expensive} requests cost 3x more than average - reviewing these could save an additional 10-15%`);
+      insights.push(
+        `${expensive} requests cost 3x more than average - reviewing these could save an additional 10-15%`
+      );
     }
-    
+
     return insights;
   }
 
@@ -933,7 +975,7 @@ return response;`,
    */
   private prioritizeImmediateActions(strategies: OptimizationStrategy[]): string[] {
     const actions: string[] = [];
-    
+
     // Sort by ROI (savings / difficulty)
     const difficultyScore = { trivial: 1, easy: 2, medium: 3, hard: 4 };
     const sorted = strategies.sort((a, b) => {
@@ -941,21 +983,29 @@ return response;`,
       const roiB = b.potentialSavings / difficultyScore[b.implementation.difficulty];
       return roiB - roiA;
     });
-    
+
     // Top 3 immediate actions
     for (const strategy of sorted.slice(0, 3)) {
       switch (strategy.type) {
         case 'semantic_dedup':
-          actions.push(`Implement semantic caching for ${strategy.examples.length} query patterns (${strategy.implementation.timeToImplement})`);
+          actions.push(
+            `Implement semantic caching for ${strategy.examples.length} query patterns (${strategy.implementation.timeToImplement})`
+          );
           break;
         case 'prompt_compression':
-          actions.push(`Deploy prompt compression to reduce tokens by ${Math.round((1 - strategy.examples[0]?.optimized.inputTokens / strategy.examples[0]?.original.inputTokens) * 100)}%`);
+          actions.push(
+            `Deploy prompt compression to reduce tokens by ${Math.round((1 - strategy.examples[0]?.optimized.inputTokens / strategy.examples[0]?.original.inputTokens) * 100)}%`
+          );
           break;
         case 'model_routing':
-          actions.push(`Set up intelligent model routing to automatically use cheaper models when appropriate`);
+          actions.push(
+            `Set up intelligent model routing to automatically use cheaper models when appropriate`
+          );
           break;
         case 'batch_consolidation':
-          actions.push(`Enable request batching during peak hours to leverage 50% batch API discount`);
+          actions.push(
+            `Enable request batching during peak hours to leverage 50% batch API discount`
+          );
           break;
         case 'cross_cache':
           actions.push(`Implement cross-request caching for common prompt components`);
@@ -965,7 +1015,7 @@ return response;`,
           break;
       }
     }
-    
+
     return actions;
   }
 
@@ -977,39 +1027,39 @@ return response;`,
     this.patternLibrary.set('ecommerce_product_description', {
       pattern: /generate.*product.*description|describe.*product|write.*listing/i,
       optimization: 'Use template with variable substitution',
-      savings: 0.3
+      savings: 0.3,
     });
-    
+
     this.patternLibrary.set('ecommerce_review_summary', {
       pattern: /summarize.*reviews?|analyze.*customer.*feedback/i,
       optimization: 'Batch process reviews together',
-      savings: 0.4
+      savings: 0.4,
     });
-    
+
     // SaaS patterns
     this.patternLibrary.set('saas_error_analysis', {
       pattern: /analyze.*error|debug.*issue|troubleshoot/i,
       optimization: 'Use structured error templates',
-      savings: 0.25
+      savings: 0.25,
     });
-    
+
     this.patternLibrary.set('saas_documentation', {
       pattern: /generate.*documentation|write.*docs|create.*api.*reference/i,
       optimization: 'Cache documentation components',
-      savings: 0.5
+      savings: 0.5,
     });
-    
+
     // Customer service patterns
     this.patternLibrary.set('support_ticket_classification', {
       pattern: /classify.*ticket|categorize.*support|route.*inquiry/i,
       optimization: 'Use lightweight classification model',
-      savings: 0.6
+      savings: 0.6,
     });
-    
+
     this.patternLibrary.set('support_response_generation', {
       pattern: /reply.*customer|respond.*inquiry|answer.*question/i,
       optimization: 'Use response templates with personalization',
-      savings: 0.45
+      savings: 0.45,
     });
   }
 }

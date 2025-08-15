@@ -1,8 +1,5 @@
 {
-  "ExpandedNodes": [
-    "",
-    "\\.claude"
-  ],
+  "ExpandedNodes": ["", "\\.claude"],
   "SelectedNode": "\\.claude\\CLAUDE.md",
   "PreviewInSolutionExplorer": false
 }

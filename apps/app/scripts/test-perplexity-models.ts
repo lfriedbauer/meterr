@@ -7,7 +7,7 @@ dotenv.config();
 
 async function testPerplexityModels() {
   console.log('🔍 Testing more Perplexity model variations...\n');
-  
+
   const models = [
     // Try without prefixes
     'sonar',
@@ -24,9 +24,9 @@ async function testPerplexityModels() {
     'pplx-7b-online',
     'pplx-70b-online',
     'pplx-7b-chat',
-    'pplx-70b-chat'
+    'pplx-70b-chat',
   ];
-  
+
   for (const model of models) {
     try {
       const response = await axios.post(
@@ -38,10 +38,10 @@ async function testPerplexityModels() {
         },
         {
           headers: {
-            'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+            'Content-Type': 'application/json',
           },
-          timeout: 5000
+          timeout: 5000,
         }
       );
       console.log(`✅ ${model} works!`);
@@ -56,7 +56,7 @@ async function testPerplexityModels() {
       }
     }
   }
-  
+
   console.log('\n❌ No working Perplexity models found');
   return null;
 }

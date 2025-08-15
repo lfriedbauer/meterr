@@ -7,7 +7,7 @@ dotenv.config();
 
 async function testPerplexityModels() {
   console.log('🔍 Testing Perplexity models...\n');
-  
+
   const models = [
     'sonar-small-chat',
     'sonar-small-online',
@@ -19,9 +19,9 @@ async function testPerplexityModels() {
     'llama-3-sonar-large-32k-chat',
     'llama-3-sonar-large-32k-online',
     'llama-3-8b-instruct',
-    'llama-3-70b-instruct'
+    'llama-3-70b-instruct',
   ];
-  
+
   for (const model of models) {
     try {
       const response = await axios.post(
@@ -33,9 +33,9 @@ async function testPerplexityModels() {
         },
         {
           headers: {
-            'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
         }
       );
       console.log(`✅ ${model} works`);
@@ -48,7 +48,7 @@ async function testPerplexityModels() {
 
 async function testGrokModels() {
   console.log('\n🔍 Testing Grok models...\n');
-  
+
   const models = [
     'grok',
     'grok-1',
@@ -56,9 +56,9 @@ async function testGrokModels() {
     'grok-beta',
     'grok-2-beta',
     'grok-2-latest',
-    'grok-latest'
+    'grok-latest',
   ];
-  
+
   for (const model of models) {
     try {
       const response = await axios.post(
@@ -67,13 +67,13 @@ async function testGrokModels() {
           model,
           messages: [{ role: 'user', content: 'Hi' }],
           max_tokens: 10,
-          stream: false
+          stream: false,
         },
         {
           headers: {
-            'Authorization': `Bearer ${process.env.XAI_API_KEY}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${process.env.XAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
         }
       );
       console.log(`✅ ${model} works`);

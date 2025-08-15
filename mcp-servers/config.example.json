@@ -9,7 +9,11 @@
     },
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:\\Users\\Owner\\Projects\\meterr"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\Owner\\Projects\\meterr"
+      ]
     },
     "github": {
       "command": "npx",

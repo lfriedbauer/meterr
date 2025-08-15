@@ -22,15 +22,15 @@ export default function Dashboard() {
       const res = await fetch('/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, companyName })
+        body: JSON.stringify({ email, companyName }),
       });
-      
+
       const data = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(data.error || data.message || 'Failed to create customer');
       }
-      
+
       // Use the customer ID whether new or existing
       setCustomerId(data.customer.id);
       setStep(2);
@@ -51,15 +51,15 @@ export default function Dashboard() {
         body: JSON.stringify({
           provider,
           keyName: 'Production Key',
-          apiKey
-        })
+          apiKey,
+        }),
       });
-      
+
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || 'Failed to add API key');
       }
-      
+
       setStep(3);
       // Try to generate Quick Win
       generateQuickWin();
@@ -74,9 +74,9 @@ export default function Dashboard() {
     setLoading(true);
     try {
       const res = await fetch(`/api/customers/${customerId}/quick-win`, {
-        method: 'POST'
+        method: 'POST',
       });
-      
+
       if (res.ok) {
         const data = await res.json();
         if (data.quickWin) {
@@ -106,21 +106,27 @@ export default function Dashboard() {
         {/* Progress Steps */}
         <div className="flex justify-center mb-12">
           <div className="flex items-center space-x-4">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-              step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
-            }`}>
+            <div
+              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
+              }`}
+            >
               1
             </div>
             <div className={`w-32 h-1 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`} />
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-              step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
-            }`}>
+            <div
+              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
+              }`}
+            >
               2
             </div>
             <div className={`w-32 h-1 ${step >= 3 ? 'bg-blue-600' : 'bg-gray-200'}`} />
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-              step >= 3 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
-            }`}>
+            <div
+              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                step >= 3 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
+              }`}
+            >
               3
             </div>
           </div>
@@ -139,9 +145,7 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold mb-6">Step 1: Tell us about your company</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Work Email
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Work Email</label>
                   <input
                     type="email"
                     value={email}
@@ -209,7 +213,11 @@ export default function Dashboard() {
                   <p className="mt-2 text-sm text-gray-500">
                     Get your API key from{' '}
                     <a
-                      href={provider === 'anthropic' ? 'https://console.anthropic.com/settings/keys' : 'https://platform.openai.com/api-keys'}
+                      href={
+                        provider === 'anthropic'
+                          ? 'https://console.anthropic.com/settings/keys'
+                          : 'https://platform.openai.com/api-keys'
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline"
@@ -232,7 +240,7 @@ export default function Dashboard() {
           {step === 3 && (
             <div>
               <h2 className="text-2xl font-bold mb-6">Step 3: Your Optimization Insights</h2>
-              
+
               {loading ? (
                 <div className="text-center py-12">
                   <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -246,7 +254,7 @@ export default function Dashboard() {
                       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
                         <h3 className="text-xl font-bold text-blue-800 mb-4">{quickWin.title}</h3>
                         <p className="text-gray-700 mb-4">{quickWin.description}</p>
-                        
+
                         <div className="bg-white p-4 rounded-lg mb-4">
                           <p className="text-sm text-gray-500">Total Savings Potential</p>
                           <p className="text-3xl font-bold text-green-600">
@@ -255,14 +263,21 @@ export default function Dashboard() {
                         </div>
 
                         {quickWin.insights.map((insight: any, idx: number) => (
-                          <div key={idx} className="bg-white p-4 rounded-lg mb-4 border-l-4 border-blue-500">
+                          <div
+                            key={idx}
+                            className="bg-white p-4 rounded-lg mb-4 border-l-4 border-blue-500"
+                          >
                             <div className="flex justify-between items-start mb-2">
                               <h4 className="font-bold text-gray-800">{insight.title}</h4>
-                              <span className={`px-2 py-1 text-xs rounded ${
-                                insight.implementation_effort === 'low' ? 'bg-green-100 text-green-800' :
-                                insight.implementation_effort === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                'bg-red-100 text-red-800'
-                              }`}>
+                              <span
+                                className={`px-2 py-1 text-xs rounded ${
+                                  insight.implementation_effort === 'low'
+                                    ? 'bg-green-100 text-green-800'
+                                    : insight.implementation_effort === 'medium'
+                                      ? 'bg-yellow-100 text-yellow-800'
+                                      : 'bg-red-100 text-red-800'
+                                }`}
+                              >
                                 {insight.implementation_effort} effort
                               </span>
                             </div>
@@ -271,12 +286,12 @@ export default function Dashboard() {
                               <span className="text-green-600 font-medium">
                                 Save ${insight.savings_potential.toLocaleString()}/mo
                               </span>
-                              <span className="text-blue-600">
-                                ROI in {insight.roi_days} days
-                              </span>
+                              <span className="text-blue-600">ROI in {insight.roi_days} days</span>
                             </div>
                             <div className="bg-gray-50 p-3 rounded">
-                              <p className="text-xs font-medium text-gray-700 mb-2">Recommendations:</p>
+                              <p className="text-xs font-medium text-gray-700 mb-2">
+                                Recommendations:
+                              </p>
                               <ul className="text-xs text-gray-600 space-y-1">
                                 {insight.specific_recommendations?.map((rec: string, i: number) => (
                                   <li key={i}>• {rec}</li>
@@ -292,7 +307,7 @@ export default function Dashboard() {
                     <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
                       <h3 className="text-xl font-bold text-green-800 mb-2">{quickWin.title}</h3>
                       <p className="text-gray-700 mb-4">{quickWin.description}</p>
-                      
+
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="bg-white p-4 rounded-lg">
                           <p className="text-sm text-gray-500">Monthly Savings</p>
@@ -317,8 +332,8 @@ export default function Dashboard() {
 
                       <div className="mt-4 pt-4 border-t border-green-200">
                         <p className="text-sm text-gray-600">
-                          Confidence: {quickWin.confidencePercentage || 95}% | 
-                          Risk: {quickWin.riskLevel || 'Low'}
+                          Confidence: {quickWin.confidencePercentage || 95}% | Risk:{' '}
+                          {quickWin.riskLevel || 'Low'}
                         </p>
                       </div>
                     </div>
@@ -337,7 +352,9 @@ export default function Dashboard() {
               ) : (
                 <div className="py-12">
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
-                    <h3 className="font-bold text-yellow-800 mb-2">Upload Your Usage Data for Deep Analysis</h3>
+                    <h3 className="font-bold text-yellow-800 mb-2">
+                      Upload Your Usage Data for Deep Analysis
+                    </h3>
                     <p className="text-sm text-yellow-700 mb-4">
                       Export your usage CSV from OpenAI or Anthropic dashboard to get:
                     </p>
@@ -359,13 +376,13 @@ export default function Dashboard() {
                             const formData = new FormData();
                             formData.append('file', file);
                             formData.append('provider', provider);
-                            
+
                             try {
                               const res = await fetch(`/api/customers/${customerId}/import-csv`, {
                                 method: 'POST',
-                                body: formData
+                                body: formData,
                               });
-                              
+
                               if (res.ok) {
                                 const data = await res.json();
                                 if (data.insights && data.insights.length > 0) {
@@ -373,7 +390,7 @@ export default function Dashboard() {
                                     title: 'Advanced Optimization Insights',
                                     description: `Found ${data.insights.length} optimization opportunities`,
                                     insights: data.insights,
-                                    totalSavings: data.totalSavingsPotential
+                                    totalSavings: data.totalSavingsPotential,
                                   });
                                 }
                               }
@@ -403,9 +420,7 @@ export default function Dashboard() {
         {/* Footer */}
         <div className="mt-12 text-center text-sm text-gray-500">
           <p>Questions? Email us at support@meterr.ai</p>
-          <p className="mt-2">
-            🔒 Privacy-first: We only analyze metadata, never your prompts
-          </p>
+          <p className="mt-2">🔒 Privacy-first: We only analyze metadata, never your prompts</p>
           {customerId && (
             <button
               onClick={() => {

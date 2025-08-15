@@ -11,16 +11,16 @@ const proxy = httpProxy.createProxyMiddleware({
     // Intercept response
     const body = await getBody(proxyRes);
     const cost = calculateCost(body);
-    
+
     // Log to database
     await logUsage({
       timestamp: Date.now(),
       endpoint: req.path,
       model: body.model,
       usage: body.usage,
-      cost: cost
+      cost: cost,
     });
-  }
+  },
 });
 
 app.use('/v1', proxy);

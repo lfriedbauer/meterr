@@ -7,7 +7,7 @@ dotenv.config();
 
 async function testPerplexityDebug() {
   console.log('🔍 Testing Perplexity API with debug info...\n');
-  
+
   try {
     const response = await axios.post(
       'https://api.perplexity.ai/chat/completions',
@@ -15,16 +15,16 @@ async function testPerplexityDebug() {
         model: 'llama-3.1-sonar-small-128k-online',
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: 'Say hello' }
+          { role: 'user', content: 'Say hello' },
         ],
         temperature: 0.7,
         max_tokens: 100,
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
     console.log('✅ Perplexity Success:', response.data);
@@ -38,7 +38,7 @@ async function testPerplexityDebug() {
 
 async function testGrokDebug() {
   console.log('\n🔍 Testing Grok API with debug info...\n');
-  
+
   try {
     const response = await axios.post(
       'https://api.x.ai/v1/chat/completions',
@@ -46,17 +46,17 @@ async function testGrokDebug() {
         model: 'grok-beta',
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: 'Say hello' }
+          { role: 'user', content: 'Say hello' },
         ],
         temperature: 0.7,
         max_tokens: 100,
-        stream: false
+        stream: false,
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.XAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${process.env.XAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
     console.log('✅ Grok Success:', response.data);

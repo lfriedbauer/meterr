@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
 import { writeFileSync } from 'fs';
 import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
@@ -19,7 +19,7 @@ interface AgentVerification {
 class PricingCrossVerification {
   private client: UnifiedLLMClient;
   private verifications: AgentVerification[] = [];
-  
+
   constructor() {
     this.client = new UnifiedLLMClient({
       openai: process.env.OPENAI_API_KEY,
@@ -32,7 +32,7 @@ class PricingCrossVerification {
 
   async verifyWithAllAgents() {
     console.log('🔍 CROSS-VERIFYING "PAY WHAT YOU SAVE" MODEL\n');
-    console.log('=' .repeat(60) + '\n');
+    console.log('='.repeat(60) + '\n');
 
     const pricingModel = `
     Meterr.ai Pricing: "Pay What You Save"
@@ -51,26 +51,26 @@ class PricingCrossVerification {
 
     // 1. Claude as Skeptical CFO
     await this.verifyWithClaude(pricingModel);
-    
+
     // 2. GPT-4 as Market Analyst
     await this.verifyWithGPT(pricingModel);
-    
+
     // 3. Gemini as Competitor Intelligence
     await this.verifyWithGemini(pricingModel);
-    
+
     // 4. Perplexity as Customer Research
     await this.verifyWithPerplexity(pricingModel);
-    
+
     // 5. Grok as Devil's Advocate
     await this.verifyWithGrok(pricingModel);
-    
+
     // Generate consensus
     await this.generateConsensus();
   }
 
   async verifyWithClaude(model: string) {
     console.log('🤖 CLAUDE (Skeptical CFO Perspective):\n');
-    
+
     const prompt = `As a skeptical CFO who's seen every SaaS pricing model, evaluate this:
 
     ${model}
@@ -84,25 +84,25 @@ class PricingCrossVerification {
     
     Be brutally honest about the flaws.`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log(response.response.substring(0, 1000));
     console.log('\n' + '-'.repeat(60) + '\n');
-    
+
     this.verifications.push({
       agent: 'Claude',
       role: 'Skeptical CFO',
       verdict: 'approve', // Will be parsed from response
-      reasoning: response.response
+      reasoning: response.response,
     });
   }
 
   async verifyWithGPT(model: string) {
     console.log('🤖 GPT-4 (Market Analyst Perspective):\n');
-    
+
     const prompt = `As a SaaS market analyst, evaluate this pricing model:
 
     ${model}
@@ -116,25 +116,25 @@ class PricingCrossVerification {
     
     How does this compare to industry standards?`;
 
-    const response = await this.client.queryOpenAI({ 
+    const response = await this.client.queryOpenAI({
       prompt,
-      model: 'gpt-4-turbo-preview'
+      model: 'gpt-4-turbo-preview',
     });
-    
+
     console.log(response.response.substring(0, 1000));
     console.log('\n' + '-'.repeat(60) + '\n');
-    
+
     this.verifications.push({
       agent: 'GPT-4',
       role: 'Market Analyst',
       verdict: 'approve',
-      reasoning: response.response
+      reasoning: response.response,
     });
   }
 
   async verifyWithGemini(model: string) {
     console.log('🤖 GEMINI (Competitive Intelligence):\n');
-    
+
     const prompt = `Compare this pricing model to competitors:
 
     ${model}
@@ -153,21 +153,21 @@ class PricingCrossVerification {
     5. Will this win against established players?`;
 
     const response = await this.client.queryGemini({ prompt });
-    
+
     console.log(response.response.substring(0, 1000));
     console.log('\n' + '-'.repeat(60) + '\n');
-    
+
     this.verifications.push({
       agent: 'Gemini',
       role: 'Competitive Intelligence',
       verdict: 'approve',
-      reasoning: response.response
+      reasoning: response.response,
     });
   }
 
   async verifyWithPerplexity(model: string) {
     console.log('🤖 PERPLEXITY (Customer Research):\n');
-    
+
     const prompt = `Research how customers typically react to performance-based pricing:
 
     ${model}
@@ -182,21 +182,21 @@ class PricingCrossVerification {
     What does the data say about this approach?`;
 
     const response = await this.client.queryPerplexity({ prompt });
-    
+
     console.log(response.response.substring(0, 1000));
     console.log('\n' + '-'.repeat(60) + '\n');
-    
+
     this.verifications.push({
       agent: 'Perplexity',
       role: 'Customer Research',
       verdict: 'approve',
-      reasoning: response.response
+      reasoning: response.response,
     });
   }
 
   async verifyWithGrok(model: string) {
-    console.log('🤖 GROK (Devil\'s Advocate):\n');
-    
+    console.log("🤖 GROK (Devil's Advocate):\n");
+
     const prompt = `Play devil's advocate on this pricing model:
 
     ${model}
@@ -211,46 +211,46 @@ class PricingCrossVerification {
     Don't hold back - destroy this model if you can.`;
 
     try {
-      const response = await this.client.queryGrok({ 
+      const response = await this.client.queryGrok({
         prompt,
-        model: 'grok-4-latest'
+        model: 'grok-4-latest',
       });
-      
+
       console.log(response.response.substring(0, 1000));
       console.log('\n' + '-'.repeat(60) + '\n');
-      
+
       this.verifications.push({
         agent: 'Grok',
-        role: 'Devil\'s Advocate',
+        role: "Devil's Advocate",
         verdict: 'concerns',
-        reasoning: response.response
+        reasoning: response.response,
       });
     } catch (error) {
-      console.log('Grok unavailable, using GPT-4 as Devil\'s Advocate instead...\n');
-      const response = await this.client.queryOpenAI({ 
+      console.log("Grok unavailable, using GPT-4 as Devil's Advocate instead...\n");
+      const response = await this.client.queryOpenAI({
         prompt,
-        model: 'gpt-4-turbo-preview'
+        model: 'gpt-4-turbo-preview',
       });
-      
+
       console.log(response.response.substring(0, 1000));
       console.log('\n' + '-'.repeat(60) + '\n');
-      
+
       this.verifications.push({
         agent: 'GPT-4 (as Grok)',
-        role: 'Devil\'s Advocate',
+        role: "Devil's Advocate",
         verdict: 'concerns',
-        reasoning: response.response
+        reasoning: response.response,
       });
     }
   }
 
   async generateConsensus() {
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log('📊 GENERATING MULTI-AGENT CONSENSUS\n');
 
-    const allFeedback = this.verifications.map(v => 
-      `${v.agent} (${v.role}): ${v.reasoning.substring(0, 500)}`
-    ).join('\n\n');
+    const allFeedback = this.verifications
+      .map((v) => `${v.agent} (${v.role}): ${v.reasoning.substring(0, 500)}`)
+      .join('\n\n');
 
     const consensusPrompt = `Based on all agent feedback about our "Pay What You Save" pricing model:
 
@@ -265,42 +265,42 @@ class PricingCrossVerification {
     
     Give me the unfiltered truth.`;
 
-    const consensus = await this.client.queryClaude({ 
+    const consensus = await this.client.queryClaude({
       prompt: consensusPrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log('🎯 FINAL CONSENSUS:\n');
     console.log(consensus.response);
-    
+
     return consensus.response;
   }
 
   async testWithRealScenarios() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🧪 TESTING EDGE CASES\n');
 
     const scenarios = [
       {
         name: 'The Optimizer',
-        situation: 'Customer already optimized 50% themselves before we arrived'
+        situation: 'Customer already optimized 50% themselves before we arrived',
       },
       {
         name: 'The Grower',
-        situation: 'Customer\'s AI usage grows 200% but efficiently - no waste to cut'
+        situation: "Customer's AI usage grows 200% but efficiently - no waste to cut",
       },
       {
         name: 'The Seasonal',
-        situation: 'Customer has 10x AI usage in December for holiday season'
+        situation: 'Customer has 10x AI usage in December for holiday season',
       },
       {
         name: 'The Merger',
-        situation: 'Customer acquires another company mid-contract'
+        situation: 'Customer acquires another company mid-contract',
       },
       {
         name: 'The Cheapskate',
-        situation: 'Customer implements our free recommendations but doesn\'t let us "save" them'
-      }
+        situation: 'Customer implements our free recommendations but doesn\'t let us "save" them',
+      },
     ];
 
     for (const scenario of scenarios) {
@@ -317,7 +317,7 @@ class PricingCrossVerification {
   }
 
   async generateFinalReport() {
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log('📋 FINAL VERIFICATION REPORT\n');
 
     const report = {
@@ -325,7 +325,7 @@ class PricingCrossVerification {
       model: 'Pay What You Save - 20% of savings',
       verifications: this.verifications,
       recommendation: await this.generateConsensus(),
-      edgeCases: await this.testWithRealScenarios()
+      edgeCases: await this.testWithRealScenarios(),
     };
 
     const reportPath = path.join(
@@ -333,30 +333,30 @@ class PricingCrossVerification {
       'research-results',
       'pricing-cross-verification.json'
     );
-    
+
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
     console.log(`📁 Verification report saved to: ${reportPath}`);
-    
+
     return report;
   }
 }
 
 async function main() {
   const verifier = new PricingCrossVerification();
-  
+
   console.log('🚀 MULTI-AGENT PRICING VERIFICATION\n');
   console.log('Consulting 5 different AI perspectives...\n');
-  
+
   // Run comprehensive verification
   await verifier.verifyWithAllAgents();
-  
+
   // Test edge cases
   await verifier.testWithRealScenarios();
-  
+
   // Generate final report
   await verifier.generateFinalReport();
-  
-  console.log('\n' + '=' .repeat(60));
+
+  console.log('\n' + '='.repeat(60));
   console.log('✅ CROSS-VERIFICATION COMPLETE\n');
   console.log('The verdict from all agents has been compiled.\n');
 }

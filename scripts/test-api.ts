@@ -22,8 +22,8 @@ async function testAPI() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: 'test@quickwin.com',
-        companyName: 'Quick Win Test Co'
-      })
+        companyName: 'Quick Win Test Co',
+      }),
     });
 
     if (!customerResponse.ok) {
@@ -37,11 +37,11 @@ async function testAPI() {
 
     // Test 2: Add OpenAI API key (you'll need to provide a real key)
     console.log('\n2. Testing API key storage...');
-    console.log('⚠️  Note: You\'ll need to add a real OpenAI API key via the dashboard');
+    console.log("⚠️  Note: You'll need to add a real OpenAI API key via the dashboard");
 
     // For now, let's just test the endpoint structure
     const apiKeyResponse = await fetch(`${BASE_URL}/api/customers/${customer.id}/api-keys`, {
-      method: 'GET'
+      method: 'GET',
     });
 
     if (!apiKeyResponse.ok) {
@@ -54,7 +54,7 @@ async function testAPI() {
     // Test 3: Test Quick Win endpoint (without real data)
     console.log('\n3. Testing Quick Win endpoint...');
     const quickWinResponse = await fetch(`${BASE_URL}/api/customers/${customer.id}/quick-win`, {
-      method: 'GET'
+      method: 'GET',
     });
 
     if (!quickWinResponse.ok) {
@@ -85,9 +85,11 @@ async function testAPI() {
 }
 
 // Run the test
-testAPI().then(success => {
-  process.exit(success ? 0 : 1);
-}).catch(error => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+testAPI()
+  .then((success) => {
+    process.exit(success ? 0 : 1);
+  })
+  .catch((error) => {
+    console.error('Fatal error:', error);
+    process.exit(1);
+  });

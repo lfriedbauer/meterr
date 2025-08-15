@@ -21,7 +21,7 @@ const REGISTRY_PATH = path.join(__dirname, '..', '.claude', 'context', 'agent-re
  */
 function spawnAgent(name, type, parent, objectives, context = {}) {
   const timestamp = new Date().toISOString();
-  
+
   // Create agent definition
   const agentDef = `# ${name} Agent
 
@@ -38,7 +38,7 @@ ${timestamp}
 active
 
 ## Objectives
-${objectives.map(obj => `- ${obj}`).join('\n')}
+${objectives.map((obj) => `- ${obj}`).join('\n')}
 
 ## Context
 ${JSON.stringify(context, null, 2)}
@@ -65,7 +65,7 @@ Collaborates with: ${context.collaborators || 'TBD'}
   // Write agent definition file
   const agentPath = path.join(AGENTS_DIR, `${name}.md`);
   fs.writeFileSync(agentPath, agentDef);
-  
+
   // Update registry
   const registry = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf8'));
   registry.agents[name] = {
@@ -76,22 +76,22 @@ Collaborates with: ${context.collaborators || 'TBD'}
     lastActivity: timestamp,
     currentTask: 'Initializing',
     objectives: objectives,
-    subAgents: []
+    subAgents: [],
   };
-  
+
   // Update parent's subAgents
   if (registry.agents[parent]) {
     registry.agents[parent].subAgents.push(name);
   }
-  
+
   // Update statistics
   registry.statistics.totalAgentsCreated++;
   registry.statistics.activeAgents++;
-  
+
   // Save registry
   registry.lastUpdate = timestamp;
   fs.writeFileSync(REGISTRY_PATH, JSON.stringify(registry, null, 2));
-  
+
   console.log(`✅ Agent '${name}' spawned successfully`);
   console.log(`   Type: ${type}`);
   console.log(`   Parent: ${parent}`);
@@ -101,17 +101,21 @@ Collaborates with: ${context.collaborators || 'TBD'}
 // CLI interface
 if (require.main === module) {
   const args = process.argv.slice(2);
-  
+
   if (args.length < 4) {
-    console.log('Usage: node agent-spawn.js <name> <type> <parent> <objective1,objective2,...> [context]');
-    console.log('Example: node agent-spawn.js payment-integrator feature-specialist builder "Implement Stripe,Handle webhooks" "{\\"workingDir\\":\\"packages/@meterr/billing\\"}"');
+    console.log(
+      'Usage: node agent-spawn.js <name> <type> <parent> <objective1,objective2,...> [context]'
+    );
+    console.log(
+      'Example: node agent-spawn.js payment-integrator feature-specialist builder "Implement Stripe,Handle webhooks" "{\\"workingDir\\":\\"packages/@meterr/billing\\"}"'
+    );
     process.exit(1);
   }
-  
+
   const [name, type, parent, objectivesStr, contextStr = '{}'] = args;
   const objectives = objectivesStr.split(',');
   const context = JSON.parse(contextStr);
-  
+
   spawnAgent(name, type, parent, objectives, context);
 }
 

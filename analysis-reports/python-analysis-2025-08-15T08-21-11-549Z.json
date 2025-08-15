@@ -32,11 +32,7 @@
       "implementation": {
         "approach": "Hybrid Architecture: FastAPI (Python) for ML + Next.js (TypeScript) for UI",
         "timeline": "3 months for full integration",
-        "resources": [
-          "1 ML Engineer",
-          "Python hosting infrastructure",
-          "ML model storage"
-        ],
+        "resources": ["1 ML Engineer", "Python hosting infrastructure", "ML model storage"],
         "architecture": "Microservices with REST/GraphQL API between Python and Node.js"
       }
     },
@@ -47,9 +43,7 @@
         "Current customers may not need advanced ML features - focus on core value first",
         "Consider alternatives: Use cloud ML APIs (Google Cloud ML, AWS SageMaker) instead of local Python, Focus on prompt engineering optimizations (doable in JS), Partner with ML-specialized company for advanced features, Use pre-trained models via API rather than custom training, Implement basic anomaly detection in JS, upgrade later if needed"
       ],
-      "corrections": [
-        "Performance gains may be overstated - realistic gain is 2-3x, not 10x"
-      ],
+      "corrections": ["Performance gains may be overstated - realistic gain is 2-3x, not 10x"],
       "finalVerdict": "SKEPTIC VERDICT: Premature to add Python. Focus on delivering value with TypeScript first. \n      Revisit Python when: (1) You have paying customers requesting ML features, \n      (2) JS alternatives proven insufficient, (3) You have resources for dual-stack maintenance."
     },
     "finalRecommendation": "no",

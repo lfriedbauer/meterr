@@ -4,7 +4,7 @@
  * Falls back to CPU when GPU unavailable
  */
 
-import { spawn, ChildProcess } from 'child_process';
+import { type ChildProcess, spawn } from 'child_process';
 import { EventEmitter } from 'events';
 
 export interface GPUTokenizerConfig {
@@ -27,7 +27,7 @@ export class GPUTokenizer extends EventEmitter {
       device: config.device ?? 0,
       batchSize: config.batchSize ?? 1000,
       modelType: config.modelType ?? 'gpt-4',
-      pythonPath: config.pythonPath ?? 'python'
+      pythonPath: config.pythonPath ?? 'python',
     };
   }
 
@@ -44,15 +44,21 @@ export class GPUTokenizer extends EventEmitter {
       // Spawn Python process with GPU tokenizer
       this.pythonProcess = spawn(this.config.pythonPath, [
         'scripts/gpu_tokenizer.py',
-        '--device', this.config.device.toString(),
-        '--batch-size', this.config.batchSize.toString(),
-        '--model', this.config.modelType
+        '--device',
+        this.config.device.toString(),
+        '--batch-size',
+        this.config.batchSize.toString(),
+        '--model',
+        this.config.modelType,
       ]);
 
       // Handle Python process output
       this.pythonProcess.stdout?.on('data', (data: Buffer) => {
         try {
-          const lines = data.toString().split('\n').filter(line => line.trim());
+          const lines = data
+            .toString()
+            .split('\n')
+            .filter((line) => line.trim());
           for (const line of lines) {
             const response = JSON.parse(line);
             const pending = this.requestQueue.get(response.id);
@@ -85,9 +91,8 @@ export class GPUTokenizer extends EventEmitter {
       });
 
       // Wait for initialization
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       return this.isInitialized;
-
     } catch (error) {
       console.error('GPU tokenizer initialization failed:', error);
       return false;
@@ -100,7 +105,7 @@ export class GPUTokenizer extends EventEmitter {
     }
 
     const id = `req_${++this.requestId}`;
-    
+
     return new Promise((resolve, reject) => {
       // Store promise handlers
       this.requestQueue.set(id, { resolve, reject });
@@ -125,15 +130,15 @@ export class GPUTokenizer extends EventEmitter {
     speedup: number;
   }> {
     // Generate test texts
-    const texts = Array(numTexts).fill(null).map((_, i) => 
-      `This is test text number ${i} with some tokens to count. `.repeat(10)
-    );
+    const texts = Array(numTexts)
+      .fill(null)
+      .map((_, i) => `This is test text number ${i} with some tokens to count. `.repeat(10));
 
     console.log(`Benchmarking with ${numTexts} texts...`);
 
     // CPU benchmark (using simple approximation)
     const cpuStart = Date.now();
-    const cpuCounts = texts.map(text => text.split(' ').length * 1.3); // Rough approximation
+    const cpuCounts = texts.map((text) => text.split(' ').length * 1.3); // Rough approximation
     const cpuTime = Date.now() - cpuStart;
     console.log(`CPU: ${cpuTime}ms`);
 
@@ -181,13 +186,13 @@ export async function getGPUTokenizer(): Promise<GPUTokenizer | null> {
 export function countTokensCPU(text: string, model: string = 'gpt-4'): number {
   // Simple approximation - in production you'd use tiktoken or similar
   const words = text.split(/\s+/).length;
-  
+
   // Different models have different tokenization rates
   const ratios: Record<string, number> = {
     'gpt-4': 1.3,
     'gpt-3.5-turbo': 1.35,
-    'claude-3': 1.25
+    'claude-3': 1.25,
   };
-  
+
   return Math.ceil(words * (ratios[model] || 1.3));
 }

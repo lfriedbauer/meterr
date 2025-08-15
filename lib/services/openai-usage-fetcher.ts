@@ -1,12 +1,12 @@
 /**
  * OpenAI Usage Fetcher
- * 
+ *
  * Fetches usage data from customer's OpenAI account
  * Stores only metadata - never actual prompts
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { ApiKeyManager } from './api-key-manager';
+import type { ApiKeyManager } from './api-key-manager';
 
 // Types
 export interface UsageMetadata {
@@ -38,12 +38,8 @@ export interface UsageSummary {
 export class OpenAIUsageFetcher {
   private supabase;
   private apiKeyManager: ApiKeyManager;
-  
-  constructor(
-    supabaseUrl: string, 
-    supabaseKey: string,
-    apiKeyManager: ApiKeyManager
-  ) {
+
+  constructor(supabaseUrl: string, supabaseKey: string, apiKeyManager: ApiKeyManager) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.apiKeyManager = apiKeyManager;
   }
@@ -83,9 +79,9 @@ export class OpenAIUsageFetcher {
       return { success: true, summary };
     } catch (error) {
       console.error('Error fetching usage data:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -95,21 +91,17 @@ export class OpenAIUsageFetcher {
    * Note: OpenAI's usage API is limited, so this is a simplified version
    * In production, you might need to use their billing/usage endpoints
    */
-  private async fetchFromOpenAI(
-    apiKey: string,
-    startDate: Date,
-    endDate: Date
-  ): Promise<any[]> {
+  private async fetchFromOpenAI(apiKey: string, startDate: Date, endDate: Date): Promise<any[]> {
     try {
       // OpenAI doesn't provide detailed usage via API yet
       // This is a placeholder for when they do
       // For now, we'll simulate with their available endpoints
-      
+
       // In production, you would:
       // 1. Use OpenAI's usage dashboard API when available
       // 2. Or ask customers to export and upload usage data
       // 3. Or use a webhook integration if OpenAI provides it
-      
+
       // Simulated data structure for development
       const mockUsage = [
         {
@@ -119,8 +111,8 @@ export class OpenAIUsageFetcher {
           timestamp: new Date(),
           metadata: {
             hasCode: false,
-            avgResponseTime: 2500
-          }
+            avgResponseTime: 2500,
+          },
         },
         {
           model: 'gpt-4',
@@ -129,8 +121,8 @@ export class OpenAIUsageFetcher {
           timestamp: new Date(),
           metadata: {
             hasCode: false,
-            avgResponseTime: 1200
-          }
+            avgResponseTime: 1200,
+          },
         },
         {
           model: 'gpt-4o-mini',
@@ -139,9 +131,9 @@ export class OpenAIUsageFetcher {
           timestamp: new Date(),
           metadata: {
             hasCode: true,
-            avgResponseTime: 800
-          }
-        }
+            avgResponseTime: 800,
+          },
+        },
       ];
 
       return mockUsage;
@@ -154,10 +146,7 @@ export class OpenAIUsageFetcher {
   /**
    * Process usage data and store metadata only
    */
-  private async processUsageData(
-    customerId: string,
-    usageData: any[]
-  ): Promise<UsageMetadata[]> {
+  private async processUsageData(customerId: string, usageData: any[]): Promise<UsageMetadata[]> {
     const metadata: UsageMetadata[] = [];
 
     for (const usage of usageData) {
@@ -171,7 +160,7 @@ export class OpenAIUsageFetcher {
         hasCodeContent: usage.metadata?.hasCode || false,
         questionType,
         responseTimeMs: usage.metadata?.avgResponseTime,
-        timestamp: usage.timestamp
+        timestamp: usage.timestamp,
       };
 
       metadata.push(metadataItem);
@@ -203,28 +192,23 @@ export class OpenAIUsageFetcher {
   /**
    * Store usage pattern in database
    */
-  private async storeUsagePattern(
-    customerId: string,
-    metadata: UsageMetadata
-  ): Promise<void> {
+  private async storeUsagePattern(customerId: string, metadata: UsageMetadata): Promise<void> {
     try {
       // Generate embedding for pattern detection
       // This would be done with text-embedding-3-small
       // For now, we'll store without embedding
-      
-      await this.supabase
-        .from('usage_patterns')
-        .insert({
-          customer_id: customerId,
-          provider: 'openai',
-          model: metadata.model,
-          token_count: metadata.tokenCount,
-          cost_usd: metadata.costUsd,
-          has_code_content: metadata.hasCodeContent,
-          question_type: metadata.questionType,
-          response_time_ms: metadata.responseTimeMs,
-          usage_timestamp: metadata.timestamp.toISOString()
-        });
+
+      await this.supabase.from('usage_patterns').insert({
+        customer_id: customerId,
+        provider: 'openai',
+        model: metadata.model,
+        token_count: metadata.tokenCount,
+        cost_usd: metadata.costUsd,
+        has_code_content: metadata.hasCodeContent,
+        question_type: metadata.questionType,
+        response_time_ms: metadata.responseTimeMs,
+        usage_timestamp: metadata.timestamp.toISOString(),
+      });
     } catch (error) {
       console.error('Error storing usage pattern:', error);
       // Continue processing even if storage fails
@@ -239,7 +223,7 @@ export class OpenAIUsageFetcher {
       totalCost: 0,
       totalTokens: 0,
       modelBreakdown: {},
-      potentialSavings: 0
+      potentialSavings: 0,
     };
 
     for (const item of metadata) {
@@ -250,7 +234,7 @@ export class OpenAIUsageFetcher {
         summary.modelBreakdown[item.model] = {
           cost: 0,
           tokens: 0,
-          count: 0
+          count: 0,
         };
       }
 
@@ -274,14 +258,14 @@ export class OpenAIUsageFetcher {
     // Check if GPT-4 is being used for simple tasks
     if (summary.modelBreakdown['gpt-4']) {
       const gpt4Usage = summary.modelBreakdown['gpt-4'];
-      
+
       // Estimate that 70% of GPT-4 usage could use GPT-4o-mini
       const potentialMiniUsage = gpt4Usage.tokens * 0.7;
-      
+
       // GPT-4 costs ~$0.03/1K tokens, GPT-4o-mini costs ~$0.00015/1K tokens
       const currentCost = (potentialMiniUsage / 1000) * 0.03;
       const optimizedCost = (potentialMiniUsage / 1000) * 0.00015;
-      
+
       savings += currentCost - optimizedCost;
     }
 
@@ -291,10 +275,7 @@ export class OpenAIUsageFetcher {
   /**
    * Get historical usage patterns for analysis
    */
-  async getUsagePatterns(
-    customerId: string,
-    days: number = 30
-  ): Promise<UsageMetadata[]> {
+  async getUsagePatterns(customerId: string, days: number = 30): Promise<UsageMetadata[]> {
     try {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
@@ -311,14 +292,14 @@ export class OpenAIUsageFetcher {
         return [];
       }
 
-      return data.map(item => ({
+      return data.map((item) => ({
         tokenCount: item.token_count,
         costUsd: item.cost_usd,
         model: item.model,
         hasCodeContent: item.has_code_content,
         questionType: item.question_type,
         responseTimeMs: item.response_time_ms,
-        timestamp: new Date(item.usage_timestamp)
+        timestamp: new Date(item.usage_timestamp),
       }));
     } catch (error) {
       console.error('Error in getUsagePatterns:', error);

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
 import { writeFileSync } from 'fs';
 import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config();
 
@@ -99,18 +99,18 @@ class AgentDialogue {
     const finalClaims = await Promise.all([
       this.getAgentResponse('research', consensusPrompt + ' Be specific but accurate.'),
       this.getAgentResponse('skeptic', consensusPrompt + ' Be conservative but fair.'),
-      this.getAgentResponse('analyst', consensusPrompt + ' Balance all perspectives.')
+      this.getAgentResponse('analyst', consensusPrompt + ' Balance all perspectives.'),
     ]);
 
     // Determine consensus
     const consensus = this.assessConsensus(finalClaims);
-    
+
     return {
       originalClaim: researchClaim,
       finalClaim: consensus.claim,
       consensus: consensus.agreed,
       confidence: consensus.confidence,
-      dialogue: this.dialogue
+      dialogue: this.dialogue,
     };
   }
 
@@ -123,14 +123,14 @@ class AgentDialogue {
       research: 'You are an optimistic market research agent. ',
       skeptic: 'You are a skeptical validator who questions everything. ',
       factchecker: 'You are a fact-checking agent with access to web data. ',
-      analyst: 'You are a balanced analytical agent. '
+      analyst: 'You are a balanced analytical agent. ',
     };
 
     const fullPrompt = (agentPrompts[agentType] || '') + prompt;
 
     try {
       let response;
-      
+
       switch (preferredModel) {
         case 'perplexity':
           response = await this.client.queryPerplexity({ prompt: fullPrompt });
@@ -158,19 +158,23 @@ class AgentDialogue {
       to,
       type,
       content,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   }
 
-  private assessConsensus(claims: string[]): { claim: string; agreed: boolean; confidence: number } {
+  private assessConsensus(claims: string[]): {
+    claim: string;
+    agreed: boolean;
+    confidence: number;
+  } {
     // Simple consensus: if all three are similar, high confidence
     const similarities = this.calculateSimilarities(claims);
-    
+
     if (similarities > 0.7) {
       return {
         claim: claims[2], // Use analyst's balanced version
         agreed: true,
-        confidence: Math.round(similarities * 100)
+        confidence: Math.round(similarities * 100),
       };
     }
 
@@ -178,37 +182,37 @@ class AgentDialogue {
     return {
       claim: claims[1], // Skeptic's version
       agreed: false,
-      confidence: 40
+      confidence: 40,
     };
   }
 
   private calculateSimilarities(texts: string[]): number {
     // Simple similarity based on shared words
-    const words = texts.map(t => new Set(t.toLowerCase().split(/\s+/)));
-    
+    const words = texts.map((t) => new Set(t.toLowerCase().split(/\s+/)));
+
     let totalSimilarity = 0;
     let comparisons = 0;
-    
+
     for (let i = 0; i < words.length; i++) {
       for (let j = i + 1; j < words.length; j++) {
-        const intersection = new Set([...words[i]].filter(x => words[j].has(x)));
+        const intersection = new Set([...words[i]].filter((x) => words[j].has(x)));
         const union = new Set([...words[i], ...words[j]]);
         totalSimilarity += intersection.size / union.size;
         comparisons++;
       }
     }
-    
+
     return totalSimilarity / comparisons;
   }
 }
 
 async function validateMarketingClaims() {
   const dialogue = new AgentDialogue();
-  
+
   const claimsToValidate = [
     'companies lack visibility into AI costs',
     'businesses waste money on suboptimal AI model selection',
-    'the market for AI expense management tools'
+    'the market for AI expense management tools',
   ];
 
   const results: DialogueResult[] = [];
@@ -216,16 +220,16 @@ async function validateMarketingClaims() {
   for (const claim of claimsToValidate) {
     console.log('\n' + '='.repeat(60));
     const result = await dialogue.runDialogue(claim);
-    
+
     console.log('\n📋 Dialogue Result:');
     console.log(`Original: "${result.originalClaim}"`);
     console.log(`Final: "${result.finalClaim}"`);
     console.log(`Consensus: ${result.consensus ? 'YES' : 'NO'} (${result.confidence}% confidence)`);
-    
+
     results.push(result);
-    
+
     // Rate limiting
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 3000));
   }
 
   // Save dialogue results
@@ -235,24 +239,31 @@ async function validateMarketingClaims() {
     `agent-dialogue-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
   );
 
-  writeFileSync(reportPath, JSON.stringify({
-    timestamp: new Date().toISOString(),
-    dialogues: results,
-    summary: {
-      totalClaims: results.length,
-      consensusReached: results.filter(r => r.consensus).length,
-      averageConfidence: Math.round(
-        results.reduce((sum, r) => sum + r.confidence, 0) / results.length
-      )
-    }
-  }, null, 2));
+  writeFileSync(
+    reportPath,
+    JSON.stringify(
+      {
+        timestamp: new Date().toISOString(),
+        dialogues: results,
+        summary: {
+          totalClaims: results.length,
+          consensusReached: results.filter((r) => r.consensus).length,
+          averageConfidence: Math.round(
+            results.reduce((sum, r) => sum + r.confidence, 0) / results.length
+          ),
+        },
+      },
+      null,
+      2
+    )
+  );
 
   console.log(`\n📁 Dialogue report saved to: ${reportPath}`);
 }
 
 async function validatePricingStructure() {
   console.log('\n💰 Validating Pricing Structure Through Agent Dialogue\n');
-  
+
   const client = new UnifiedLLMClient({
     openai: process.env.OPENAI_API_KEY,
     anthropic: process.env.ANTHROPIC_API_KEY,
@@ -268,21 +279,21 @@ async function validatePricingStructure() {
     - Team plan (2-50 users, collaboration features)  
     - Enterprise plan (50+ users, SSO, SLA)
     Compare to ChatGPT Plus ($20), Claude Pro ($20), Notion ($8-15/user).`,
-    
+
     realist: `As a realistic market analyst, critique this pricing idea for meterr.ai:
     Solopreneur: $40-5000/month, Team: $7-5000/month, Enterprise: $20+/month
     What's wrong here and what would actually work?`,
-    
+
     competitor: `As a competitive intelligence agent, research what similar tools charge:
     - Helicone, Langfuse, Weights & Biases for AI observability
     - Datadog, New Relic for general observability
-    Suggest competitive pricing for meterr.ai.`
+    Suggest competitive pricing for meterr.ai.`,
   };
 
   const responses = await Promise.all([
     client.queryGemini({ prompt: pricingPrompts.optimist }),
     client.queryClaude({ prompt: pricingPrompts.realist }),
-    client.queryPerplexity({ prompt: pricingPrompts.competitor })
+    client.queryPerplexity({ prompt: pricingPrompts.competitor }),
   ]);
 
   console.log('💡 Optimist:', responses[0].response.substring(0, 300));
@@ -291,7 +302,7 @@ async function validatePricingStructure() {
 
   // Final pricing consensus
   const consensusPrompt = `Based on these perspectives:
-  ${responses.map(r => r.response.substring(0, 200)).join('\n')}
+  ${responses.map((r) => r.response.substring(0, 200)).join('\n')}
   
   Provide final realistic pricing tiers for meterr.ai.`;
 
@@ -303,13 +314,13 @@ async function validatePricingStructure() {
 
 async function main() {
   console.log('🤖 Starting Intelligent Agent Dialogue System\n');
-  
+
   // Run claim validation dialogues
   await validateMarketingClaims();
-  
+
   // Run pricing validation
   await validatePricingStructure();
-  
+
   console.log('\n✨ Agent dialogue complete!');
 }
 

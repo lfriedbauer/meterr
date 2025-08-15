@@ -3,7 +3,7 @@
  * Handles importing usage data from OpenAI/Anthropic CSV exports
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { CSVImporter } from '@/lib/services/csv-importer';
 
 // Lazy initialization
@@ -22,47 +22,35 @@ function getCSVImporter() {
 /**
  * POST /api/customers/[id]/import-csv - Import CSV usage data
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: customerId } = await params;
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const provider = formData.get('provider') as string || 'openai';
+    const provider = (formData.get('provider') as string) || 'openai';
 
     if (!file) {
-      return NextResponse.json(
-        { error: 'No file provided' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
     // Read file content
     const csvContent = await file.text();
-    
+
     // Import and analyze
     const result = await getCSVImporter().importOpenAICSV(customerId, csvContent);
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Failed to import CSV' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to import CSV' }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
       message: `Imported ${result.rowsImported} usage records`,
       insights: result.insights,
-      totalSavingsPotential: result.insights.reduce((sum, i) => sum + i.savings_potential, 0)
+      totalSavingsPotential: result.insights.reduce((sum, i) => sum + i.savings_potential, 0),
     });
   } catch (error) {
     console.error('Error importing CSV:', error);
-    return NextResponse.json(
-      { error: 'Failed to process CSV file' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to process CSV file' }, { status: 500 });
   }
 }

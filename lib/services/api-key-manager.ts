@@ -1,6 +1,6 @@
 /**
  * Customer API Key Management System
- * 
+ *
  * Core principle: Customers own and control their API keys
  * We only store encrypted versions for their convenience
  */
@@ -39,7 +39,7 @@ export interface ApiKeyValidation {
  */
 export class ApiKeyManager {
   private supabase;
-  
+
   constructor(supabaseUrl: string, supabaseKey: string) {
     this.supabase = createClient(supabaseUrl, supabaseKey);
   }
@@ -54,14 +54,14 @@ export class ApiKeyManager {
     try {
       // Skip validation for test keys
       const isTestKey = apiKey.apiKey.startsWith('sk-test-') || apiKey.apiKey.includes('test');
-      
+
       if (!isTestKey) {
         // Validate the API key first
         const validation = await this.validateApiKey(apiKey.provider, apiKey.apiKey);
         if (!validation.isValid) {
-          return { 
-            success: false, 
-            error: `Invalid ${apiKey.provider} API key: ${validation.error}` 
+          return {
+            success: false,
+            error: `Invalid ${apiKey.provider} API key: ${validation.error}`,
           };
         }
       }
@@ -70,9 +70,11 @@ export class ApiKeyManager {
       const keyHint = '...' + apiKey.apiKey.slice(-4);
 
       // Store encrypted key in database using database encryption function
-      const { data: encryptedData, error: encryptError } = await this.supabase
-        .rpc('encrypt_api_key', { key_text: apiKey.apiKey });
-      
+      const { data: encryptedData, error: encryptError } = await this.supabase.rpc(
+        'encrypt_api_key',
+        { key_text: apiKey.apiKey }
+      );
+
       if (encryptError) {
         console.error('Encryption error:', encryptError);
         return { success: false, error: 'Failed to encrypt API key' };
@@ -86,7 +88,7 @@ export class ApiKeyManager {
           key_name: apiKey.keyName,
           encrypted_key: encryptedData,
           key_hint: keyHint,
-          is_active: true
+          is_active: true,
         })
         .select('id')
         .single();
@@ -99,15 +101,15 @@ export class ApiKeyManager {
       // Log the action for audit
       await this.logAudit(customerId, 'api_key_added', {
         provider: apiKey.provider,
-        keyName: apiKey.keyName
+        keyName: apiKey.keyName,
       });
 
       return { success: true, keyId: data.id };
     } catch (error) {
       console.error('Error in storeApiKey:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -116,10 +118,7 @@ export class ApiKeyManager {
    * Retrieve a customer's API key (decrypted)
    * Note: This should only be used server-side for API calls
    */
-  async getApiKey(
-    customerId: string,
-    provider: string
-  ): Promise<string | null> {
+  async getApiKey(customerId: string, provider: string): Promise<string | null> {
     try {
       const { data, error } = await this.supabase
         .from('customer_api_keys')
@@ -143,13 +142,15 @@ export class ApiKeyManager {
 
       // Decrypt and return
       // Decrypt using database function
-      const { data: decryptedKey, error: decryptError } = await this.supabase
-        .rpc('decrypt_api_key', { encrypted_text: data.encrypted_key });
-      
+      const { data: decryptedKey, error: decryptError } = await this.supabase.rpc(
+        'decrypt_api_key',
+        { encrypted_text: data.encrypted_key }
+      );
+
       if (decryptError) {
         throw new Error('Failed to decrypt API key');
       }
-      
+
       return decryptedKey;
     } catch (error) {
       console.error('Error retrieving API key:', error);
@@ -174,13 +175,13 @@ export class ApiKeyManager {
         return [];
       }
 
-      return data.map(key => ({
+      return data.map((key) => ({
         id: key.id,
         provider: key.provider,
         keyName: key.key_name,
         keyHint: key.key_hint,
         isActive: key.is_active,
-        lastUsedAt: key.last_used_at ? new Date(key.last_used_at) : null
+        lastUsedAt: key.last_used_at ? new Date(key.last_used_at) : null,
       }));
     } catch (error) {
       console.error('Error in listApiKeys:', error);
@@ -212,9 +213,9 @@ export class ApiKeyManager {
       return { success: true };
     } catch (error) {
       console.error('Error revoking API key:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -222,32 +223,29 @@ export class ApiKeyManager {
   /**
    * Validate an API key by testing it
    */
-  private async validateApiKey(
-    provider: string,
-    apiKey: string
-  ): Promise<ApiKeyValidation> {
+  private async validateApiKey(provider: string, apiKey: string): Promise<ApiKeyValidation> {
     try {
       switch (provider) {
         case 'openai':
           return await this.validateOpenAIKey(apiKey);
-        
+
         case 'anthropic':
           return await this.validateAnthropicKey(apiKey);
-        
+
         case 'stripe':
           return await this.validateStripeKey(apiKey);
-        
+
         case 'analytics':
           // Google Analytics, Mixpanel, etc.
           return { isValid: true }; // Simplified for now
-        
+
         default:
           return { isValid: true }; // Allow unknown providers
       }
     } catch (error) {
-      return { 
-        isValid: false, 
-        error: error instanceof Error ? error.message : 'Validation failed' 
+      return {
+        isValid: false,
+        error: error instanceof Error ? error.message : 'Validation failed',
       };
     }
   }
@@ -259,8 +257,8 @@ export class ApiKeyManager {
     try {
       const response = await fetch('https://api.openai.com/v1/models', {
         headers: {
-          'Authorization': `Bearer ${apiKey}`
-        }
+          Authorization: `Bearer ${apiKey}`,
+        },
       });
 
       if (!response.ok) {
@@ -273,8 +271,8 @@ export class ApiKeyManager {
       // Get usage if available
       const usageResponse = await fetch('https://api.openai.com/v1/usage', {
         headers: {
-          'Authorization': `Bearer ${apiKey}`
-        }
+          Authorization: `Bearer ${apiKey}`,
+        },
       });
 
       if (usageResponse.ok) {
@@ -284,16 +282,16 @@ export class ApiKeyManager {
           usage: {
             limit: usage.limit || 0,
             used: usage.used || 0,
-            remaining: usage.remaining || 0
-          }
+            remaining: usage.remaining || 0,
+          },
         };
       }
 
       return { isValid: true };
     } catch (error) {
-      return { 
-        isValid: false, 
-        error: error instanceof Error ? error.message : 'Connection failed' 
+      return {
+        isValid: false,
+        error: error instanceof Error ? error.message : 'Connection failed',
       };
     }
   }
@@ -308,13 +306,13 @@ export class ApiKeyManager {
         headers: {
           'x-api-key': apiKey,
           'anthropic-version': '2023-06-01',
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         },
         body: JSON.stringify({
           model: 'claude-3-haiku-20240307',
           messages: [{ role: 'user', content: 'test' }],
-          max_tokens: 1
-        })
+          max_tokens: 1,
+        }),
       });
 
       // 401 means invalid key, 400 might mean valid key but bad request
@@ -324,9 +322,9 @@ export class ApiKeyManager {
 
       return { isValid: true };
     } catch (error) {
-      return { 
-        isValid: false, 
-        error: error instanceof Error ? error.message : 'Connection failed' 
+      return {
+        isValid: false,
+        error: error instanceof Error ? error.message : 'Connection failed',
       };
     }
   }
@@ -338,16 +336,16 @@ export class ApiKeyManager {
     try {
       // Check if it's a restricted key with read-only access
       if (!apiKey.startsWith('rk_')) {
-        return { 
-          isValid: false, 
-          error: 'Please provide a restricted read-only Stripe key (starts with rk_)' 
+        return {
+          isValid: false,
+          error: 'Please provide a restricted read-only Stripe key (starts with rk_)',
         };
       }
 
       const response = await fetch('https://api.stripe.com/v1/balance', {
         headers: {
-          'Authorization': `Bearer ${apiKey}`
-        }
+          Authorization: `Bearer ${apiKey}`,
+        },
       });
 
       if (response.status === 401) {
@@ -356,9 +354,9 @@ export class ApiKeyManager {
 
       return { isValid: true };
     } catch (error) {
-      return { 
-        isValid: false, 
-        error: error instanceof Error ? error.message : 'Connection failed' 
+      return {
+        isValid: false,
+        error: error instanceof Error ? error.message : 'Connection failed',
       };
     }
   }
@@ -370,16 +368,19 @@ export class ApiKeyManager {
   private async encryptKey(apiKey: string): Promise<string> {
     // This is a simplified version - use proper KMS in production
     const algorithm = 'aes-256-gcm';
-    const key = Buffer.from(process.env.ENCRYPTION_KEY || 'default-key-change-in-production', 'utf-8');
+    const key = Buffer.from(
+      process.env.ENCRYPTION_KEY || 'default-key-change-in-production',
+      'utf-8'
+    );
     const iv = crypto.randomBytes(16);
-    
+
     const cipher = crypto.createCipheriv(algorithm, crypto.scryptSync(key, 'salt', 32), iv);
-    
+
     let encrypted = cipher.update(apiKey, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     const authTag = cipher.getAuthTag();
-    
+
     return iv.toString('hex') + ':' + authTag.toString('hex') + ':' + encrypted;
   }
 
@@ -392,16 +393,19 @@ export class ApiKeyManager {
       const iv = Buffer.from(parts[0], 'hex');
       const authTag = Buffer.from(parts[1], 'hex');
       const encrypted = parts[2];
-      
+
       const algorithm = 'aes-256-gcm';
-      const key = Buffer.from(process.env.ENCRYPTION_KEY || 'default-key-change-in-production', 'utf-8');
-      
+      const key = Buffer.from(
+        process.env.ENCRYPTION_KEY || 'default-key-change-in-production',
+        'utf-8'
+      );
+
       const decipher = crypto.createDecipheriv(algorithm, crypto.scryptSync(key, 'salt', 32), iv);
       decipher.setAuthTag(authTag);
-      
+
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
-      
+
       return decrypted;
     } catch (error) {
       console.error('Decryption error:', error);
@@ -412,20 +416,14 @@ export class ApiKeyManager {
   /**
    * Log audit event
    */
-  private async logAudit(
-    customerId: string,
-    action: string,
-    metadata: any
-  ): Promise<void> {
+  private async logAudit(customerId: string, action: string, metadata: any): Promise<void> {
     try {
-      await this.supabase
-        .from('audit_logs')
-        .insert({
-          customer_id: customerId,
-          action,
-          metadata,
-          entity_type: 'api_key'
-        });
+      await this.supabase.from('audit_logs').insert({
+        customer_id: customerId,
+        action,
+        metadata,
+        entity_type: 'api_key',
+      });
     } catch (error) {
       console.error('Failed to log audit event:', error);
       // Don't throw - audit logging shouldn't break the main flow

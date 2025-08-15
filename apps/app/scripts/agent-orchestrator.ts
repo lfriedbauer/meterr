@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
-import dotenv from 'dotenv';
-import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
-import path from 'path';
 import { execSync } from 'child_process';
+import dotenv from 'dotenv';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
@@ -61,7 +61,7 @@ export class OrchestratorAgent {
     'agent-platform-builder',
     'quick-win-detector',
     'csv-importer',
-    'cost-anomaly-detector'
+    'cost-anomaly-detector',
   ];
 
   constructor() {
@@ -72,7 +72,7 @@ export class OrchestratorAgent {
       perplexity: process.env.PERPLEXITY_API_KEY,
       xai: process.env.XAI_API_KEY,
     });
-    
+
     this.outputDir = path.join(process.cwd(), 'orchestrator-reports');
     if (!existsSync(this.outputDir)) {
       mkdirSync(this.outputDir, { recursive: true });
@@ -84,8 +84,8 @@ export class OrchestratorAgent {
    */
   async orchestrateSystemAnalysis(marketFeedback: string): Promise<SystemAnalysis> {
     console.log('🎯 ORCHESTRATOR AGENT ACTIVATED\n');
-    console.log('=' .repeat(70) + '\n');
-    
+    console.log('='.repeat(70) + '\n');
+
     const analysis: SystemAnalysis = {
       timestamp: new Date(),
       overallStatus: 'needs-improvement',
@@ -94,26 +94,28 @@ export class OrchestratorAgent {
       competitiveLandscape: [],
       agentReports: [],
       strategicRecommendations: [],
-      actionPlan: []
+      actionPlan: [],
     };
 
     // Step 1: Analyze market feedback deeply
     console.log('📊 Step 1: Deep Market Analysis\n');
     const marketAnalysis = await this.analyzeMarketFeedback(marketFeedback);
     analysis.coreProblems = marketAnalysis.problems;
-    
+
     // Step 2: Competitive landscape analysis
     console.log('\n🔍 Step 2: Competitive Landscape Analysis\n');
     analysis.competitiveLandscape = await this.analyzeCompetitors();
-    
+
     // Step 3: Evaluate each existing agent
     console.log('\n🤖 Step 3: Agent Performance Evaluation\n');
     for (const agent of this.existingAgents) {
       const report = await this.evaluateAgent(agent, marketFeedback);
       analysis.agentReports.push(report);
-      console.log(`   ${report.status === 'optimal' ? '✅' : report.status === 'critical' ? '❌' : '⚠️'} ${agent}: ${report.marketAlignmentScore}/100`);
+      console.log(
+        `   ${report.status === 'optimal' ? '✅' : report.status === 'critical' ? '❌' : '⚠️'} ${agent}: ${report.marketAlignmentScore}/100`
+      );
     }
-    
+
     // Step 4: Generate strategic recommendations
     console.log('\n💡 Step 4: Strategic Recommendations\n');
     analysis.strategicRecommendations = await this.generateStrategicRecommendations(
@@ -121,24 +123,24 @@ export class OrchestratorAgent {
       analysis.agentReports,
       analysis.competitiveLandscape
     );
-    
+
     // Step 5: Create actionable plan
     console.log('\n📋 Step 5: Action Plan Generation\n');
     analysis.actionPlan = await this.createActionPlan(analysis.strategicRecommendations);
-    
+
     // Step 6: Determine overall status
     analysis.overallStatus = this.determineOverallStatus(analysis.agentReports);
-    
+
     // Save comprehensive report
     await this.saveReport(analysis);
-    
+
     return analysis;
   }
 
   /**
    * Deep analysis of market feedback
    */
-  private async analyzeMarketFeedback(feedback: string): Promise<{problems: string[]}> {
+  private async analyzeMarketFeedback(feedback: string): Promise<{ problems: string[] }> {
     const prompt = `As a product strategy expert, analyze this market feedback for an AI expense tracking tool:
 
 "${feedback}"
@@ -151,22 +153,22 @@ Identify:
 
 Be brutally honest and specific.`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt,
-      model: 'claude-3-5-sonnet-20241022'
+      model: 'claude-3-5-sonnet-20241022',
     });
 
     // Parse response to extract core problems
     const problems = [
-      "Asking for API keys without showing immediate unique value",
-      "Recommendations are too generic and obvious (caching, batching)",
-      "Not solving a painful enough problem to justify the friction",
-      "Missing domain-specific insights that require expertise",
-      "No differentiation from free provider dashboards"
+      'Asking for API keys without showing immediate unique value',
+      'Recommendations are too generic and obvious (caching, batching)',
+      'Not solving a painful enough problem to justify the friction',
+      'Missing domain-specific insights that require expertise',
+      'No differentiation from free provider dashboards',
     ];
 
     console.log('Core Problems Identified:');
-    problems.forEach(p => console.log(`   • ${p}`));
+    problems.forEach((p) => console.log(`   • ${p}`));
 
     return { problems };
   }
@@ -200,18 +202,14 @@ Focus on what makes them worth paying for vs free alternatives.`;
           'One-line integration with proxy',
           'Automatic caching that actually saves money',
           'Custom rate limiting and retry logic',
-          'Detailed request logs for debugging'
+          'Detailed request logs for debugging',
         ],
-        ourAdvantage: [
-          'Multi-provider support',
-          'Deeper cost analysis',
-          'Team-based insights'
-        ],
+        ourAdvantage: ['Multi-provider support', 'Deeper cost analysis', 'Team-based insights'],
         gaps: [
           'Their caching is automatic and transparent',
           'Zero-config value delivery',
-          'Developer-focused features'
-        ]
+          'Developer-focused features',
+        ],
       },
       {
         competitor: 'Langfuse',
@@ -219,18 +217,11 @@ Focus on what makes them worth paying for vs free alternatives.`;
           'Production debugging capabilities',
           'Trace entire LLM chains',
           'Quality scoring and evaluation',
-          'Dataset management'
+          'Dataset management',
         ],
-        ourAdvantage: [
-          'Cost focus vs quality focus',
-          'Simpler for non-technical users'
-        ],
-        gaps: [
-          'Deep technical debugging tools',
-          'Chain tracing capabilities',
-          'Quality metrics'
-        ]
-      }
+        ourAdvantage: ['Cost focus vs quality focus', 'Simpler for non-technical users'],
+        gaps: ['Deep technical debugging tools', 'Chain tracing capabilities', 'Quality metrics'],
+      },
     ];
 
     return competitors;
@@ -247,22 +238,22 @@ Focus on what makes them worth paying for vs free alternatives.`;
         currentCapabilities: [
           'Identifies model downgrade opportunities',
           'Calculates potential savings',
-          'Provides implementation snippets'
+          'Provides implementation snippets',
         ],
         weaknesses: [
           'Only suggests obvious model downgrades',
-          'Doesn\'t analyze actual usage patterns deeply',
+          "Doesn't analyze actual usage patterns deeply",
           'Missing domain-specific optimizations',
-          'No learning from customer feedback'
+          'No learning from customer feedback',
         ],
         recommendations: [
           'Add pattern recognition for specific use cases',
           'Identify wasteful prompt patterns unique to each customer',
           'Suggest architectural changes, not just model swaps',
-          'Learn from successful optimizations across customers'
+          'Learn from successful optimizations across customers',
         ],
         marketAlignmentScore: 40,
-        uniqueValueScore: 30
+        uniqueValueScore: 30,
       },
       'csv-importer': {
         agentName: 'csv-importer',
@@ -270,22 +261,22 @@ Focus on what makes them worth paying for vs free alternatives.`;
         currentCapabilities: [
           'Parses OpenAI/Anthropic CSV files',
           'Generates basic insights',
-          'Detects batching opportunities'
+          'Detects batching opportunities',
         ],
         weaknesses: [
           'Generic insights everyone already knows',
           'No industry-specific analysis',
           'Missing cross-customer intelligence',
-          'No predictive capabilities'
+          'No predictive capabilities',
         ],
         recommendations: [
           'Build industry-specific pattern library',
           'Compare against anonymized peer benchmarks',
           'Predict future costs based on growth patterns',
-          'Identify anomalies specific to their use case'
+          'Identify anomalies specific to their use case',
         ],
         marketAlignmentScore: 35,
-        uniqueValueScore: 25
+        uniqueValueScore: 25,
       },
       'agent-dialogue': {
         agentName: 'agent-dialogue',
@@ -293,20 +284,20 @@ Focus on what makes them worth paying for vs free alternatives.`;
         currentCapabilities: [
           'Multi-agent validation',
           'Market research capabilities',
-          'Consensus building'
+          'Consensus building',
         ],
         weaknesses: [
           'Not integrated into customer-facing features',
           'Operates in isolation',
-          'No real-time value delivery'
+          'No real-time value delivery',
         ],
         recommendations: [
           'Use for real-time optimization suggestions',
           'Validate customer-specific patterns',
-          'Generate custom insights per industry'
+          'Generate custom insights per industry',
         ],
         marketAlignmentScore: 50,
-        uniqueValueScore: 60
+        uniqueValueScore: 60,
       },
       'agent-platform-builder': {
         agentName: 'agent-platform-builder',
@@ -314,51 +305,46 @@ Focus on what makes them worth paying for vs free alternatives.`;
         currentCapabilities: [
           'Rapid prototyping',
           'Multi-agent coordination',
-          'Market validation integration'
+          'Market validation integration',
         ],
         weaknesses: [
           'Not building differentiating features',
-          'Focus on generic platform capabilities'
+          'Focus on generic platform capabilities',
         ],
         recommendations: [
           'Build unique optimization engine',
           'Create industry-specific analyzers',
-          'Develop proprietary cost prediction models'
+          'Develop proprietary cost prediction models',
         ],
         marketAlignmentScore: 70,
-        uniqueValueScore: 65
+        uniqueValueScore: 65,
       },
       'cost-anomaly-detector': {
         agentName: 'cost-anomaly-detector',
         status: 'needs-improvement',
-        currentCapabilities: [
-          'Basic anomaly detection',
-          'Threshold alerts'
-        ],
-        weaknesses: [
-          'Too many false positives',
-          'No context awareness',
-          'Generic thresholds'
-        ],
+        currentCapabilities: ['Basic anomaly detection', 'Threshold alerts'],
+        weaknesses: ['Too many false positives', 'No context awareness', 'Generic thresholds'],
         recommendations: [
           'Learn normal patterns per customer',
           'Understand business context for spikes',
-          'Predictive warnings before issues occur'
+          'Predictive warnings before issues occur',
         ],
         marketAlignmentScore: 45,
-        uniqueValueScore: 40
-      }
+        uniqueValueScore: 40,
+      },
     };
 
-    return agentEvaluations[agentName] || {
-      agentName,
-      status: 'needs-improvement',
-      currentCapabilities: [],
-      weaknesses: ['Not properly evaluated'],
-      recommendations: ['Requires detailed analysis'],
-      marketAlignmentScore: 0,
-      uniqueValueScore: 0
-    };
+    return (
+      agentEvaluations[agentName] || {
+        agentName,
+        status: 'needs-improvement',
+        currentCapabilities: [],
+        weaknesses: ['Not properly evaluated'],
+        recommendations: ['Requires detailed analysis'],
+        marketAlignmentScore: 0,
+        uniqueValueScore: 0,
+      }
+    );
   }
 
   /**
@@ -373,34 +359,40 @@ Focus on what makes them worth paying for vs free alternatives.`;
       {
         priority: 'critical',
         title: 'Build Industry-Specific Intelligence Engine',
-        description: 'Create ML models trained on patterns from specific industries (e-commerce, SaaS, fintech) that provide insights competitors can\'t match',
-        expectedImpact: 'Differentiate from generic tools by providing "This is how top e-commerce companies optimize their chatbots" insights',
+        description:
+          "Create ML models trained on patterns from specific industries (e-commerce, SaaS, fintech) that provide insights competitors can't match",
+        expectedImpact:
+          'Differentiate from generic tools by providing "This is how top e-commerce companies optimize their chatbots" insights',
         implementationTime: '2 weeks',
-        requiredResources: ['ML engineer', 'Industry data', 'Domain experts']
+        requiredResources: ['ML engineer', 'Industry data', 'Domain experts'],
       },
       {
         priority: 'critical',
         title: 'Zero-Friction Value Demonstration',
-        description: 'Allow users to upload CSV or paste API response to get immediate, specific insights without connecting API keys',
-        expectedImpact: 'Prove value before asking for integration, reducing activation friction by 80%',
+        description:
+          'Allow users to upload CSV or paste API response to get immediate, specific insights without connecting API keys',
+        expectedImpact:
+          'Prove value before asking for integration, reducing activation friction by 80%',
         implementationTime: '3 days',
-        requiredResources: ['Frontend developer', 'Enhanced CSV analyzer']
+        requiredResources: ['Frontend developer', 'Enhanced CSV analyzer'],
       },
       {
         priority: 'high',
         title: 'Proprietary Optimization Algorithms',
-        description: 'Develop optimization strategies competitors don\'t have: semantic deduplication, intelligent prompt compression, cross-request caching',
+        description:
+          "Develop optimization strategies competitors don't have: semantic deduplication, intelligent prompt compression, cross-request caching",
         expectedImpact: 'Deliver 40-60% cost reduction vs 10-20% from generic advice',
         implementationTime: '1 week',
-        requiredResources: ['AI engineer', 'Optimization researcher']
+        requiredResources: ['AI engineer', 'Optimization researcher'],
       },
       {
         priority: 'high',
         title: 'Peer Benchmarking System',
-        description: 'Show how customer\'s AI spending compares to similar companies anonymously',
-        expectedImpact: 'Create FOMO and urgency - "You\'re spending 3x more than similar SaaS companies"',
+        description: "Show how customer's AI spending compares to similar companies anonymously",
+        expectedImpact:
+          'Create FOMO and urgency - "You\'re spending 3x more than similar SaaS companies"',
         implementationTime: '1 week',
-        requiredResources: ['Data engineer', 'Privacy lawyer']
+        requiredResources: ['Data engineer', 'Privacy lawyer'],
       },
       {
         priority: 'medium',
@@ -408,12 +400,12 @@ Focus on what makes them worth paying for vs free alternatives.`;
         description: 'Intercept API calls in browser and show real-time optimization suggestions',
         expectedImpact: 'Immediate value during development, viral growth potential',
         implementationTime: '1 week',
-        requiredResources: ['Extension developer', 'Real-time optimization engine']
-      }
+        requiredResources: ['Extension developer', 'Real-time optimization engine'],
+      },
     ];
 
     console.log('Strategic Recommendations:');
-    recommendations.forEach(r => {
+    recommendations.forEach((r) => {
       console.log(`   [${r.priority.toUpperCase()}] ${r.title}`);
       console.log(`          Impact: ${r.expectedImpact}`);
     });
@@ -424,18 +416,22 @@ Focus on what makes them worth paying for vs free alternatives.`;
   /**
    * Create actionable plan with assignments
    */
-  private async createActionPlan(recommendations: StrategicRecommendation[]): Promise<ActionItem[]> {
+  private async createActionPlan(
+    recommendations: StrategicRecommendation[]
+  ): Promise<ActionItem[]> {
     const actionItems: ActionItem[] = [];
     let itemId = 1;
 
-    for (const rec of recommendations.filter(r => r.priority === 'critical' || r.priority === 'high')) {
+    for (const rec of recommendations.filter(
+      (r) => r.priority === 'critical' || r.priority === 'high'
+    )) {
       actionItems.push({
         id: `ACTION-${itemId++}`,
         title: `Implement: ${rec.title}`,
         assignedAgent: this.assignBestAgent(rec),
         deadline: this.calculateDeadline(rec.implementationTime),
         dependencies: this.identifyDependencies(rec),
-        successCriteria: this.defineSuccessCriteria(rec)
+        successCriteria: this.defineSuccessCriteria(rec),
       });
     }
 
@@ -451,7 +447,7 @@ Focus on what makes them worth paying for vs free alternatives.`;
       'Zero-Friction Value Demonstration': 'csv-importer',
       'Proprietary Optimization Algorithms': 'new-optimization-engine-agent',
       'Peer Benchmarking System': 'new-benchmarking-agent',
-      'Chrome Extension for Live Optimization': 'agent-platform-builder'
+      'Chrome Extension for Live Optimization': 'agent-platform-builder',
     };
 
     return agentMapping[recommendation.title] || 'orchestrator';
@@ -474,9 +470,12 @@ Focus on what makes them worth paying for vs free alternatives.`;
     const deps: Record<string, string[]> = {
       'Build Industry-Specific Intelligence Engine': ['Collect industry data', 'Train ML models'],
       'Zero-Friction Value Demonstration': ['Enhance CSV parser', 'Build demo UI'],
-      'Proprietary Optimization Algorithms': ['Research optimization techniques', 'Benchmark against competitors'],
+      'Proprietary Optimization Algorithms': [
+        'Research optimization techniques',
+        'Benchmark against competitors',
+      ],
       'Peer Benchmarking System': ['Privacy compliance', 'Data anonymization'],
-      'Chrome Extension for Live Optimization': ['Extension permissions', 'Real-time processing']
+      'Chrome Extension for Live Optimization': ['Extension permissions', 'Real-time processing'],
     };
 
     return deps[recommendation.title] || [];
@@ -490,40 +489,50 @@ Focus on what makes them worth paying for vs free alternatives.`;
       'Build Industry-Specific Intelligence Engine': [
         '90% accuracy in industry classification',
         'Provide 5+ unique insights per industry',
-        'Reduce generic recommendations by 80%'
+        'Reduce generic recommendations by 80%',
       ],
       'Zero-Friction Value Demonstration': [
         'Process CSV in <2 seconds',
         'Generate 3+ actionable insights',
-        '50% of demo users sign up'
+        '50% of demo users sign up',
       ],
       'Proprietary Optimization Algorithms': [
         'Achieve 40%+ cost reduction',
         'Zero quality degradation',
-        'Work across all major providers'
+        'Work across all major providers',
       ],
       'Peer Benchmarking System': [
         '100% anonymous data',
         'Benchmarks for 10+ industries',
-        'Update weekly'
+        'Update weekly',
       ],
       'Chrome Extension for Live Optimization': [
         'Zero performance impact',
         'Support OpenAI and Anthropic consoles',
-        '1000+ installs in first month'
-      ]
+        '1000+ installs in first month',
+      ],
     };
 
-    return criteria[recommendation.title] || ['Meet expected impact', 'Complete on time', 'Pass quality review'];
+    return (
+      criteria[recommendation.title] || [
+        'Meet expected impact',
+        'Complete on time',
+        'Pass quality review',
+      ]
+    );
   }
 
   /**
    * Determine overall system status
    */
-  private determineOverallStatus(agentReports: AgentReport[]): 'optimal' | 'needs-improvement' | 'critical' {
-    const avgMarketAlignment = agentReports.reduce((sum, r) => sum + r.marketAlignmentScore, 0) / agentReports.length;
-    const avgUniqueValue = agentReports.reduce((sum, r) => sum + r.uniqueValueScore, 0) / agentReports.length;
-    
+  private determineOverallStatus(
+    agentReports: AgentReport[]
+  ): 'optimal' | 'needs-improvement' | 'critical' {
+    const avgMarketAlignment =
+      agentReports.reduce((sum, r) => sum + r.marketAlignmentScore, 0) / agentReports.length;
+    const avgUniqueValue =
+      agentReports.reduce((sum, r) => sum + r.uniqueValueScore, 0) / agentReports.length;
+
     if (avgMarketAlignment >= 70 && avgUniqueValue >= 70) return 'optimal';
     if (avgMarketAlignment >= 50 || avgUniqueValue >= 50) return 'needs-improvement';
     return 'critical';
@@ -563,35 +572,47 @@ Focus on what makes them worth paying for vs free alternatives.`;
 "${analysis.marketFeedback}"
 
 ## Core Problems Identified
-${analysis.coreProblems.map(p => `- ${p}`).join('\n')}
+${analysis.coreProblems.map((p) => `- ${p}`).join('\n')}
 
 ## Agent Performance Summary
-${analysis.agentReports.map(r => `
+${analysis.agentReports
+  .map(
+    (r) => `
 ### ${r.agentName}
 - Status: ${r.status}
 - Market Alignment: ${r.marketAlignmentScore}/100
 - Unique Value: ${r.uniqueValueScore}/100
 - Key Weakness: ${r.weaknesses[0]}
 - Top Recommendation: ${r.recommendations[0]}
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## Top Strategic Recommendations
 ${analysis.strategicRecommendations
-  .filter(r => r.priority === 'critical' || r.priority === 'high')
-  .map(r => `
+  .filter((r) => r.priority === 'critical' || r.priority === 'high')
+  .map(
+    (r) => `
 ### [${r.priority.toUpperCase()}] ${r.title}
 ${r.description}
 - **Impact**: ${r.expectedImpact}
 - **Time**: ${r.implementationTime}
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## Immediate Action Items
-${analysis.actionPlan.slice(0, 5).map(a => `
+${analysis.actionPlan
+  .slice(0, 5)
+  .map(
+    (a) => `
 1. **${a.title}**
    - Assigned: ${a.assignedAgent}
    - Deadline: ${a.deadline}
    - Success: ${a.successCriteria[0]}
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## Conclusion
 The system currently provides generic recommendations that don't justify the $99/month price point. 
@@ -614,11 +635,14 @@ To succeed, we must:
     capabilities: string[]
   ): Promise<void> {
     console.log(`\n🔧 Spawning new agent: ${name}`);
-    
+
     const agentCode = `
 import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
-export class ${name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}Agent {
+export class ${name
+      .split('-')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join('')}Agent {
   private client: UnifiedLLMClient;
   
   constructor() {
@@ -636,14 +660,8 @@ export class ${name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).
 }
 `;
 
-    const agentPath = path.join(
-      process.cwd(),
-      'apps',
-      'app',
-      'scripts',
-      `agent-${name}.ts`
-    );
-    
+    const agentPath = path.join(process.cwd(), 'apps', 'app', 'scripts', `agent-${name}.ts`);
+
     writeFileSync(agentPath, agentCode);
     console.log(`   ✅ Agent spawned: ${agentPath}`);
   }
@@ -651,33 +669,48 @@ export class ${name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).
 
 async function main() {
   const orchestrator = new OrchestratorAgent();
-  
-  const marketFeedback = "This product is asking users to connect their API, then showing generic recommendations everyone already knows (batch processing, caching, etc.). This won't sell.";
-  
+
+  const marketFeedback =
+    "This product is asking users to connect their API, then showing generic recommendations everyone already knows (batch processing, caching, etc.). This won't sell.";
+
   console.log('🚀 ORCHESTRATOR AGENT - COMPREHENSIVE SYSTEM ANALYSIS\n');
   console.log('Analyzing all agents and generating improvement strategy...\n');
-  
+
   const analysis = await orchestrator.orchestrateSystemAnalysis(marketFeedback);
-  
-  console.log('\n' + '=' .repeat(70));
+
+  console.log('\n' + '='.repeat(70));
   console.log('📊 ANALYSIS COMPLETE\n');
   console.log(`Overall Status: ${analysis.overallStatus.toUpperCase()}`);
-  console.log(`Agents Needing Improvement: ${analysis.agentReports.filter(r => r.status !== 'optimal').length}/${analysis.agentReports.length}`);
+  console.log(
+    `Agents Needing Improvement: ${analysis.agentReports.filter((r) => r.status !== 'optimal').length}/${analysis.agentReports.length}`
+  );
   console.log(`Critical Actions: ${analysis.actionPlan.length}`);
   console.log(`\nTop Priority: ${analysis.strategicRecommendations[0]?.title}`);
-  
+
   // Spawn new agents for critical tasks
   const newAgentsNeeded = [
-    { name: 'ml-optimization', purpose: 'Build ML models for industry-specific patterns', capabilities: ['Pattern recognition', 'Cost prediction', 'Anomaly detection'] },
-    { name: 'benchmarking', purpose: 'Create peer comparison system', capabilities: ['Data anonymization', 'Statistical analysis', 'Industry classification'] },
-    { name: 'optimization-engine', purpose: 'Develop proprietary optimization algorithms', capabilities: ['Prompt compression', 'Semantic deduplication', 'Smart caching'] }
+    {
+      name: 'ml-optimization',
+      purpose: 'Build ML models for industry-specific patterns',
+      capabilities: ['Pattern recognition', 'Cost prediction', 'Anomaly detection'],
+    },
+    {
+      name: 'benchmarking',
+      purpose: 'Create peer comparison system',
+      capabilities: ['Data anonymization', 'Statistical analysis', 'Industry classification'],
+    },
+    {
+      name: 'optimization-engine',
+      purpose: 'Develop proprietary optimization algorithms',
+      capabilities: ['Prompt compression', 'Semantic deduplication', 'Smart caching'],
+    },
   ];
-  
+
   console.log('\n🔧 Spawning Specialized Agents...');
   for (const agent of newAgentsNeeded) {
     await orchestrator.spawnSpecializedAgent(agent.name, agent.purpose, agent.capabilities);
   }
-  
+
   console.log('\n✅ Orchestration complete! Check orchestrator-reports/ for detailed analysis.');
 }
 

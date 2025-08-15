@@ -1,6 +1,6 @@
 /**
  * Quick Win Detector
- * 
+ *
  * Identifies the first high-confidence optimization opportunity
  * to prove value rapidly to the customer
  */
@@ -46,7 +46,7 @@ export interface OptimizationPattern {
  */
 export class QuickWinDetector {
   private supabase;
-  
+
   // Predefined optimization patterns for Quick Wins
   private patterns: OptimizationPattern[] = [
     // OpenAI patterns
@@ -59,19 +59,19 @@ export class QuickWinDetector {
       conditions: {
         maxTokens: 500,
         hasCode: false,
-        questionTypes: ['simple_qa']
-      }
+        questionTypes: ['simple_qa'],
+      },
     },
     {
       pattern: 'faq_gpt4',
       currentModel: 'gpt-4',
       recommendedModel: 'gpt-4o-mini',
-      confidenceThreshold: 0.90,
+      confidenceThreshold: 0.9,
       riskLevel: 'low',
       conditions: {
         maxTokens: 300,
-        questionTypes: ['simple_qa']
-      }
+        questionTypes: ['simple_qa'],
+      },
     },
     {
       pattern: 'summarization_gpt4',
@@ -82,18 +82,18 @@ export class QuickWinDetector {
       conditions: {
         maxTokens: 1000,
         hasCode: false,
-        questionTypes: ['analysis']
-      }
+        questionTypes: ['analysis'],
+      },
     },
     {
       pattern: 'translation_gpt4',
       currentModel: 'gpt-4',
       recommendedModel: 'gpt-3.5-turbo',
-      confidenceThreshold: 0.90,
+      confidenceThreshold: 0.9,
       riskLevel: 'low',
       conditions: {
-        hasCode: false
-      }
+        hasCode: false,
+      },
     },
     // Anthropic patterns - ACTUAL models from your usage
     {
@@ -103,8 +103,8 @@ export class QuickWinDetector {
       confidenceThreshold: 0.92,
       riskLevel: 'low',
       conditions: {
-        maxTokens: 100000  // Removed restriction since you have heavy usage
-      }
+        maxTokens: 100000, // Removed restriction since you have heavy usage
+      },
     },
     {
       pattern: 'sonnet_new_to_haiku',
@@ -113,8 +113,8 @@ export class QuickWinDetector {
       confidenceThreshold: 0.85,
       riskLevel: 'low',
       conditions: {
-        maxTokens: 2000
-      }
+        maxTokens: 2000,
+      },
     },
     {
       pattern: 'sonnet_old_to_haiku',
@@ -123,8 +123,8 @@ export class QuickWinDetector {
       confidenceThreshold: 0.85,
       riskLevel: 'low',
       conditions: {
-        maxTokens: 2000
-      }
+        maxTokens: 2000,
+      },
     },
     {
       pattern: 'sonnet_4_to_sonnet_3_5',
@@ -132,8 +132,8 @@ export class QuickWinDetector {
       recommendedModel: 'claude-3-5-sonnet-20241022',
       confidenceThreshold: 0.95,
       riskLevel: 'low',
-      conditions: {}
-    }
+      conditions: {},
+    },
   ];
 
   constructor(supabaseUrl: string, supabaseKey: string) {
@@ -161,7 +161,7 @@ export class QuickWinDetector {
 
       // Select the best Quick Win (highest confidence, lowest risk)
       const quickWin = this.selectBestQuickWin(opportunities);
-      
+
       // Store the Quick Win in database
       if (quickWin) {
         await this.storeQuickWin(customerId, quickWin);
@@ -207,19 +207,18 @@ export class QuickWinDetector {
       // Check each optimization pattern
       for (const pattern of this.patterns) {
         if (model === pattern.currentModel) {
-          const matchingUsage = this.filterMatchingUsage(
-            usage as any,
-            pattern.conditions
-          );
+          const matchingUsage = this.filterMatchingUsage(usage as any, pattern.conditions);
 
-          if (matchingUsage.count >= 1) { // Lower threshold for POC
+          if (matchingUsage.count >= 1) {
+            // Lower threshold for POC
             const savings = this.calculateSavings(
               matchingUsage,
               pattern.currentModel,
               pattern.recommendedModel
             );
 
-            if (savings.monthly > 10) { // Lower threshold for POC, was $100
+            if (savings.monthly > 10) {
+              // Lower threshold for POC, was $100
               opportunities.push({
                 title: this.generateTitle(pattern),
                 description: this.generateDescription(pattern, matchingUsage),
@@ -228,7 +227,7 @@ export class QuickWinDetector {
                 monthlySavings: savings.monthly,
                 confidencePercentage: Math.round(pattern.confidenceThreshold * 100),
                 implementationGuide: this.generateImplementationGuide(pattern),
-                riskLevel: pattern.riskLevel
+                riskLevel: pattern.riskLevel,
               });
             }
           }
@@ -251,13 +250,14 @@ export class QuickWinDetector {
           patterns: [],
           totalCost: 0,
           totalTokens: 0,
-          count: 0
+          count: 0,
         };
       }
 
       aggregated[pattern.model].patterns.push(pattern);
       aggregated[pattern.model].totalCost += pattern.cost || 0;
-      aggregated[pattern.model].totalTokens += (pattern.input_tokens || 0) + (pattern.output_tokens || 0);
+      aggregated[pattern.model].totalTokens +=
+        (pattern.input_tokens || 0) + (pattern.output_tokens || 0);
       aggregated[pattern.model].count += 1;
     }
 
@@ -272,7 +272,7 @@ export class QuickWinDetector {
       patterns: [],
       totalCost: 0,
       totalTokens: 0,
-      count: 0
+      count: 0,
     };
 
     for (const pattern of usage.patterns) {
@@ -318,12 +318,12 @@ export class QuickWinDetector {
       'gpt-4o-mini': 0.00015,
       'gpt-3.5-turbo': 0.001,
       // Anthropic (average of input/output prices)
-      'claude-opus-4-1-20250805': 0.045,      // $15 input + $75 output / 2
-      'claude-3-5-sonnet-20241022': 0.009,    // $3 input + $15 output / 2
+      'claude-opus-4-1-20250805': 0.045, // $15 input + $75 output / 2
+      'claude-3-5-sonnet-20241022': 0.009, // $3 input + $15 output / 2
       'claude-3-5-sonnet-20240620': 0.009,
-      'claude-3-5-haiku-20241022': 0.0024,    // $0.8 input + $4 output / 2
+      'claude-3-5-haiku-20241022': 0.0024, // $0.8 input + $4 output / 2
       'claude-sonnet-4-20250514': 0.009,
-      'claude-3-haiku-20240307': 0.00075      // $0.25 input + $1.25 output / 2
+      'claude-3-haiku-20240307': 0.00075, // $0.25 input + $1.25 output / 2
     };
 
     const currentCostPerToken = (pricing[currentModel] || 0.03) / 1000;
@@ -337,7 +337,7 @@ export class QuickWinDetector {
 
     return {
       monthly: Math.round(monthlySavings * 100) / 100,
-      annual: Math.round(annualSavings * 100) / 100
+      annual: Math.round(annualSavings * 100) / 100,
     };
   }
 
@@ -372,13 +372,16 @@ export class QuickWinDetector {
    */
   private generateTitle(pattern: OptimizationPattern): string {
     const titles: Record<string, string> = {
-      'simple_qa_gpt4': 'Optimize Simple Q&A Responses',
-      'faq_gpt4': 'Switch FAQ Bot to Efficient Model',
-      'summarization_gpt4': 'Optimize Document Summarization',
-      'translation_gpt4': 'Optimize Translation Tasks'
+      simple_qa_gpt4: 'Optimize Simple Q&A Responses',
+      faq_gpt4: 'Switch FAQ Bot to Efficient Model',
+      summarization_gpt4: 'Optimize Document Summarization',
+      translation_gpt4: 'Optimize Translation Tasks',
     };
 
-    return titles[pattern.pattern] || `Switch from ${pattern.currentModel} to ${pattern.recommendedModel}`;
+    return (
+      titles[pattern.pattern] ||
+      `Switch from ${pattern.currentModel} to ${pattern.recommendedModel}`
+    );
   }
 
   /**
@@ -386,10 +389,12 @@ export class QuickWinDetector {
    */
   private generateDescription(pattern: OptimizationPattern, usage: any): string {
     const percentage = Math.round((usage.count / usage.patterns.length) * 100);
-    
-    return `We've identified that ${percentage}% of your ${pattern.currentModel} usage is for simple tasks ` +
-           `that would work perfectly with ${pattern.recommendedModel}. ` +
-           `This optimization maintains quality while significantly reducing costs.`;
+
+    return (
+      `We've identified that ${percentage}% of your ${pattern.currentModel} usage is for simple tasks ` +
+      `that would work perfectly with ${pattern.recommendedModel}. ` +
+      `This optimization maintains quality while significantly reducing costs.`
+    );
   }
 
   /**
@@ -397,7 +402,7 @@ export class QuickWinDetector {
    */
   private generateImplementationGuide(pattern: OptimizationPattern): ImplementationGuide {
     const guides: Record<string, ImplementationGuide> = {
-      'simple_qa_gpt4': {
+      simple_qa_gpt4: {
         description: 'Update your API calls to use GPT-4o-mini for simple questions',
         codeSnippet: `// Before
 const response = await openai.chat.completions.create({
@@ -421,10 +426,10 @@ const response = await openai.chat.completions.create({
           'Test with 10 simple questions',
           'Compare response quality',
           'Monitor response times',
-          'Check customer satisfaction metrics'
-        ]
+          'Check customer satisfaction metrics',
+        ],
       },
-      'faq_gpt4': {
+      faq_gpt4: {
         description: 'Configure your FAQ bot to use GPT-4o-mini',
         codeSnippet: `// Update your FAQ handler
 function getFAQResponse(question) {
@@ -442,17 +447,19 @@ function getFAQResponse(question) {
           'Test all FAQ categories',
           'Verify response accuracy',
           'Check response times improved',
-          'Monitor for customer complaints'
-        ]
-      }
+          'Monitor for customer complaints',
+        ],
+      },
     };
 
-    return guides[pattern.pattern] || {
-      description: `Switch from ${pattern.currentModel} to ${pattern.recommendedModel}`,
-      codeSnippet: `model: "${pattern.recommendedModel}" // Changed from "${pattern.currentModel}"`,
-      whereToChange: 'In your OpenAI API configuration',
-      testingSteps: ['Test with sample requests', 'Monitor quality metrics']
-    };
+    return (
+      guides[pattern.pattern] || {
+        description: `Switch from ${pattern.currentModel} to ${pattern.recommendedModel}`,
+        codeSnippet: `model: "${pattern.recommendedModel}" // Changed from "${pattern.currentModel}"`,
+        whereToChange: 'In your OpenAI API configuration',
+        testingSteps: ['Test with sample requests', 'Monitor quality metrics'],
+      }
+    );
   }
 
   /**
@@ -474,7 +481,7 @@ function getFAQResponse(question) {
           risk_score: quickWin.riskLevel === 'low' ? 2 : 5,
           implementation_code: quickWin.implementationGuide.codeSnippet,
           implementation_guide: quickWin.implementationGuide,
-          status: 'identified'
+          status: 'identified',
         })
         .select('id')
         .single();
@@ -485,16 +492,14 @@ function getFAQResponse(question) {
       }
 
       // Then store the Quick Win
-      await this.supabase
-        .from('quick_wins')
-        .insert({
-          customer_id: customerId,
-          opportunity_id: opportunity.id,
-          title: quickWin.title,
-          description: quickWin.description,
-          monthly_savings: quickWin.monthlySavings,
-          confidence_percentage: quickWin.confidencePercentage
-        });
+      await this.supabase.from('quick_wins').insert({
+        customer_id: customerId,
+        opportunity_id: opportunity.id,
+        title: quickWin.title,
+        description: quickWin.description,
+        monthly_savings: quickWin.monthlySavings,
+        confidence_percentage: quickWin.confidencePercentage,
+      });
     } catch (error) {
       console.error('Error storing Quick Win:', error);
     }

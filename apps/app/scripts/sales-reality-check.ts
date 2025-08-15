@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
 import { writeFileSync } from 'fs';
 import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config();
 
@@ -48,16 +48,16 @@ class SalesRealityChecker {
 
     // Step 1: Who actually has budget for this?
     const budgetRealityCheck = await this.checkBudgetReality(pricing);
-    
+
     // Step 2: Profile actual buyers
     const buyerProfiles = await this.profileRealBuyers();
-    
+
     // Step 3: Validate market size
     const marketSize = await this.validateMarketSize(buyerProfiles);
-    
+
     // Step 4: Sales objections and reality
     const salesChallenges = await this.identifySalesChallenges(pricing);
-    
+
     // Step 5: Competitive reality check
     const competitivePosition = await this.checkCompetitiveReality(pricing);
 
@@ -67,7 +67,7 @@ class SalesRealityChecker {
       buyerProfiles,
       marketSize,
       salesChallenges,
-      competitivePosition
+      competitivePosition,
     });
   }
 
@@ -131,9 +131,9 @@ class SalesRealityChecker {
     
     Don't make up numbers - use what's publicly known or say "unknown"`;
 
-    const response = await this.client.queryPerplexity({ 
+    const response = await this.client.queryPerplexity({
       prompt,
-      model: 'sonar' // Use web search for real data
+      model: 'sonar', // Use web search for real data
     });
     console.log('📊 Market Size Validation:\n', response.response.substring(0, 800), '\n');
     return response.response;
@@ -188,9 +188,9 @@ class SalesRealityChecker {
     
     Give me the harsh truth about competitive positioning.`;
 
-    const response = await this.client.queryOpenAI({ 
+    const response = await this.client.queryOpenAI({
       prompt,
-      model: 'gpt-4-turbo-preview' 
+      model: 'gpt-4-turbo-preview',
     });
     console.log('🥊 Competitive Reality:\n', response.response.substring(0, 800), '\n');
     return response.response;
@@ -200,7 +200,9 @@ class SalesRealityChecker {
     // Final synthesis prompt
     const synthesisPrompt = `Based on all this sales reality checking for an AI expense management tool:
     
-    ${Object.values(data).map((d: any) => d.substring(0, 300)).join('\n')}
+    ${Object.values(data)
+      .map((d: any) => d.substring(0, 300))
+      .join('\n')}
     
     Give me the brutal truth:
     1. Is there a real market for this at $50-300/month?
@@ -211,9 +213,9 @@ class SalesRealityChecker {
     
     Don't sugarcoat it. What would you tell the founder?`;
 
-    const finalAnalysis = await this.client.queryClaude({ 
+    const finalAnalysis = await this.client.queryClaude({
       prompt: synthesisPrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
 
     const report = {
@@ -222,17 +224,17 @@ class SalesRealityChecker {
         free: 'Limited usage',
         pro: '$50-75/month',
         team: '$200-300/month',
-        enterprise: 'Custom'
+        enterprise: 'Custom',
       },
       salesRealityCheck: {
         budgetReality: data.budgetRealityCheck.substring(0, 500),
         buyerProfiles: data.buyerProfiles.substring(0, 500),
         marketSize: data.marketSize.substring(0, 500),
         salesChallenges: data.salesChallenges.substring(0, 500),
-        competitivePosition: data.competitivePosition.substring(0, 500)
+        competitivePosition: data.competitivePosition.substring(0, 500),
       },
       brutalTruth: finalAnalysis.response,
-      recommendations: this.extractRecommendations(finalAnalysis.response)
+      recommendations: this.extractRecommendations(finalAnalysis.response),
     };
 
     const reportPath = path.join(
@@ -252,7 +254,7 @@ class SalesRealityChecker {
 
   private extractRecommendations(analysis: string): string[] {
     const recommendations = [];
-    
+
     if (analysis.toLowerCase().includes('lower price')) {
       recommendations.push('Consider lowering price point');
     }
@@ -268,8 +270,10 @@ class SalesRealityChecker {
     if (analysis.toLowerCase().includes('specific')) {
       recommendations.push('Narrow focus to specific buyer persona');
     }
-    
-    return recommendations.length > 0 ? recommendations : ['Gather more market data before finalizing pricing'];
+
+    return recommendations.length > 0
+      ? recommendations
+      : ['Gather more market data before finalizing pricing'];
   }
 }
 
@@ -296,7 +300,7 @@ async function deepDiveBuyerPersona() {
       - They're price sensitive (solo business)
       - They could track in a spreadsheet
       
-      What would make them buy vs not buy?`
+      What would make them buy vs not buy?`,
     },
     {
       persona: 'Series A Startup (20 employees)',
@@ -309,7 +313,7 @@ async function deepDiveBuyerPersona() {
       - They're burning $400K/month anyway
       - Board wants them to "control costs"
       
-      What's the realistic sales process?`
+      What's the realistic sales process?`,
     },
     {
       persona: 'Fractional CFO',
@@ -322,34 +326,34 @@ async function deepDiveBuyerPersona() {
       - They already use QuickBooks, Excel, etc.
       - They'd need to convince 5 CEOs
       
-      Is this a real buyer or a fantasy?`
-    }
+      Is this a real buyer or a fantasy?`,
+    },
   ];
 
   for (const scenario of scenarios) {
     console.log(`\n👤 ${scenario.persona}`);
-    console.log('=' .repeat(40));
-    
+    console.log('='.repeat(40));
+
     const response = await client.queryGemini({ prompt: scenario.prompt });
     console.log(response.response.substring(0, 600));
-    
-    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 }
 
 async function main() {
   const checker = new SalesRealityChecker();
-  
+
   // Test the validated pricing
   const validatedPricing = {
     free: 'Limited usage',
     pro: '$50-75/month',
     team: '$200-300/month',
-    enterprise: 'Custom'
+    enterprise: 'Custom',
   };
 
   await checker.validatePricingWithSalesReality(validatedPricing);
-  
+
   // Deep dive into specific personas
   await deepDiveBuyerPersona();
 

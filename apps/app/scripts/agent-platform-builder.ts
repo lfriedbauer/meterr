@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
-import dotenv from 'dotenv';
-import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
-import path from 'path';
 import { execSync } from 'child_process';
+import dotenv from 'dotenv';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
@@ -45,7 +45,7 @@ class AgentPlatformBuilder {
       perplexity: process.env.PERPLEXITY_API_KEY,
       grok: process.env.XAI_API_KEY,
     });
-    
+
     this.outputDir = path.join(process.cwd(), 'platform-mvp');
     if (!existsSync(this.outputDir)) {
       mkdirSync(this.outputDir, { recursive: true });
@@ -54,8 +54,8 @@ class AgentPlatformBuilder {
 
   async planPlatform() {
     console.log('🏗️  AGENT-DRIVEN PLATFORM DEVELOPMENT\n');
-    console.log('=' .repeat(60) + '\n');
-    
+    console.log('='.repeat(60) + '\n');
+
     // Step 1: Architect Agent designs the MVP
     const architectPrompt = `As the architect agent for meterr.ai, design a minimal viable platform that:
     
@@ -74,13 +74,13 @@ class AgentPlatformBuilder {
     Remember: This needs to be impressive enough to charge $99/month but simple enough to build quickly.`;
 
     console.log('🎨 Architect Agent: Designing MVP...\n');
-    const architectResponse = await this.client.queryClaude({ 
+    const architectResponse = await this.client.queryClaude({
       prompt: architectPrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log(architectResponse.response.substring(0, 1500));
-    console.log('\n' + '=' .repeat(60) + '\n');
+    console.log('\n' + '='.repeat(60) + '\n');
 
     // Step 2: Market Validator tests the concept
     const marketPrompt = `As a potential customer (CTO spending $10K/month on AI), review this MVP plan:
@@ -98,7 +98,7 @@ class AgentPlatformBuilder {
     console.log('💼 Market Validator: Testing concept with potential customers...\n');
     const marketResponse = await this.client.queryGemini({ prompt: marketPrompt });
     console.log(marketResponse.response.substring(0, 1000));
-    
+
     // Store the validated features
     this.features = [
       {
@@ -106,75 +106,83 @@ class AgentPlatformBuilder {
         description: 'Live view of AI spending across all providers',
         userValue: 'See exactly where money is being spent right now',
         technicalRequirements: ['Next.js dashboard', 'Supabase database', 'Webhook listeners'],
-        estimatedHours: 16
+        estimatedHours: 16,
       },
       {
         name: 'Chrome Extension Tracker',
         description: 'Captures usage directly from OpenAI/Claude consoles',
         userValue: 'Zero-setup tracking - just install and go',
-        technicalRequirements: ['Chrome manifest v3', 'Content scripts', 'Background service worker'],
-        estimatedHours: 12
+        technicalRequirements: [
+          'Chrome manifest v3',
+          'Content scripts',
+          'Background service worker',
+        ],
+        estimatedHours: 12,
       },
       {
         name: 'Smart Alerts',
         description: 'Notifications when spending exceeds thresholds',
         userValue: 'Prevent bill shock before it happens',
-        technicalRequirements: ['Email integration', 'Threshold rules engine', 'Daily aggregation job'],
-        estimatedHours: 8
+        technicalRequirements: [
+          'Email integration',
+          'Threshold rules engine',
+          'Daily aggregation job',
+        ],
+        estimatedHours: 8,
       },
       {
         name: 'Team Usage Breakdown',
         description: 'See which developers/projects use most tokens',
         userValue: 'Identify waste and optimize team behavior',
         technicalRequirements: ['User attribution', 'Project tagging', 'Analytics queries'],
-        estimatedHours: 10
+        estimatedHours: 10,
       },
       {
         name: 'Export & Reports',
         description: 'PDF/CSV reports for finance teams',
         userValue: 'Easy expense reporting and budgeting',
         technicalRequirements: ['PDF generation', 'CSV export', 'Report templates'],
-        estimatedHours: 6
-      }
+        estimatedHours: 6,
+      },
     ];
 
     await this.saveProgress('platform-architecture', {
       architect: architectResponse.response,
       marketValidation: marketResponse.response,
-      features: this.features
+      features: this.features,
     });
   }
 
   async buildCoreComponents() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🔨 Builder Agents: Creating core components...\n');
 
     // Build Task 1: Database Schema
     const schemaTask = await this.createBuildTask({
       title: 'Create Supabase Schema',
       description: 'Design and create database tables for users, api_usage, projects, alerts',
-      agent: 'builder'
+      agent: 'builder',
     });
 
     // Build Task 2: Dashboard Layout
     const dashboardTask = await this.createBuildTask({
       title: 'Build Dashboard Shell',
       description: 'Create Next.js dashboard with navigation, charts area, and real-time updates',
-      agent: 'builder'
+      agent: 'builder',
     });
 
     // Build Task 3: Chrome Extension
     const extensionTask = await this.createBuildTask({
       title: 'Chrome Extension MVP',
       description: 'Build extension that captures API calls from OpenAI playground',
-      agent: 'builder'
+      agent: 'builder',
     });
 
     // Execute builds in parallel where possible
     await Promise.all([
       this.executeBuildTask(schemaTask),
       this.executeBuildTask(dashboardTask),
-      this.executeBuildTask(extensionTask)
+      this.executeBuildTask(extensionTask),
     ]);
   }
 
@@ -190,9 +198,9 @@ class AgentPlatformBuilder {
       description: params.description,
       agent: params.agent,
       status: 'pending',
-      dependencies: params.dependencies
+      dependencies: params.dependencies,
     };
-    
+
     this.tasks.push(task);
     return task;
   }
@@ -217,46 +225,49 @@ class AgentPlatformBuilder {
     If this is too complex for one response, generate the most critical component first and explain what else is needed.`;
 
     try {
-      const response = await this.client.queryClaude({ 
+      const response = await this.client.queryClaude({
         prompt: buildPrompt,
         model: 'claude-opus-4-1-20250805',
-        temperature: 0.3
+        temperature: 0.3,
       });
-      
+
       task.code = response.response;
       task.status = 'completed';
-      
+
       // Extract and save any code blocks
       const codeBlocks = this.extractCodeBlocks(response.response);
       for (const block of codeBlocks) {
         await this.saveCodeFile(task.id, block);
       }
-      
+
       console.log(`✅ Completed: ${task.title}`);
       console.log(response.response.substring(0, 500) + '...\n');
-      
     } catch (error) {
       console.error(`❌ Failed: ${task.title}`, error);
       task.status = 'pending';
     }
   }
 
-  extractCodeBlocks(response: string): Array<{filename: string; content: string; language: string}> {
-    const blocks: Array<{filename: string; content: string; language: string}> = [];
+  extractCodeBlocks(
+    response: string
+  ): Array<{ filename: string; content: string; language: string }> {
+    const blocks: Array<{ filename: string; content: string; language: string }> = [];
     const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
     let match;
-    
+
     while ((match = codeBlockRegex.exec(response)) !== null) {
       const language = match[1] || 'text';
       const content = match[2];
-      
+
       // Try to extract filename from comments
       const filenameMatch = content.match(/\/\/\s*(?:File:|Filename:)\s*(.+)/);
-      const filename = filenameMatch ? filenameMatch[1].trim() : `code-${blocks.length}.${this.getExtension(language)}`;
-      
+      const filename = filenameMatch
+        ? filenameMatch[1].trim()
+        : `code-${blocks.length}.${this.getExtension(language)}`;
+
       blocks.push({ filename, content, language });
     }
-    
+
     return blocks;
   }
 
@@ -269,28 +280,31 @@ class AgentPlatformBuilder {
       sql: 'sql',
       json: 'json',
       css: 'css',
-      html: 'html'
+      html: 'html',
     };
     return extensions[language.toLowerCase()] || 'txt';
   }
 
-  async saveCodeFile(taskId: string, block: {filename: string; content: string; language: string}) {
+  async saveCodeFile(
+    taskId: string,
+    block: { filename: string; content: string; language: string }
+  ) {
     const taskDir = path.join(this.outputDir, taskId);
     if (!existsSync(taskDir)) {
       mkdirSync(taskDir, { recursive: true });
     }
-    
+
     const filePath = path.join(taskDir, block.filename);
     writeFileSync(filePath, block.content);
     console.log(`  📁 Saved: ${block.filename}`);
   }
 
   async validateWithMarket() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('📊 Market Testing: Validating built features...\n');
 
-    const completedTasks = this.tasks.filter(t => t.status === 'completed');
-    
+    const completedTasks = this.tasks.filter((t) => t.status === 'completed');
+
     for (const task of completedTasks) {
       const validationPrompt = `You're a CTO evaluating meterr.ai. We just built this feature:
       
@@ -309,18 +323,18 @@ class AgentPlatformBuilder {
       const validation = await this.client.queryGemini({ prompt: validationPrompt });
       task.marketFeedback = validation.response;
       task.status = 'validated';
-      
+
       console.log(`📝 Feedback on ${task.title}:`);
       console.log(validation.response.substring(0, 400) + '...\n');
     }
   }
 
   async generateSalesDemo() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🎭 Creating Sales Demo Script...\n');
 
     const demoPrompt = `Based on the features we've built for meterr.ai:
-    ${this.features.map(f => `- ${f.name}: ${f.userValue}`).join('\n')}
+    ${this.features.map((f) => `- ${f.name}: ${f.userValue}`).join('\n')}
     
     Create a 5-minute demo script that:
     1. Opens with a shocking statement about AI costs
@@ -331,14 +345,14 @@ class AgentPlatformBuilder {
     
     Make it conversational and focused on value, not features.`;
 
-    const demoScript = await this.client.queryClaude({ 
+    const demoScript = await this.client.queryClaude({
       prompt: demoPrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log('Demo Script Preview:');
     console.log(demoScript.response.substring(0, 1000));
-    
+
     await this.saveProgress('demo-script', demoScript.response);
   }
 
@@ -349,7 +363,7 @@ class AgentPlatformBuilder {
   }
 
   async iterateBasedOnFeedback() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🔄 Iteration Agent: Improving based on feedback...\n');
 
     const iterationPrompt = `Review all market feedback and identify:
@@ -358,21 +372,24 @@ class AgentPlatformBuilder {
     3. The ONE thing that would make customers buy TODAY
     
     Feedback summary:
-    ${this.tasks.filter(t => t.marketFeedback).map(t => t.marketFeedback?.substring(0, 200)).join('\n')}
+    ${this.tasks
+      .filter((t) => t.marketFeedback)
+      .map((t) => t.marketFeedback?.substring(0, 200))
+      .join('\n')}
     
     What should we build/change immediately?`;
 
     const iteration = await this.client.queryGemini({ prompt: iterationPrompt });
     console.log('Priority Improvements:');
     console.log(iteration.response);
-    
+
     return iteration.response;
   }
 }
 
 async function main() {
   const builder = new AgentPlatformBuilder();
-  
+
   console.log('🚀 STARTING AGENT-DRIVEN PLATFORM DEVELOPMENT\n');
   console.log('This process will:');
   console.log('1. Design the MVP architecture');
@@ -380,24 +397,24 @@ async function main() {
   console.log('3. Validate each feature with market feedback');
   console.log('4. Generate sales materials');
   console.log('5. Iterate based on feedback\n');
-  
+
   try {
     // Phase 1: Architecture and Planning
     await builder.planPlatform();
-    
+
     // Phase 2: Build Core Components
     await builder.buildCoreComponents();
-    
+
     // Phase 3: Market Validation
     await builder.validateWithMarket();
-    
+
     // Phase 4: Sales Preparation
     await builder.generateSalesDemo();
-    
+
     // Phase 5: Iterate
     const improvements = await builder.iterateBasedOnFeedback();
-    
-    console.log('\n' + '=' .repeat(60));
+
+    console.log('\n' + '='.repeat(60));
     console.log('✅ PLATFORM MVP READY\n');
     console.log('Next Steps:');
     console.log('1. Review generated code in platform-mvp/ directory');
@@ -405,7 +422,6 @@ async function main() {
     console.log('3. Test Chrome extension locally');
     console.log('4. Use demo script for first sales calls');
     console.log('5. Implement priority improvements from feedback\n');
-    
   } catch (error) {
     console.error('❌ Build failed:', error);
   }

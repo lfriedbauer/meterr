@@ -3,8 +3,8 @@
  * Handles customer registration and profile management
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 // Lazy initialization
@@ -56,9 +56,9 @@ export async function POST(request: NextRequest) {
           id: existing.id,
           email: existing.email,
           companyName: existing.company_name,
-          status: existing.status
+          status: existing.status,
         },
-        existingCustomer: true
+        existingCustomer: true,
       });
     }
 
@@ -68,17 +68,14 @@ export async function POST(request: NextRequest) {
       .insert({
         email,
         company_name: companyName,
-        status: 'trial'
+        status: 'trial',
       })
       .select()
       .single();
 
     if (error) {
       console.error('Error creating customer:', error);
-      return NextResponse.json(
-        { error: 'Failed to create customer' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to create customer' }, { status: 500 });
     }
 
     // Log the action
@@ -87,7 +84,7 @@ export async function POST(request: NextRequest) {
       action: 'customer_created',
       entity_type: 'customer',
       entity_id: customer.id,
-      metadata: { email, companyName }
+      metadata: { email, companyName },
     });
 
     return NextResponse.json({
@@ -97,8 +94,8 @@ export async function POST(request: NextRequest) {
         email: customer.email,
         companyName: customer.company_name,
         status: customer.status,
-        createdAt: customer.created_at
-      }
+        createdAt: customer.created_at,
+      },
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -109,10 +106,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.error('Error in POST /api/customers:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -140,28 +134,23 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Error fetching customers:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch customers' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch customers' }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
-      customers: customers?.map(customer => ({
-        id: customer.id,
-        email: customer.email,
-        companyName: customer.company_name,
-        status: customer.status,
-        createdAt: customer.created_at,
-        updatedAt: customer.updated_at
-      })) || []
+      customers:
+        customers?.map((customer) => ({
+          id: customer.id,
+          email: customer.email,
+          companyName: customer.company_name,
+          status: customer.status,
+          createdAt: customer.created_at,
+          updatedAt: customer.updated_at,
+        })) || [],
     });
   } catch (error) {
     console.error('Error in GET /api/customers:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

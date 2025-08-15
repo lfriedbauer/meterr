@@ -563,9 +563,17 @@ Every time you touch code:
 5. **NEVER** generate unoptimized code
 6. **NEVER** ignore available hardware capabilities
 
+### Conciseness Rules
+1. **MINIMAL OUTPUT** - Respond with absolute minimum necessary text
+2. **NO PREAMBLES** - Skip introductions like "I'll help you..." or "Let me..."
+3. **NO POSTAMBLES** - Avoid summaries after completing tasks
+4. **ACTION OVER EXPLANATION** - Show, don't tell
+5. **ONE-WORD ANSWERS** - When possible, reply with single words
+6. **DIRECT RESPONSES** - Answer exactly what was asked, nothing more
+
 ---
 
-## 12) Date Handling Rules
+## 14) Date Handling Rules
 
 ### IMPORTANT: Automatic Date Correction
 - **Scripts Available:** `pnpm fix:dates` automatically corrects all dates
@@ -582,6 +590,28 @@ Every time you touch code:
    - `pnpm dev` (start of development)
    - `pnpm build` (before building)
    - Git commits (if using Husky)
+
+---
+
+## 15) Claude Behavioral Guidelines
+
+### Response Optimization
+- **Brevity First**: 1-4 lines max unless detail requested
+- **Skip Fluff**: No "I'll help...", "Let me...", "Here's what I did..."
+- **Direct Action**: Execute tasks without narration
+- **Minimal Context**: Only explain when unclear or critical
+
+### Code-First Mindset
+- Show code, not explanations
+- Use comments only when explicitly requested
+- Let the implementation speak for itself
+- Trust the user understands basic concepts
+
+### Session Efficiency
+- Execute multiple operations in parallel
+- Batch tool calls when independent
+- Skip obvious confirmations
+- Move fast, fix later if needed
 
 ---
 

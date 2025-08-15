@@ -1,12 +1,12 @@
 /**
  * Embedding Generator
- * 
+ *
  * Generates embeddings for usage patterns using OpenAI text-embedding-3-small
  * Privacy-first: Only generates embeddings from metadata, never from actual prompts
  */
 
-import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
+import OpenAI from 'openai';
 
 // Types
 export interface PatternMetadata {
@@ -32,12 +32,8 @@ export interface EmbeddingResult {
 export class EmbeddingGenerator {
   private openai: OpenAI;
   private supabase;
-  
-  constructor(
-    openaiApiKey: string,
-    supabaseUrl: string,
-    supabaseKey: string
-  ) {
+
+  constructor(openaiApiKey: string, supabaseUrl: string, supabaseKey: string) {
     this.openai = new OpenAI({ apiKey: openaiApiKey });
     this.supabase = createClient(supabaseUrl, supabaseKey);
   }
@@ -50,7 +46,7 @@ export class EmbeddingGenerator {
     try {
       // Create a privacy-safe text representation of the pattern
       const patternText = this.createPatternText(metadata);
-      
+
       // Generate embedding using text-embedding-3-small
       const response = await this.openai.embeddings.create({
         model: 'text-embedding-3-small',
@@ -65,7 +61,7 @@ export class EmbeddingGenerator {
       return {
         embedding: response.data[0].embedding,
         model: response.model,
-        usage: response.usage
+        usage: response.usage,
       };
     } catch (error) {
       console.error('Error generating embedding:', error);
@@ -83,7 +79,7 @@ export class EmbeddingGenerator {
       `tokens:${this.categorizeTokenCount(metadata.tokenCount)}`,
       `type:${metadata.questionType}`,
       metadata.hasCode ? 'has_code' : 'no_code',
-      metadata.responseTime ? `speed:${this.categorizeResponseTime(metadata.responseTime)}` : ''
+      metadata.responseTime ? `speed:${this.categorizeResponseTime(metadata.responseTime)}` : '',
     ].filter(Boolean);
 
     return components.join(' ');
@@ -134,7 +130,7 @@ export class EmbeddingGenerator {
           tokenCount: pattern.token_count,
           hasCode: pattern.has_code_content,
           questionType: pattern.question_type || 'unknown',
-          responseTime: pattern.response_time_ms
+          responseTime: pattern.response_time_ms,
         };
 
         // Generate embedding
@@ -147,9 +143,9 @@ export class EmbeddingGenerator {
         // Update pattern with embedding
         const { error } = await this.supabase
           .from('usage_patterns')
-          .update({ 
+          .update({
             embedding: result.embedding,
-            confidence_score: this.calculateConfidenceScore(metadata)
+            confidence_score: this.calculateConfidenceScore(metadata),
           })
           .eq('id', pattern.id);
 
@@ -187,7 +183,7 @@ export class EmbeddingGenerator {
         query_embedding: embedding,
         match_threshold: threshold,
         match_count: limit,
-        customer_id: customerId
+        customer_id: customerId,
       });
 
       if (error) {
@@ -238,12 +234,7 @@ export class EmbeddingGenerator {
         }
 
         // Find similar patterns
-        const similar = await this.findSimilarPatterns(
-          customerId,
-          pattern.embedding,
-          0.85,
-          20
-        );
+        const similar = await this.findSimilarPatterns(customerId, pattern.embedding, 0.85, 20);
 
         if (similar.length >= minClusterSize) {
           // Create new cluster
@@ -251,7 +242,7 @@ export class EmbeddingGenerator {
           clusters.set(clusterId, similar);
 
           // Update patterns with cluster ID
-          const patternIds = similar.map(p => p.id);
+          const patternIds = similar.map((p) => p.id);
           await this.supabase
             .from('usage_patterns')
             .update({ cluster_id: clusterId })
@@ -287,7 +278,7 @@ export class EmbeddingGenerator {
    * Sleep utility for rate limiting
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 

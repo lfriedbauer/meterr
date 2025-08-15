@@ -16,7 +16,7 @@ const colors = {
   bright: '\x1b[1m',
   green: '\x1b[32m',
   yellow: '\x1b[33m',
-  blue: '\x1b[34m'
+  blue: '\x1b[34m',
 };
 
 console.log(`${colors.blue}🗓️  Fixing dates to: ${colors.bright}${TODAY}${colors.reset}\n`);
@@ -27,47 +27,47 @@ const DATE_PATTERNS = [
   {
     pattern: /last_updated:\s*\d{4}-\d{2}-\d{2}/g,
     replacement: `last_updated: ${TODAY}`,
-    description: 'YAML frontmatter'
+    description: 'YAML frontmatter',
   },
   // Markdown "Last updated" lines
   {
     pattern: /Last updated:\s*\d{4}-\d{2}-\d{2}/g,
     replacement: `Last updated: ${TODAY}`,
-    description: 'Markdown dates'
+    description: 'Markdown dates',
   },
   // Copyright years
   {
     pattern: /Copyright\s*(?:©|\(c\))?\s*\d{4}/gi,
     replacement: `Copyright © ${YEAR}`,
-    description: 'Copyright years'
+    description: 'Copyright years',
   },
   {
     pattern: /©\s*\d{4}\s+/g,
     replacement: `© ${YEAR} `,
-    description: 'Copyright symbols'
+    description: 'Copyright symbols',
   },
   // Date comments in code
   {
     pattern: /\/\/\s*Date:\s*\d{4}-\d{2}-\d{2}/g,
     replacement: `// Date: ${TODAY}`,
-    description: 'Code comments'
+    description: 'Code comments',
   },
   {
     pattern: /\/\*\s*Date:\s*\d{4}-\d{2}-\d{2}\s*\*\//g,
     replacement: `/* Date: ${TODAY} */`,
-    description: 'Block comments'
+    description: 'Block comments',
   },
   // Package.json version dates (if you use date-based versions)
   {
     pattern: /"lastUpdated":\s*"[\d-T:.Z]+"/g,
     replacement: `"lastUpdated": "${TIMESTAMP}"`,
-    description: 'JSON timestamps'
+    description: 'JSON timestamps',
   },
   // Common date formats in docs
   {
     pattern: /\*Updated:\s*\d{4}-\d{2}-\d{2}\*/g,
     replacement: `*Updated: ${TODAY}*`,
-    description: 'Doc updates'
+    description: 'Doc updates',
   },
   // Version headers
   {
@@ -76,8 +76,8 @@ const DATE_PATTERNS = [
       const version = match.match(/\d+\.\d+\.\d+/)[0];
       return `Version ${version} (${TODAY})`;
     },
-    description: 'Version headers'
-  }
+    description: 'Version headers',
+  },
 ];
 
 // File patterns to check
@@ -91,7 +91,7 @@ const FILE_PATTERNS = [
   '**/package.json',
   '**/*.yaml',
   '**/*.yml',
-  '**/README*'
+  '**/README*',
 ];
 
 // Directories to ignore
@@ -102,24 +102,24 @@ const IGNORE_DIRS = [
   'dist/**',
   'build/**',
   '.git/**',
-  'coverage/**'
+  'coverage/**',
 ];
 
 let totalFixed = 0;
 let filesChanged = 0;
 
 // Process each file type
-FILE_PATTERNS.forEach(filePattern => {
-  const files = glob.sync(filePattern, { 
+FILE_PATTERNS.forEach((filePattern) => {
+  const files = glob.sync(filePattern, {
     ignore: IGNORE_DIRS,
-    nodir: true 
+    nodir: true,
   });
-  
-  files.forEach(file => {
+
+  files.forEach((file) => {
     let content = fs.readFileSync(file, 'utf8');
-    let originalContent = content;
+    const originalContent = content;
     let fileFixCount = 0;
-    
+
     DATE_PATTERNS.forEach(({ pattern, replacement, description }) => {
       const matches = content.match(pattern);
       if (matches) {
@@ -129,10 +129,12 @@ FILE_PATTERNS.forEach(filePattern => {
           content = content.replace(pattern, replacement);
         }
         fileFixCount += matches.length;
-        console.log(`  ${colors.green}✓${colors.reset} Fixed ${matches.length} ${description} in ${colors.yellow}${file}${colors.reset}`);
+        console.log(
+          `  ${colors.green}✓${colors.reset} Fixed ${matches.length} ${description} in ${colors.yellow}${file}${colors.reset}`
+        );
       }
     });
-    
+
     if (content !== originalContent) {
       fs.writeFileSync(file, content, 'utf8');
       filesChanged++;
@@ -173,4 +175,6 @@ if (!fs.existsSync(dateConstantsDir)) {
 }
 
 fs.writeFileSync(dateConstantsPath, dateConstants);
-console.log(`${colors.green}✓${colors.reset} Created date constants at ${colors.yellow}lib/constants/dates.ts${colors.reset}`);
+console.log(
+  `${colors.green}✓${colors.reset} Created date constants at ${colors.yellow}lib/constants/dates.ts${colors.reset}`
+);

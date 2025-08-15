@@ -1,21 +1,21 @@
+import Anthropic from '@anthropic-ai/sdk';
 import { Helicone } from 'helicone';
 import OpenAI from 'openai';
-import Anthropic from '@anthropic-ai/sdk';
 
 // Initialize Helicone (will use HELICONE_API_KEY from env)
 const helicone = new Helicone({
-  apiKey: process.env.HELICONE_API_KEY || 'sk-helicone-default'
+  apiKey: process.env.HELICONE_API_KEY || 'sk-helicone-default',
 });
 
 // Wrap OpenAI client
 export function wrapOpenAI(apiKey: string): OpenAI {
   return new OpenAI({
     apiKey,
-    baseURL: "https://oai.helicone.ai/v1",
+    baseURL: 'https://oai.helicone.ai/v1',
     defaultHeaders: {
-      "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
-      "Helicone-Cache-Enabled": "true",
-      "Helicone-Property-App": "meterr",
+      'Helicone-Auth': `Bearer ${process.env.HELICONE_API_KEY}`,
+      'Helicone-Cache-Enabled': 'true',
+      'Helicone-Property-App': 'meterr',
     },
   });
 }
@@ -24,11 +24,11 @@ export function wrapOpenAI(apiKey: string): OpenAI {
 export function wrapAnthropic(apiKey: string): Anthropic {
   return new Anthropic({
     apiKey,
-    baseURL: "https://anthropic.helicone.ai",
+    baseURL: 'https://anthropic.helicone.ai',
     defaultHeaders: {
-      "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
-      "Helicone-Cache-Enabled": "true",
-      "Helicone-Property-App": "meterr",
+      'Helicone-Auth': `Bearer ${process.env.HELICONE_API_KEY}`,
+      'Helicone-Cache-Enabled': 'true',
+      'Helicone-Property-App': 'meterr',
     },
   });
 }
@@ -49,7 +49,7 @@ export async function trackResearch(
         promptTokens,
         completionTokens,
         cost,
-        ...metadata
+        ...metadata,
       },
       timestamp: new Date().toISOString(),
     });
@@ -73,7 +73,7 @@ export async function getUsageAnalytics(
       endDate: endDate || new Date(),
       groupBy: ['model'],
     });
-    
+
     return {
       totalCost: analytics.totalCost,
       totalTokens: analytics.totalTokens,

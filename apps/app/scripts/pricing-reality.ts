@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config();
 
@@ -32,23 +32,23 @@ Critical questions:
 Don't sugarcoat it. What's the truth about this pricing model?`;
 
   console.log('🎯 Asking Claude (Sales Reality)...\n');
-  const claudeResponse = await client.queryClaude({ 
+  const claudeResponse = await client.queryClaude({
     prompt: brutalQuestions,
-    model: 'claude-opus-4-1-20250805'
+    model: 'claude-opus-4-1-20250805',
   });
   console.log(claudeResponse.response.substring(0, 1000));
 
   console.log('\n' + '='.repeat(60) + '\n');
   console.log('🎯 Asking GPT-4 (Market Analysis)...\n');
-  const gptResponse = await client.queryOpenAI({ 
+  const gptResponse = await client.queryOpenAI({
     prompt: brutalQuestions,
-    model: 'gpt-4-turbo-preview'
+    model: 'gpt-4-turbo-preview',
   });
   console.log(gptResponse.response.substring(0, 1000));
 
   console.log('\n' + '='.repeat(60) + '\n');
   console.log('🎯 Asking Gemini (Competitive Reality)...\n');
-  
+
   const competitivePrompt = `Compare this pricing to reality:
   
 Our AI expense tracker: $50-75 (Pro), $200-300 (Team)
@@ -72,7 +72,7 @@ What's our REAL differentiator that justifies the price?`;
 
   console.log('\n' + '='.repeat(60) + '\n');
   console.log('🎯 Final Reality Check\n');
-  
+
   const consensusPrompt = `Based on market analysis, here's the proposed pricing for an AI expense tracker:
   Free → Pro $50-75 → Team $200-300 → Enterprise Custom
   

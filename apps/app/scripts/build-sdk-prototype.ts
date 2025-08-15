@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
@@ -18,7 +18,7 @@ class SDKPrototypeBuilder {
   private client: UnifiedLLMClient;
   private components: SDKComponent[] = [];
   private outputDir: string;
-  
+
   constructor() {
     this.client = new UnifiedLLMClient({
       openai: process.env.OPENAI_API_KEY,
@@ -27,7 +27,7 @@ class SDKPrototypeBuilder {
       perplexity: process.env.PERPLEXITY_API_KEY,
       grok: process.env.XAI_API_KEY,
     });
-    
+
     this.outputDir = path.join(process.cwd(), 'sdk-prototype');
     if (!existsSync(this.outputDir)) {
       mkdirSync(this.outputDir, { recursive: true });
@@ -36,32 +36,32 @@ class SDKPrototypeBuilder {
 
   async buildSDKPrototype() {
     console.log('🔨 R&D TEAM: BUILDING SDK PROTOTYPE\n');
-    console.log('=' .repeat(60) + '\n');
-    
+    console.log('='.repeat(60) + '\n');
+
     // Phase 1: Architecture Design
     await this.designArchitecture();
-    
+
     // Phase 2: Build Python SDK
     await this.buildPythonSDK();
-    
+
     // Phase 3: Build Node.js SDK
     await this.buildNodeSDK();
-    
+
     // Phase 4: Build API Proxy
     await this.buildAPIProxy();
-    
+
     // Phase 5: Create Integration Examples
     await this.createExamples();
-    
+
     // Phase 6: Generate Documentation
     await this.generateDocs();
-    
+
     return this.components;
   }
 
   async designArchitecture() {
     console.log('🏗️ ARCHITECT AGENT: Designing SDK Architecture...\n');
-    
+
     const architectPrompt = `Design a production-ready SDK architecture for Meterr.ai that:
     
     1. Wraps existing AI SDKs (OpenAI, Anthropic, etc)
@@ -77,26 +77,23 @@ class SDKPrototypeBuilder {
     - Security considerations
     
     Focus on simplicity and reliability.`;
-    
+
     const response = await this.client.queryClaude({
       prompt: architectPrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log('Architecture Design:');
     console.log(response.response.substring(0, 1000));
     console.log('\n' + '-'.repeat(60) + '\n');
-    
+
     // Save architecture
-    writeFileSync(
-      path.join(this.outputDir, 'architecture.md'),
-      response.response
-    );
+    writeFileSync(path.join(this.outputDir, 'architecture.md'), response.response);
   }
 
   async buildPythonSDK() {
     console.log('🐍 BUILDER AGENT: Creating Python SDK...\n');
-    
+
     const pythonPrompt = `Build a complete Python SDK for Meterr.ai with these requirements:
     
     MUST HAVE:
@@ -114,39 +111,36 @@ class SDKPrototypeBuilder {
     5. Batched telemetry sending
     
     Generate COMPLETE, WORKING code. No placeholders.`;
-    
+
     const response = await this.client.queryClaude({
       prompt: pythonPrompt,
       model: 'claude-opus-4-1-20250805',
-      temperature: 0.3
+      temperature: 0.3,
     });
-    
+
     // Extract code and save
     const pythonCode = this.extractCode(response.response, 'python');
-    
+
     const pythonSDK: SDKComponent = {
       name: 'Python SDK',
       language: 'python',
       description: 'Drop-in replacement for OpenAI SDK with automatic tracking',
       code: pythonCode,
-      status: 'building'
+      status: 'building',
     };
-    
+
     this.components.push(pythonSDK);
-    
+
     // Save Python SDK
     const pythonDir = path.join(this.outputDir, 'python-sdk');
     if (!existsSync(pythonDir)) {
       mkdirSync(pythonDir, { recursive: true });
     }
-    
-    writeFileSync(
-      path.join(pythonDir, 'meterr.py'),
-      pythonCode || '# Python SDK implementation'
-    );
-    
+
+    writeFileSync(path.join(pythonDir, 'meterr.py'), pythonCode || '# Python SDK implementation');
+
     console.log('✅ Python SDK created\n');
-    
+
     // Also create setup.py
     const setupPy = `from setuptools import setup, find_packages
 
@@ -164,13 +158,13 @@ setup(
     ],
     python_requires=">=3.7",
 )`;
-    
+
     writeFileSync(path.join(pythonDir, 'setup.py'), setupPy);
   }
 
   async buildNodeSDK() {
     console.log('📦 BUILDER AGENT: Creating Node.js SDK...\n');
-    
+
     const nodePrompt = `Build a complete Node.js/TypeScript SDK for Meterr.ai:
     
     Requirements:
@@ -188,64 +182,58 @@ setup(
     5. Batched telemetry
     
     Include all imports, types, and error handling. No placeholders.`;
-    
+
     const response = await this.client.queryGemini({ prompt: nodePrompt });
-    
+
     const nodeCode = this.extractCode(response.response, 'typescript');
-    
+
     const nodeSDK: SDKComponent = {
       name: 'Node.js SDK',
       language: 'typescript',
       description: 'TypeScript SDK with Express middleware support',
       code: nodeCode,
-      status: 'building'
+      status: 'building',
     };
-    
+
     this.components.push(nodeSDK);
-    
+
     // Save Node SDK
     const nodeDir = path.join(this.outputDir, 'node-sdk');
     if (!existsSync(nodeDir)) {
       mkdirSync(nodeDir, { recursive: true });
     }
-    
-    writeFileSync(
-      path.join(nodeDir, 'index.ts'),
-      nodeCode || '// Node.js SDK implementation'
-    );
-    
+
+    writeFileSync(path.join(nodeDir, 'index.ts'), nodeCode || '// Node.js SDK implementation');
+
     // Create package.json
     const packageJson = {
-      name: "@meterr/sdk",
-      version: "0.1.0",
-      description: "Track AI API costs with one line of code",
-      main: "dist/index.js",
-      types: "dist/index.d.ts",
+      name: '@meterr/sdk',
+      version: '0.1.0',
+      description: 'Track AI API costs with one line of code',
+      main: 'dist/index.js',
+      types: 'dist/index.d.ts',
       scripts: {
-        build: "tsc",
-        test: "jest"
+        build: 'tsc',
+        test: 'jest',
       },
       dependencies: {
-        "openai": "^4.0.0",
-        "axios": "^1.4.0"
+        openai: '^4.0.0',
+        axios: '^1.4.0',
       },
       devDependencies: {
-        "@types/node": "^20.0.0",
-        "typescript": "^5.0.0"
-      }
+        '@types/node': '^20.0.0',
+        typescript: '^5.0.0',
+      },
     };
-    
-    writeFileSync(
-      path.join(nodeDir, 'package.json'),
-      JSON.stringify(packageJson, null, 2)
-    );
-    
+
+    writeFileSync(path.join(nodeDir, 'package.json'), JSON.stringify(packageJson, null, 2));
+
     console.log('✅ Node.js SDK created\n');
   }
 
   async buildAPIProxy() {
     console.log('🔀 BUILDER AGENT: Creating API Proxy...\n');
-    
+
     const proxyPrompt = `Design an API proxy for zero-code Meterr integration:
     
     Users change their API endpoint from:
@@ -262,33 +250,30 @@ setup(
     5. Handle authentication
     
     Provide the architecture and key implementation details.`;
-    
+
     const response = await this.client.queryOpenAI({
       prompt: proxyPrompt,
-      model: 'gpt-4-turbo-preview'
+      model: 'gpt-4-turbo-preview',
     });
-    
+
     const proxyDesign: SDKComponent = {
       name: 'API Proxy',
       language: 'typescript',
       description: 'Zero-code integration via endpoint change',
       code: response.response,
-      status: 'designing'
+      status: 'designing',
     };
-    
+
     this.components.push(proxyDesign);
-    
-    writeFileSync(
-      path.join(this.outputDir, 'proxy-design.md'),
-      response.response
-    );
-    
+
+    writeFileSync(path.join(this.outputDir, 'proxy-design.md'), response.response);
+
     console.log('✅ API Proxy design complete\n');
   }
 
   async createExamples() {
     console.log('📚 Creating Integration Examples...\n');
-    
+
     // Python FastAPI example
     const fastAPIExample = `# FastAPI + Meterr Integration Example
 from fastapi import FastAPI
@@ -357,23 +342,17 @@ export async function POST(req: Request) {
     if (!existsSync(examplesDir)) {
       mkdirSync(examplesDir, { recursive: true });
     }
-    
-    writeFileSync(
-      path.join(examplesDir, 'fastapi_example.py'),
-      fastAPIExample
-    );
-    
-    writeFileSync(
-      path.join(examplesDir, 'nextjs_example.ts'),
-      nextjsExample
-    );
-    
+
+    writeFileSync(path.join(examplesDir, 'fastapi_example.py'), fastAPIExample);
+
+    writeFileSync(path.join(examplesDir, 'nextjs_example.ts'), nextjsExample);
+
     console.log('✅ Examples created\n');
   }
 
   async generateDocs() {
     console.log('📖 Generating Documentation...\n');
-    
+
     const quickstart = `# Meterr SDK - Quick Start
 
 ## Installation
@@ -473,11 +452,8 @@ View your costs at: https://app.meterr.ai
 - Email: support@meterr.ai
 - Discord: https://discord.gg/meterr`;
 
-    writeFileSync(
-      path.join(this.outputDir, 'README.md'),
-      quickstart
-    );
-    
+    writeFileSync(path.join(this.outputDir, 'README.md'), quickstart);
+
     console.log('✅ Documentation generated\n');
   }
 
@@ -485,29 +461,30 @@ View your costs at: https://app.meterr.ai
     // Try to extract code block
     const codeBlockRegex = new RegExp(`\`\`\`${language}([\\s\\S]*?)\`\`\``, 'g');
     const matches = response.match(codeBlockRegex);
-    
+
     if (matches && matches.length > 0) {
       // Remove the backticks and language identifier
       return matches[0]
         .replace(new RegExp(`^\`\`\`${language}\\s*`), '')
-        .replace(/\`\`\`$/, '')
+        .replace(/```$/, '')
         .trim();
     }
-    
+
     // If no code block found, look for the implementation section
-    const implStart = response.indexOf('class Meterr') || response.indexOf('def ') || response.indexOf('export ');
+    const implStart =
+      response.indexOf('class Meterr') || response.indexOf('def ') || response.indexOf('export ');
     if (implStart > -1) {
       return response.substring(implStart);
     }
-    
+
     return response;
   }
 }
 
 async function sendToResearchTeam(components: SDKComponent[]) {
-  console.log('\n' + '=' .repeat(60));
+  console.log('\n' + '='.repeat(60));
   console.log('📤 SENDING PROTOTYPE TO RESEARCH TEAM\n');
-  
+
   const client = new UnifiedLLMClient({
     openai: process.env.OPENAI_API_KEY,
     anthropic: process.env.ANTHROPIC_API_KEY,
@@ -515,7 +492,7 @@ async function sendToResearchTeam(components: SDKComponent[]) {
     perplexity: process.env.PERPLEXITY_API_KEY,
     grok: process.env.XAI_API_KEY,
   });
-  
+
   const prototypeDescription = `
   SDK Prototype Complete:
   
@@ -537,9 +514,9 @@ async function sendToResearchTeam(components: SDKComponent[]) {
   - Python: pip install meterr
   - Node: npm install @meterr/sdk
   - Proxy: Change endpoint to proxy.meterr.ai`;
-  
+
   console.log('🔬 RESEARCH TEAM: Validating SDK Prototype...\n');
-  
+
   // Get CTO perspective
   const ctoPrompt = `As a CTO, evaluate this SDK approach for Meterr:
   ${prototypeDescription}
@@ -547,15 +524,15 @@ async function sendToResearchTeam(components: SDKComponent[]) {
   Is this what you wanted instead of the Chrome extension?
   Would you pay $142/month for this?
   What's missing?`;
-  
+
   const ctoResponse = await client.queryClaude({
     prompt: ctoPrompt,
-    model: 'claude-opus-4-1-20250805'
+    model: 'claude-opus-4-1-20250805',
   });
-  
+
   console.log('CTO Validation:');
   console.log(ctoResponse.response.substring(0, 800));
-  
+
   // Get developer perspective
   const devPrompt = `As a senior developer, review this SDK:
   ${prototypeDescription}
@@ -563,46 +540,46 @@ async function sendToResearchTeam(components: SDKComponent[]) {
   Is the integration truly "one line"?
   Any concerns about wrapping the OpenAI SDK?
   Would you use this?`;
-  
+
   const devResponse = await client.queryGemini({ prompt: devPrompt });
-  
+
   console.log('\nDeveloper Validation:');
   console.log(devResponse.response.substring(0, 800));
-  
+
   // Save validation results
   const validation = {
     timestamp: new Date().toISOString(),
     prototype: prototypeDescription,
     feedback: {
       cto: ctoResponse.response,
-      developer: devResponse.response
+      developer: devResponse.response,
     },
-    verdict: 'SDK approach validated - proceed with development'
+    verdict: 'SDK approach validated - proceed with development',
   };
-  
+
   writeFileSync(
     path.join(process.cwd(), 'research-results', 'sdk-validation.json'),
     JSON.stringify(validation, null, 2)
   );
-  
+
   console.log('\n✅ Research team validation complete!');
-  
+
   return validation;
 }
 
 async function main() {
   console.log('🚀 SDK PROTOTYPE DEVELOPMENT CYCLE\n');
   console.log('R&D Team → Build SDK → Research Team → Validate\n');
-  
+
   const builder = new SDKPrototypeBuilder();
-  
+
   // R&D Team builds prototype
   const components = await builder.buildSDKPrototype();
-  
+
   // Send to Research Team for validation
   const validation = await sendToResearchTeam(components);
-  
-  console.log('\n' + '=' .repeat(60));
+
+  console.log('\n' + '='.repeat(60));
   console.log('✅ SDK PROTOTYPE VALIDATED\n');
   console.log('Next steps:');
   console.log('1. Implement full Python SDK');

@@ -14,7 +14,7 @@ const API_BASE = 'http://localhost:3001';
 
 async function runMetricsTests() {
   console.log('🧪 Testing "Bring Your Own Metrics" Framework');
-  console.log('=' .repeat(50));
+  console.log('='.repeat(50));
 
   try {
     // Step 1: Create test customer
@@ -24,8 +24,8 @@ async function runMetricsTests() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: 'metrics-test@example.com',
-        companyName: 'Metrics Test Company'
-      })
+        companyName: 'Metrics Test Company',
+      }),
     });
 
     if (!customerResponse.ok) {
@@ -39,9 +39,9 @@ async function runMetricsTests() {
     console.log('\n2️⃣ Getting available integrations...');
     const integrationsResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics`);
     const { availableIntegrations, suggestedMetrics } = await integrationsResponse.json();
-    
+
     console.log(`   ✅ Found ${availableIntegrations.length} integrations:`);
-    availableIntegrations.forEach(integration => {
+    availableIntegrations.forEach((integration) => {
       console.log(`      - ${integration.name}: ${integration.description}`);
     });
 
@@ -54,15 +54,15 @@ async function runMetricsTests() {
         baselineValue: 150,
         acceptableRangeMin: 140,
         acceptableRangeMax: 160,
-        description: 'Website conversion events'
-      }
+        description: 'Website conversion events',
+      },
     ];
 
     for (const metric of gaMetrics) {
       const addMetricResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(metric)
+        body: JSON.stringify(metric),
       });
 
       if (addMetricResponse.ok) {
@@ -82,15 +82,15 @@ async function runMetricsTests() {
         baselineValue: 50000,
         acceptableRangeMin: 48000,
         acceptableRangeMax: 52000,
-        description: 'Monthly recurring revenue'
-      }
+        description: 'Monthly recurring revenue',
+      },
     ];
 
     for (const metric of stripeMetrics) {
       const addMetricResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(metric)
+        body: JSON.stringify(metric),
       });
 
       if (addMetricResponse.ok) {
@@ -109,14 +109,17 @@ async function runMetricsTests() {
       baselineValue: 4.5,
       acceptableRangeMin: 4.3,
       acceptableRangeMax: 4.7,
-      description: 'Customer satisfaction score'
+      description: 'Customer satisfaction score',
     };
 
-    const addCustomMetricResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(customMetric)
-    });
+    const addCustomMetricResponse = await fetch(
+      `${API_BASE}/api/customers/${customer.id}/metrics`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(customMetric),
+      }
+    );
 
     if (addCustomMetricResponse.ok) {
       console.log(`   ✅ Added custom metric: ${customMetric.name}`);
@@ -126,14 +129,17 @@ async function runMetricsTests() {
 
     // Step 6: Test metrics validation
     console.log('\n6️⃣ Running metrics validation...');
-    const validationResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics/validate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        testPeriodDays: 7,
-        optimizationId: 'test-optimization-123'
-      })
-    });
+    const validationResponse = await fetch(
+      `${API_BASE}/api/customers/${customer.id}/metrics/validate`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          testPeriodDays: 7,
+          optimizationId: 'test-optimization-123',
+        }),
+      }
+    );
 
     if (validationResponse.ok) {
       const { validation } = await validationResponse.json();
@@ -151,8 +157,8 @@ async function runMetricsTests() {
     if (summaryResponse.ok) {
       const summary = await summaryResponse.json();
       console.log(`   ✅ Customer has ${summary.customerMetrics.length} active metrics configured`);
-      
-      summary.customerMetrics.forEach(metric => {
+
+      summary.customerMetrics.forEach((metric) => {
         console.log(`      - ${metric.name} (${metric.source}): baseline ${metric.baselineValue}`);
       });
     }
@@ -168,7 +174,6 @@ async function runMetricsTests() {
 
     console.log('\n🚀 Phase 1A.2 Complete - "Bring Your Own Metrics" Framework is ready!');
     console.log('\n🔮 Next Phase: 1B - Implement 30% of savings pricing model');
-
   } catch (error) {
     console.error('\n❌ Test failed:', error.message);
     process.exit(1);
@@ -182,7 +187,7 @@ if (require.main === module) {
       console.log('\n✅ All tests passed!');
       process.exit(0);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('\n❌ Tests failed:', error);
       process.exit(1);
     });

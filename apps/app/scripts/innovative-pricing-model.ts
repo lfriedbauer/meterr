@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
 import { writeFileSync } from 'fs';
 import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
@@ -18,7 +18,7 @@ interface InnovativePricingModel {
 class CreativePricingDesigner {
   private client: UnifiedLLMClient;
   private models: InnovativePricingModel[] = [];
-  
+
   constructor() {
     this.client = new UnifiedLLMClient({
       openai: process.env.OPENAI_API_KEY,
@@ -31,7 +31,7 @@ class CreativePricingDesigner {
 
   async breakTheMold() {
     console.log('🎨 BREAKING THE SAAS PRICING MOLD\n');
-    console.log('=' .repeat(60) + '\n');
+    console.log('='.repeat(60) + '\n');
 
     const creativePrompt = `Forget everything about traditional SaaS pricing (Starter/Growth/Enterprise).
     
@@ -56,15 +56,15 @@ class CreativePricingDesigner {
     Be creative. Be bold. Make it memorable.`;
 
     console.log('🚀 Innovative Pricing Models:\n');
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt: creativePrompt,
       model: 'claude-opus-4-1-20250805',
-      temperature: 0.9
+      temperature: 0.9,
     });
-    
+
     console.log(response.response);
-    console.log('\n' + '=' .repeat(60) + '\n');
-    
+    console.log('\n' + '='.repeat(60) + '\n');
+
     return response.response;
   }
 
@@ -74,24 +74,29 @@ class CreativePricingDesigner {
     const wildModels = [
       {
         name: 'The Safety Net',
-        description: 'Pay nothing upfront. We invoice you for 10% of savings at the end of each month. If we save you nothing, you pay nothing.'
+        description:
+          'Pay nothing upfront. We invoice you for 10% of savings at the end of each month. If we save you nothing, you pay nothing.',
       },
       {
         name: 'The Graduation Model',
-        description: 'Start at $199/month. Every $1000 we save you, your price drops by $10. Eventually, it becomes free once we save you $20K.'
+        description:
+          'Start at $199/month. Every $1000 we save you, your price drops by $10. Eventually, it becomes free once we save you $20K.',
       },
       {
         name: 'The Betting Pool',
-        description: 'You bet us $100/month that we cant save you 10x that amount. If we do, you keep paying. If we dont, we pay YOU $100.'
+        description:
+          'You bet us $100/month that we cant save you 10x that amount. If we do, you keep paying. If we dont, we pay YOU $100.',
       },
       {
         name: 'The Credit System',
-        description: 'Buy credits at $1 each. Each optimization we find costs 100 credits. Each $100 saved earns you 50 credits back.'
+        description:
+          'Buy credits at $1 each. Each optimization we find costs 100 credits. Each $100 saved earns you 50 credits back.',
       },
       {
         name: 'The Netflix Model',
-        description: 'One price: $49/month. Unlimited AI cost tracking. Unlimited optimizations. Cancel anytime. Dead simple.'
-      }
+        description:
+          'One price: $49/month. Unlimited AI cost tracking. Unlimited optimizations. Cancel anytime. Dead simple.',
+      },
     ];
 
     for (const model of wildModels) {
@@ -103,11 +108,11 @@ class CreativePricingDesigner {
       Your instant gut reaction? Would you try it? Why or why not?
       Be brutally honest - no corporate speak.`;
 
-      const response = await this.client.queryGemini({ 
+      const response = await this.client.queryGemini({
         prompt: testPrompt,
-        temperature: 0.7 
+        temperature: 0.7,
       });
-      
+
       console.log(`📊 ${model.name}:`);
       console.log(response.response.substring(0, 400));
       console.log('\n' + '-'.repeat(40) + '\n');
@@ -132,20 +137,20 @@ class CreativePricingDesigner {
     
     Give me something revolutionary.`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt: frameworkPrompt,
       model: 'claude-opus-4-1-20250805',
-      temperature: 0.8
+      temperature: 0.8,
     });
-    
+
     console.log('Revolutionary Framework:\n');
     console.log(response.response);
-    
+
     return response.response;
   }
 
   async createAntiPricingPage() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('📝 The Anti-Pricing Page\n');
 
     const antiPricingPrompt = `Create website copy for a pricing page that:
@@ -163,12 +168,12 @@ class CreativePricingDesigner {
 
     const response = await this.client.queryGemini({ prompt: antiPricingPrompt });
     console.log(response.response);
-    
+
     return response.response;
   }
 
   async testWithFounders() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('👨‍💼 Founder Perspective Check\n');
 
     const founderPrompt = `You're a YC founder. Your startup spends $8K/month on AI.
@@ -183,19 +188,19 @@ class CreativePricingDesigner {
     
     Which grabs your attention? Which would you actually buy? Why?`;
 
-    const response = await this.client.queryOpenAI({ 
+    const response = await this.client.queryOpenAI({
       prompt: founderPrompt,
-      model: 'gpt-4-turbo-preview'
+      model: 'gpt-4-turbo-preview',
     });
-    
+
     console.log('YC Founder Response:');
     console.log(response.response);
-    
+
     return response.response;
   }
 
   async generateFinalRecommendation() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🎯 FINAL INNOVATIVE PRICING RECOMMENDATION\n');
 
     const finalPrompt = `Based on everything, what's the most innovative yet practical pricing model for Meterr.ai?
@@ -209,35 +214,35 @@ class CreativePricingDesigner {
     
     Don't give me Starter/Growth/Enterprise. Give me something that makes people say "Finally, pricing that makes sense!"`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt: finalPrompt,
       model: 'claude-opus-4-1-20250805',
-      temperature: 0.7
+      temperature: 0.7,
     });
-    
+
     console.log(response.response);
-    
+
     // Save the innovative models
     const report = {
       timestamp: new Date().toISOString(),
       innovative_models: this.models,
-      final_recommendation: response.response
+      final_recommendation: response.response,
     };
-    
+
     const reportPath = path.join(
       process.cwd(),
       'research-results',
       'innovative-pricing-strategy.json'
     );
-    
+
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
     console.log(`\n📁 Innovative pricing saved to: ${reportPath}`);
-    
+
     return report;
   }
 
   async createPricingExperiments() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🧪 A/B Testing Different Models\n');
 
     const experimentPrompt = `Design 3 pricing experiments we could run simultaneously:
@@ -258,39 +263,39 @@ class CreativePricingDesigner {
     const response = await this.client.queryGemini({ prompt: experimentPrompt });
     console.log('Pricing Experiments:\n');
     console.log(response.response);
-    
+
     return response.response;
   }
 }
 
 async function main() {
   const designer = new CreativePricingDesigner();
-  
+
   console.log('🚀 REDESIGNING PRICING FROM FIRST PRINCIPLES\n');
   console.log('Throwing out the SaaS playbook...\n');
-  
+
   // Break the traditional mold
   await designer.breakTheMold();
-  
+
   // Test wild ideas
   await designer.testTheWildIdeas();
-  
+
   // Design flexible framework
   await designer.designFlexibleFramework();
-  
+
   // Create anti-pricing page
   await designer.createAntiPricingPage();
-  
+
   // Test with founders
   await designer.testWithFounders();
-  
+
   // Create experiments
   await designer.createPricingExperiments();
-  
+
   // Final recommendation
   await designer.generateFinalRecommendation();
-  
-  console.log('\n' + '=' .repeat(60));
+
+  console.log('\n' + '='.repeat(60));
   console.log('✅ INNOVATIVE PRICING COMPLETE\n');
   console.log('Key Insight: Stop thinking in tiers. Start thinking in value.\n');
 }

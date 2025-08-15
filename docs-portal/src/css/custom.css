@@ -18,7 +18,7 @@
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
+[data-theme="dark"] {
   --ifm-color-primary: #25c2a0;
   --ifm-color-primary-dark: #21af90;
   --ifm-color-primary-darker: #1fa588;
@@ -36,49 +36,49 @@
     font-size: 16px;
     padding: 0.5rem;
   }
-  
+
   .menu__link {
     padding: 0.75rem 1rem;
     line-height: 1.5;
   }
-  
+
   /* Better touch targets for mobile */
   .navbar__toggle {
     padding: 0.75rem;
   }
-  
+
   /* Optimize content spacing on mobile */
   .container {
     padding: 1rem;
   }
-  
+
   article {
     padding: 1rem 0;
   }
-  
+
   /* Improve code block readability on mobile */
   pre {
     font-size: 14px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   /* Better table scrolling on mobile */
   table {
     display: block;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   /* Optimize heading sizes for mobile */
   h1 {
     font-size: 1.75rem;
   }
-  
+
   h2 {
     font-size: 1.5rem;
   }
-  
+
   h3 {
     font-size: 1.25rem;
   }
@@ -89,7 +89,7 @@
   .container {
     max-width: 90%;
   }
-  
+
   .menu__list {
     font-size: 15px;
   }
@@ -102,29 +102,30 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   /* Larger tap targets for small screens */
-  .button, 
+  .button,
   .navbar__link,
   .menu__link {
     min-height: 44px;
     display: flex;
     align-items: center;
   }
-  
+
   /* Optimize Mermaid diagrams for mobile */
   .mermaid {
     overflow-x: auto;
     max-width: 100%;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   /* Better spacing for mobile reading */
-  p, li {
+  p,
+  li {
     line-height: 1.6;
     font-size: 16px;
   }
-  
+
   /* Collapsible sidebar categories default to closed on mobile */
   .menu__list-item--collapsed .menu__list {
     display: none;
@@ -134,11 +135,12 @@
 /* Enhanced accessibility for touch devices */
 @media (hover: none) and (pointer: coarse) {
   /* Larger touch targets */
-  a, button {
+  a,
+  button {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   /* Remove hover effects on touch devices */
   .menu__link:hover {
     background-color: transparent;
@@ -153,12 +155,12 @@
   .theme-doc-sidebar-container {
     display: none;
   }
-  
+
   .main-wrapper {
     margin: 0;
     padding: 0;
   }
-  
+
   article {
     width: 100%;
     max-width: none;

@@ -4,8 +4,8 @@
  * Falls back to Supabase in production
  */
 
-import Database from 'better-sqlite3';
 import { faker } from '@faker-js/faker';
+import Database from 'better-sqlite3';
 import { BigNumber } from 'bignumber.js';
 
 export interface DevDatabaseConfig {
@@ -24,7 +24,7 @@ class InMemoryDatabase {
       useInMemory: process.env.NODE_ENV === 'development' && process.env.USE_MEMORY_DB === 'true',
       seedData: true,
       logQueries: process.env.LOG_DB_QUERIES === 'true',
-      ...config
+      ...config,
     };
   }
 
@@ -32,10 +32,10 @@ class InMemoryDatabase {
     if (this.db) return this.db;
 
     console.log('🚀 Initializing in-memory database with 256GB RAM...');
-    
+
     // Create in-memory database
     this.db = new Database(':memory:', {
-      verbose: this.config.logQueries ? console.log : undefined
+      verbose: this.config.logQueries ? console.log : undefined,
     });
 
     // Enable WAL mode for better concurrency
@@ -43,10 +43,10 @@ class InMemoryDatabase {
     this.db.pragma('synchronous = NORMAL');
     this.db.pragma('cache_size = -2000000'); // 2GB cache
     this.db.pragma('mmap_size = 30000000000'); // 30GB memory map
-    
+
     // Create schema
     this.createSchema();
-    
+
     // Seed with test data if requested
     if (this.config.seedData) {
       this.seedTestData();
@@ -143,7 +143,7 @@ class InMemoryDatabase {
         const user = {
           id: faker.string.uuid(),
           email: faker.internet.email(),
-          name: faker.person.fullName()
+          name: faker.person.fullName(),
         };
         insertUser.run(user.id, user.email, user.name);
         users.push(user);
@@ -151,15 +151,11 @@ class InMemoryDatabase {
 
       // Create API keys for each user
       const providers = ['openai', 'anthropic', 'google', 'azure'];
-      users.forEach(user => {
-        providers.forEach(provider => {
-          if (Math.random() > 0.5) { // 50% chance of having each provider
-            insertApiKey.run(
-              faker.string.uuid(),
-              user.id,
-              provider,
-              faker.string.alphanumeric(40)
-            );
+      users.forEach((user) => {
+        providers.forEach((provider) => {
+          if (Math.random() > 0.5) {
+            // 50% chance of having each provider
+            insertApiKey.run(faker.string.uuid(), user.id, provider, faker.string.alphanumeric(40));
           }
         });
       });
@@ -169,19 +165,19 @@ class InMemoryDatabase {
         openai: ['gpt-4', 'gpt-3.5-turbo', 'gpt-4-turbo'],
         anthropic: ['claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku'],
         google: ['gemini-pro', 'gemini-ultra'],
-        azure: ['gpt-4', 'gpt-3.5-turbo']
+        azure: ['gpt-4', 'gpt-3.5-turbo'],
       };
 
-      users.forEach(user => {
+      users.forEach((user) => {
         // Generate 100-1000 token records per user
         const recordCount = faker.number.int({ min: 100, max: 1000 });
-        
+
         for (let i = 0; i < recordCount; i++) {
           const provider = faker.helpers.arrayElement(providers);
           const model = faker.helpers.arrayElement(models[provider]);
           const inputTokens = faker.number.int({ min: 10, max: 10000 });
           const outputTokens = faker.number.int({ min: 10, max: 5000 });
-          
+
           // Calculate cost with BigNumber
           const rate = faker.number.float({ min: 0.0001, max: 0.01 });
           const cost = new BigNumber(inputTokens + outputTokens)
@@ -202,9 +198,13 @@ class InMemoryDatabase {
       });
     })();
 
-    const userCount = this.db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
-    const tokenCount = this.db.prepare('SELECT COUNT(*) as count FROM tokens').get() as { count: number };
-    
+    const userCount = this.db.prepare('SELECT COUNT(*) as count FROM users').get() as {
+      count: number;
+    };
+    const tokenCount = this.db.prepare('SELECT COUNT(*) as count FROM tokens').get() as {
+      count: number;
+    };
+
     console.log(`✅ Seeded ${userCount.count} users with ${tokenCount.count} token records`);
   }
 
@@ -259,11 +259,11 @@ class InMemoryDatabase {
         totalQueries: 0,
         averageTime: 0,
         slowestQuery: null,
-        fastestQuery: null
+        fastestQuery: null,
       };
     }
 
-    const times = this.queryLog.map(q => q.time);
+    const times = this.queryLog.map((q) => q.time);
     const totalTime = times.reduce((a, b) => a + b, 0);
     const sorted = [...this.queryLog].sort((a, b) => b.time - a.time);
 
@@ -271,21 +271,23 @@ class InMemoryDatabase {
       totalQueries: this.queryLog.length,
       averageTime: totalTime / this.queryLog.length,
       slowestQuery: sorted[0] ? { query: sorted[0].query, time: sorted[0].time } : null,
-      fastestQuery: sorted[sorted.length - 1] ? { query: sorted[sorted.length - 1].query, time: sorted[sorted.length - 1].time } : null
+      fastestQuery: sorted[sorted.length - 1]
+        ? { query: sorted[sorted.length - 1].query, time: sorted[sorted.length - 1].time }
+        : null,
     };
   }
 
   // Benchmark in-memory vs production database
   async benchmark(): Promise<void> {
     console.log('🏃 Running database benchmark...');
-    
+
     // Test 1: Simple SELECT
     const start1 = Date.now();
     for (let i = 0; i < 1000; i++) {
       this.query('SELECT * FROM users LIMIT 10');
     }
     const time1 = Date.now() - start1;
-    console.log(`1000 simple SELECTs: ${time1}ms (${time1/1000}ms per query)`);
+    console.log(`1000 simple SELECTs: ${time1}ms (${time1 / 1000}ms per query)`);
 
     // Test 2: Complex JOIN
     const start2 = Date.now();
@@ -299,28 +301,32 @@ class InMemoryDatabase {
       `);
     }
     const time2 = Date.now() - start2;
-    console.log(`100 complex JOINs: ${time2}ms (${time2/100}ms per query)`);
+    console.log(`100 complex JOINs: ${time2}ms (${time2 / 100}ms per query)`);
 
     // Test 3: Bulk INSERT
     const start3 = Date.now();
-    const stmt = this.db!.prepare('INSERT INTO tokens (id, user_id, provider, model, input_tokens, output_tokens, cost) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    const stmt = this.db!.prepare(
+      'INSERT INTO tokens (id, user_id, provider, model, input_tokens, output_tokens, cost) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    );
     const insertMany = this.db!.transaction((tokens: any[]) => {
       for (const token of tokens) stmt.run(...token);
     });
-    
-    const testTokens = Array(10000).fill(null).map(() => [
-      faker.string.uuid(),
-      faker.string.uuid(),
-      'openai',
-      'gpt-4',
-      1000,
-      500,
-      '0.015000'
-    ]);
-    
+
+    const testTokens = Array(10000)
+      .fill(null)
+      .map(() => [
+        faker.string.uuid(),
+        faker.string.uuid(),
+        'openai',
+        'gpt-4',
+        1000,
+        500,
+        '0.015000',
+      ]);
+
     insertMany(testTokens);
     const time3 = Date.now() - start3;
-    console.log(`10,000 INSERTs: ${time3}ms (${time3/10000}ms per insert)`);
+    console.log(`10,000 INSERTs: ${time3}ms (${time3 / 10000}ms per insert)`);
 
     console.log('\n✅ Benchmark complete! In-memory database is FAST! 🚀');
   }

@@ -1,6 +1,6 @@
 /**
  * Test Script for "Bring Your Own Metrics" Framework
- * 
+ *
  * Tests all components of the metrics system including:
  * - Google Analytics integration
  * - Stripe integration
@@ -20,7 +20,7 @@ const API_BASE = process.env.API_BASE_URL || 'http://localhost:3001';
 
 async function runMetricsTests() {
   console.log('🧪 Testing "Bring Your Own Metrics" Framework');
-  console.log('=' .repeat(50));
+  console.log('='.repeat(50));
 
   try {
     // Step 1: Create test customer
@@ -30,8 +30,8 @@ async function runMetricsTests() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: 'metrics-test@example.com',
-        companyName: 'Metrics Test Company'
-      })
+        companyName: 'Metrics Test Company',
+      }),
     });
 
     if (!customerResponse.ok) {
@@ -45,9 +45,9 @@ async function runMetricsTests() {
     console.log('\n2️⃣ Testing available integrations...');
     const integrationsResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics`);
     const { availableIntegrations, suggestedMetrics } = await integrationsResponse.json();
-    
+
     console.log(`✅ Found ${availableIntegrations.length} integrations:`);
-    availableIntegrations.forEach(integration => {
+    availableIntegrations.forEach((integration) => {
       console.log(`   - ${integration.name}: ${integration.description}`);
     });
 
@@ -60,23 +60,23 @@ async function runMetricsTests() {
         baselineValue: 150,
         acceptableRangeMin: 140,
         acceptableRangeMax: 160,
-        description: 'Website conversion events'
+        description: 'Website conversion events',
       },
       {
         name: 'session_duration',
-        source: 'google_analytics', 
+        source: 'google_analytics',
         baselineValue: 180,
         acceptableRangeMin: 170,
         acceptableRangeMax: 190,
-        description: 'Average session duration in seconds'
-      }
+        description: 'Average session duration in seconds',
+      },
     ];
 
     for (const metric of gaMetrics) {
       const addMetricResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(metric)
+        body: JSON.stringify(metric),
       });
 
       if (addMetricResponse.ok) {
@@ -96,7 +96,7 @@ async function runMetricsTests() {
         baselineValue: 50000,
         acceptableRangeMin: 48000,
         acceptableRangeMax: 52000,
-        description: 'Monthly recurring revenue'
+        description: 'Monthly recurring revenue',
       },
       {
         name: 'conversion_rate',
@@ -104,15 +104,15 @@ async function runMetricsTests() {
         baselineValue: 3.2,
         acceptableRangeMin: 3.0,
         acceptableRangeMax: 3.4,
-        description: 'Payment conversion rate'
-      }
+        description: 'Payment conversion rate',
+      },
     ];
 
     for (const metric of stripeMetrics) {
       const addMetricResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(metric)
+        body: JSON.stringify(metric),
       });
 
       if (addMetricResponse.ok) {
@@ -132,14 +132,17 @@ async function runMetricsTests() {
       baselineValue: 4.5,
       acceptableRangeMin: 4.3,
       acceptableRangeMax: 4.7,
-      description: 'Customer satisfaction score'
+      description: 'Customer satisfaction score',
     };
 
-    const addCustomMetricResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(customMetric)
-    });
+    const addCustomMetricResponse = await fetch(
+      `${API_BASE}/api/customers/${customer.id}/metrics`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(customMetric),
+      }
+    );
 
     if (addCustomMetricResponse.ok) {
       const result = await addCustomMetricResponse.json();
@@ -150,28 +153,28 @@ async function runMetricsTests() {
 
     // Step 6: Test integration connections
     console.log('\n6️⃣ Testing integration connections...');
-    
+
     const integrationTests = [
       {
         source: 'google_analytics',
         credentials: {
           apiKey: 'test-ga-key',
-          propertyId: 'GA_PROPERTY_ID'
-        }
+          propertyId: 'GA_PROPERTY_ID',
+        },
       },
       {
         source: 'stripe',
         credentials: {
-          restrictedApiKey: 'rk_test_123'
-        }
+          restrictedApiKey: 'rk_test_123',
+        },
       },
       {
         source: 'custom',
         credentials: {
           endpointUrl: 'https://api.example.com/test',
-          apiKey: 'test-key'
-        }
-      }
+          apiKey: 'test-key',
+        },
+      },
     ];
 
     for (const test of integrationTests) {
@@ -179,7 +182,7 @@ async function runMetricsTests() {
         const testResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics/test`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(test)
+          body: JSON.stringify(test),
         });
 
         const result = await testResponse.json();
@@ -195,25 +198,30 @@ async function runMetricsTests() {
 
     // Step 7: Test metrics validation
     console.log('\n7️⃣ Running metrics validation...');
-    const validationResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/metrics/validate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        testPeriodDays: 7,
-        optimizationId: 'test-optimization-123'
-      })
-    });
+    const validationResponse = await fetch(
+      `${API_BASE}/api/customers/${customer.id}/metrics/validate`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          testPeriodDays: 7,
+          optimizationId: 'test-optimization-123',
+        }),
+      }
+    );
 
     if (validationResponse.ok) {
       const { validation } = await validationResponse.json();
       console.log(`✅ Metrics validation completed`);
       console.log(`   Overall Status: ${validation.overallStatus.toUpperCase()}`);
       console.log(`   Success Rate: ${validation.summary.successRate}`);
-      console.log(`   Metrics: ${validation.summary.passed} passed, ${validation.summary.warnings} warnings, ${validation.summary.failed} failed`);
-      
+      console.log(
+        `   Metrics: ${validation.summary.passed} passed, ${validation.summary.warnings} warnings, ${validation.summary.failed} failed`
+      );
+
       if (validation.recommendations.length > 0) {
         console.log('\n📋 Recommendations:');
-        validation.recommendations.forEach(rec => {
+        validation.recommendations.forEach((rec) => {
           console.log(`   ${rec}`);
         });
       }
@@ -227,8 +235,8 @@ async function runMetricsTests() {
     if (summaryResponse.ok) {
       const summary = await summaryResponse.json();
       console.log(`✅ Customer has ${summary.customerMetrics.length} active metrics configured`);
-      
-      summary.customerMetrics.forEach(metric => {
+
+      summary.customerMetrics.forEach((metric) => {
         console.log(`   - ${metric.name} (${metric.source}): baseline ${metric.baselineValue}`);
       });
     }
@@ -243,7 +251,6 @@ async function runMetricsTests() {
     console.log('✅ API endpoints: FUNCTIONAL');
 
     console.log('\n🚀 Phase 1A.2 Complete - "Bring Your Own Metrics" Framework is ready!');
-
   } catch (error) {
     console.error('\n❌ Test failed:', error.message);
     console.error(error.stack);
@@ -258,7 +265,7 @@ if (require.main === module) {
       console.log('\n✅ All tests passed!');
       process.exit(0);
     })
-    .catch(error => {
+    .catch((error) => {
       console.error('\n❌ Tests failed:', error);
       process.exit(1);
     });

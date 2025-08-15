@@ -31,12 +31,5 @@
       "domain": "admin.meterr.ai"
     }
   ],
-  "operations": [
-    "deploy",
-    "promote",
-    "rollback",
-    "setEnv",
-    "getDomains",
-    "getAnalytics"
-  ]
+  "operations": ["deploy", "promote", "rollback", "setEnv", "getDomains", "getAnalytics"]
 }

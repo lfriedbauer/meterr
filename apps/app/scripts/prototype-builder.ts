@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import path from 'path';
 import { exec } from 'child_process';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import path from 'path';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
@@ -68,7 +68,7 @@ class PrototypeBuilder {
 
     for (const prototype of PROTOTYPES.sort((a, b) => a.priority - b.priority)) {
       console.log(`📦 Building: ${prototype.name} (Priority ${prototype.priority})`);
-      
+
       try {
         switch (prototype.type) {
           case 'page':
@@ -84,7 +84,7 @@ class PrototypeBuilder {
             await this.buildComponentPrototype(prototype);
             break;
         }
-        
+
         console.log(`✅ Completed: ${prototype.name}\n`);
       } catch (error) {
         console.error(`❌ Failed: ${prototype.name}`, error);
@@ -887,7 +887,7 @@ export default function TokenOptimizer() {
     const report = {
       timestamp: new Date().toISOString(),
       prototypesBuilt: PROTOTYPES.length,
-      prototypes: PROTOTYPES.map(p => ({
+      prototypes: PROTOTYPES.map((p) => ({
         name: p.name,
         path: p.path,
         type: p.type,
@@ -904,7 +904,7 @@ export default function TokenOptimizer() {
 
     const reportPath = path.join(this.prototypesDir, 'build-report.json');
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    
+
     console.log(`\\n📊 Build report saved to: ${reportPath}`);
     return report;
   }
@@ -912,18 +912,17 @@ export default function TokenOptimizer() {
 
 async function main() {
   const builder = new PrototypeBuilder();
-  
+
   try {
     await builder.buildAll();
     const report = builder.generateReport();
-    
+
     console.log('\\n✅ All prototypes built successfully!');
     console.log(`\\nSummary:`);
     console.log(`- Total prototypes: ${report.prototypesBuilt}`);
-    console.log(`- Priority 1: ${report.prototypes.filter(p => p.priority === 1).length}`);
-    console.log(`- Priority 2: ${report.prototypes.filter(p => p.priority === 2).length}`);
-    console.log(`- Priority 3: ${report.prototypes.filter(p => p.priority === 3).length}`);
-    
+    console.log(`- Priority 1: ${report.prototypes.filter((p) => p.priority === 1).length}`);
+    console.log(`- Priority 2: ${report.prototypes.filter((p) => p.priority === 2).length}`);
+    console.log(`- Priority 3: ${report.prototypes.filter((p) => p.priority === 3).length}`);
   } catch (error) {
     console.error('❌ Prototype building failed:', error);
     process.exit(1);

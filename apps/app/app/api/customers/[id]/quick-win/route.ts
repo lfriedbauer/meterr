@@ -3,12 +3,12 @@
  * Discovers optimization opportunities for customers
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { ApiKeyManager } from '@/lib/services/api-key-manager';
-import { OpenAIUsageFetcher } from '@/lib/services/openai-usage-fetcher';
+import { type NextRequest, NextResponse } from 'next/server';
 import { AnthropicUsageFetcher } from '@/lib/services/anthropic-usage-fetcher';
-import { QuickWinDetector } from '@/lib/services/quick-win-detector';
+import { ApiKeyManager } from '@/lib/services/api-key-manager';
 import { EmbeddingGenerator } from '@/lib/services/embedding-generator';
+import { OpenAIUsageFetcher } from '@/lib/services/openai-usage-fetcher';
+import { QuickWinDetector } from '@/lib/services/quick-win-detector';
 
 // Lazy initialization
 let apiKeyManager: ApiKeyManager | null = null;
@@ -43,28 +43,31 @@ function getServices() {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
   }
-  return { apiKeyManager, openAIUsageFetcher, anthropicUsageFetcher, quickWinDetector, embeddingGenerator };
+  return {
+    apiKeyManager,
+    openAIUsageFetcher,
+    anthropicUsageFetcher,
+    quickWinDetector,
+    embeddingGenerator,
+  };
 }
 
 /**
  * POST /api/customers/[id]/quick-win - Generate Quick Win
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: customerId } = await params;
 
     // Step 1: Determine which provider to use
     console.log('Fetching usage data for customer:', customerId);
     const { apiKeyManager, openAIUsageFetcher, anthropicUsageFetcher } = getServices();
-    
+
     // Get customer's API keys to determine provider
     const apiKeys = await apiKeyManager.getCustomerApiKeys(customerId);
-    const hasAnthropic = apiKeys.some(k => k.provider === 'anthropic');
-    const hasOpenAI = apiKeys.some(k => k.provider === 'openai');
-    
+    const hasAnthropic = apiKeys.some((k) => k.provider === 'anthropic');
+    const hasOpenAI = apiKeys.some((k) => k.provider === 'openai');
+
     let usageResult;
     if (hasAnthropic) {
       console.log('Using Anthropic usage fetcher');
@@ -73,12 +76,9 @@ export async function POST(
       console.log('Using OpenAI usage fetcher');
       usageResult = await openAIUsageFetcher.fetchUsageData(customerId);
     } else {
-      return NextResponse.json(
-        { error: 'No API keys found for customer' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'No API keys found for customer' }, { status: 400 });
     }
-    
+
     if (!usageResult.success) {
       return NextResponse.json(
         { error: usageResult.error || 'Failed to fetch usage data' },
@@ -95,13 +95,14 @@ export async function POST(
     console.log('Detecting Quick Win opportunity...');
     const { quickWinDetector } = getServices();
     const quickWin = await quickWinDetector.detectQuickWin(customerId);
-    
+
     if (!quickWin) {
       return NextResponse.json({
         success: true,
         message: 'No Quick Win opportunities found at this time',
-        suggestion: 'Continue using your AI as normal. We\'ll analyze more data and find opportunities soon.',
-        usageSummary: usageResult.summary
+        suggestion:
+          "Continue using your AI as normal. We'll analyze more data and find opportunities soon.",
+        usageSummary: usageResult.summary,
       });
     }
 
@@ -120,30 +121,24 @@ export async function POST(
           description: quickWin.implementationGuide.description,
           codeSnippet: quickWin.implementationGuide.codeSnippet,
           whereToChange: quickWin.implementationGuide.whereToChange,
-          testingSteps: quickWin.implementationGuide.testingSteps
-        }
+          testingSteps: quickWin.implementationGuide.testingSteps,
+        },
       },
-      usageSummary: usageResult.summary
+      usageSummary: usageResult.summary,
     });
   } catch (error) {
     console.error('Error generating Quick Win:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate Quick Win' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to generate Quick Win' }, { status: 500 });
   }
 }
 
 /**
  * GET /api/customers/[id]/quick-win - Get existing Quick Win
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: customerId } = await params;
-    
+
     // Get existing Quick Win from database
     const supabase = require('@supabase/supabase-js').createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -159,19 +154,17 @@ export async function GET(
       .eq('customer_id', customerId)
       .single();
 
-    if (error && error.code !== 'PGRST116') { // Not found is OK
+    if (error && error.code !== 'PGRST116') {
+      // Not found is OK
       console.error('Error fetching Quick Win:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch Quick Win' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch Quick Win' }, { status: 500 });
     }
 
     if (!quickWin) {
       return NextResponse.json({
         success: true,
         message: 'No Quick Win found. Generate one by analyzing your usage.',
-        hasQuickWin: false
+        hasQuickWin: false,
       });
     }
 
@@ -189,25 +182,19 @@ export async function GET(
         implementedAt: quickWin.implemented_at,
         qualityMaintained: quickWin.quality_maintained,
         actualSavings: quickWin.actual_savings,
-        opportunity: quickWin.optimization_opportunities
-      }
+        opportunity: quickWin.optimization_opportunities,
+      },
     });
   } catch (error) {
     console.error('Error getting Quick Win:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 /**
  * PATCH /api/customers/[id]/quick-win - Update Quick Win status
  */
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const customerId = params.id;
     const body = await request.json();
@@ -218,7 +205,7 @@ export async function PATCH(
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    let updateData: any = {};
+    const updateData: any = {};
 
     switch (action) {
       case 'clicked':
@@ -234,10 +221,7 @@ export async function PATCH(
         }
         break;
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
     const { error } = await supabase
@@ -247,21 +231,15 @@ export async function PATCH(
 
     if (error) {
       console.error('Error updating Quick Win:', error);
-      return NextResponse.json(
-        { error: 'Failed to update Quick Win' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to update Quick Win' }, { status: 500 });
     }
 
     return NextResponse.json({
       success: true,
-      message: `Quick Win ${action} recorded successfully`
+      message: `Quick Win ${action} recorded successfully`,
     });
   } catch (error) {
     console.error('Error updating Quick Win:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

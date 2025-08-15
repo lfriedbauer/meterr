@@ -3,16 +3,8 @@
   "name": "OpenAI API Call Capture",
   "version": "1.0.0",
   "description": "Captures API calls from OpenAI playground",
-  "permissions": [
-    "storage",
-    "webRequest",
-    "tabs",
-    "scripting"
-  ],
-  "host_permissions": [
-    "https://platform.openai.com/*",
-    "https://api.openai.com/*"
-  ],
+  "permissions": ["storage", "webRequest", "tabs", "scripting"],
+  "host_permissions": ["https://platform.openai.com/*", "https://api.openai.com/*"],
   "background": {
     "service_worker": "dist/background.js",
     "type": "module"

@@ -1,0 +1,67 @@
+Key Optimization Opportunities:
+1. FLEXSEARCH-FIRST Enforcement (Critical)
+The documents emphasize searching for existing solutions but could be stronger:
+
+Add automated pre-commit hooks that block code without FlexSearch proof
+Create a .flexsearch-check file requirement for each PR
+Implement a "BUILD_JUSTIFICATION.md" requirement when building custom
+
+2. Low-Code/No-Code Enforcement (Needs Strengthening)
+Current gaps:
+
+No mandatory v0.dev usage tracking
+Missing "tool-first" checklist enforcement
+No automated rejection for hand-coded UI components
+
+Suggested additions:
+markdown## MANDATORY NO-CODE CHECKLIST
+Before ANY code:
+□ v0.dev attempted for UI? (paste prompt used)
+□ Zapier/Make.com checked for integrations?
+□ Retool evaluated for admin panels?
+□ Bubble considered for prototypes?
+□ Evidence documented in PR description
+3. Prompt Engineering Templates (Should be Expanded)
+The PROMPT_ENGINEERING_GUIDE.md could include:
+
+Copy-paste ready templates for common tasks
+"Magic phrases" that reduce hallucinations
+Failure recovery prompts
+
+4. Hardware Utilization (Under-leveraged)
+With 256GB RAM and RTX 5070 Ti:
+
+Not using RAM disk for development
+Missing GPU-accelerated linting/formatting
+No parallel type-checking configuration
+
+5. Tool Registry Automation
+Manual tool awareness could be automated:
+bash# Auto-generate from package.json
+pnpm tools:scan > AVAILABLE_TOOLS.md
+pnpm tools:unused # Flag installed but unused
+Recommended Immediate Actions:
+
+Add to ORCHESTRATOR_DIRECTIVES.md:
+
+markdown## ZERO-CODE MANDATE
+1. UI Components → v0.dev ONLY
+2. Integrations → Zapier/Make FIRST
+3. Admin Panels → Retool REQUIRED
+4. Proof of attempt MANDATORY in PR
+
+Create AUTO_REJECTION.md:
+
+markdown## Instant PR Rejection Triggers
+- No FlexSearch proof
+- Hand-coded UI without v0.dev attempt
+- Custom auth/payment/email code
+- Missing tool justification
+
+Enhance conciseness rules - Current rules are good but could add:
+
+markdown## ULTRA-CONCISE MODE
+- Max 50 words per response unless requested
+- Code blocks without explanation
+- Single emoji acknowledgments when appropriate
+Should optimize? Yes - stronger enforcement of no-code/low-code principles would accelerate development significantly. The 80% reduction target is achievable with stricter tool-first mandates.

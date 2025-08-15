@@ -34,7 +34,7 @@ interface CompetitiveAnalysis {
 export class LLMInsightsEngine {
   private client: UnifiedLLMClient;
   private industryPatterns: Map<string, any>;
-  
+
   constructor() {
     this.client = new UnifiedLLMClient({
       openai: process.env.OPENAI_API_KEY,
@@ -42,7 +42,7 @@ export class LLMInsightsEngine {
       google: process.env.GOOGLE_API_KEY,
       perplexity: process.env.PERPLEXITY_API_KEY,
     });
-    
+
     this.industryPatterns = new Map();
     this.loadIndustryPatterns();
   }
@@ -58,34 +58,29 @@ export class LLMInsightsEngine {
   }> {
     // Prepare analysis context
     const context = this.prepareContext(request);
-    
+
     // Consult different LLMs for different perspectives
-    const [
-      costInsights,
-      architectureInsights,
-      competitiveIntel,
-      unusualPatterns
-    ] = await Promise.all([
-      this.getCostOptimizationInsights(context),
-      this.getArchitectureInsights(context),
-      this.getCompetitiveIntelligence(context),
-      this.findUnusualPatterns(context)
-    ]);
-    
+    const [costInsights, architectureInsights, competitiveIntel, unusualPatterns] =
+      await Promise.all([
+        this.getCostOptimizationInsights(context),
+        this.getArchitectureInsights(context),
+        this.getCompetitiveIntelligence(context),
+        this.findUnusualPatterns(context),
+      ]);
+
     // Synthesize insights
-    const insights = [
-      ...costInsights,
-      ...architectureInsights
-    ].sort((a, b) => b.confidence - a.confidence);
-    
+    const insights = [...costInsights, ...architectureInsights].sort(
+      (a, b) => b.confidence - a.confidence
+    );
+
     // Generate implementation roadmap
     const roadmap = await this.generateRoadmap(insights);
-    
+
     return {
       insights: insights.slice(0, 10), // Top 10 insights
       competitive: competitiveIntel,
       roadmap,
-      unusualFindings: unusualPatterns
+      unusualFindings: unusualPatterns,
     };
   }
 
@@ -124,9 +119,9 @@ Format as JSON array of insights.`;
     try {
       const response = await this.client.queryClaude({
         prompt,
-        model: 'claude-3-5-sonnet-20241022'
+        model: 'claude-3-5-sonnet-20241022',
       });
-      
+
       // Parse and structure insights
       return this.parseInsights(response.response, 'cost');
     } catch (error) {
@@ -158,9 +153,9 @@ Format as actionable insights with confidence scores.`;
     try {
       const response = await this.client.queryGemini({
         prompt,
-        model: 'gemini-pro'
+        model: 'gemini-pro',
       });
-      
+
       return this.parseInsights(response.response, 'architecture');
     } catch (error) {
       console.error('Error getting architecture insights:', error);
@@ -190,7 +185,7 @@ Provide specific, data-driven insights with real examples where possible.`;
 
     try {
       const response = await this.client.queryPerplexity({ prompt });
-      
+
       return this.parseCompetitiveAnalysis(response.response);
     } catch (error) {
       console.error('Error getting competitive intel:', error);
@@ -217,14 +212,14 @@ List the most interesting/actionable findings.`;
 
     try {
       const response = await this.client.queryGemini({ prompt });
-      
+
       return this.parseUnusualPatterns(response.response);
     } catch (error) {
       console.error('Error finding patterns:', error);
       return [
         'Detected potential token leakage in 15% of requests',
         'Usage spikes correlate with specific user actions - opportunity for predictive caching',
-        'Model selection appears random rather than optimized for task complexity'
+        'Model selection appears random rather than optimized for task complexity',
       ];
     }
   }
@@ -233,11 +228,11 @@ List the most interesting/actionable findings.`;
    * Generate implementation roadmap
    */
   private async generateRoadmap(insights: AdvancedInsight[]): Promise<string[]> {
-    const highPriority = insights.filter(i => i.confidence > 0.8);
-    
+    const highPriority = insights.filter((i) => i.confidence > 0.8);
+
     const prompt = `Create a 30-day implementation roadmap for these AI optimizations:
 
-${highPriority.map(i => `- ${i.title}: ${i.recommendation}`).join('\n')}
+${highPriority.map((i) => `- ${i.title}: ${i.recommendation}`).join('\n')}
 
 Structure as:
 Week 1: Quick wins and foundation
@@ -248,11 +243,11 @@ Week 4: Monitoring and refinement
 Be specific with daily tasks and milestones.`;
 
     try {
-      const response = await this.client.queryClaude({ 
+      const response = await this.client.queryClaude({
         prompt,
-        model: 'claude-3-5-sonnet-20241022'
+        model: 'claude-3-5-sonnet-20241022',
       });
-      
+
       return this.parseRoadmap(response.response);
     } catch (error) {
       console.error('Error generating roadmap:', error);
@@ -261,7 +256,7 @@ Be specific with daily tasks and milestones.`;
         'Day 4-7: Deploy intelligent model router based on complexity scoring',
         'Week 2: Set up prompt compression and context pruning',
         'Week 3: Implement cross-request caching and batch processing',
-        'Week 4: Fine-tune and monitor optimization impact'
+        'Week 4: Fine-tune and monitor optimization impact',
       ];
     }
   }
@@ -271,7 +266,7 @@ Be specific with daily tasks and milestones.`;
    */
   private prepareContext(request: InsightRequest): any {
     const data = request.usageData;
-    
+
     return {
       totalCost: data.totalCost || 0,
       avgTokens: data.avgTokens || 0,
@@ -282,7 +277,7 @@ Be specific with daily tasks and milestones.`;
       companySize: request.companySize,
       challenges: request.currentChallenges,
       dailyRequests: data.dailyRequests || 0,
-      avgLatency: data.avgLatency || 0
+      avgLatency: data.avgLatency || 0,
     };
   }
 
@@ -294,7 +289,7 @@ Be specific with daily tasks and milestones.`;
       // Try to parse as JSON first
       const parsed = JSON.parse(response);
       if (Array.isArray(parsed)) {
-        return parsed.map(item => ({
+        return parsed.map((item) => ({
           category,
           title: item.title || 'Optimization Opportunity',
           finding: item.finding || '',
@@ -302,17 +297,17 @@ Be specific with daily tasks and milestones.`;
           implementation: item.implementation || '',
           expectedImpact: item.impact || '20-30% improvement',
           confidence: item.confidence || 0.7,
-          dataPoints: item.dataPoints || []
+          dataPoints: item.dataPoints || [],
         }));
       }
     } catch (e) {
       // Fallback to text parsing
     }
-    
+
     // Parse text response into insights
     const insights: AdvancedInsight[] = [];
     const sections = response.split(/\n\n/);
-    
+
     for (const section of sections) {
       if (section.length > 50) {
         insights.push({
@@ -323,11 +318,11 @@ Be specific with daily tasks and milestones.`;
           implementation: 'See detailed implementation guide',
           expectedImpact: this.extractImpact(section),
           confidence: 0.75,
-          dataPoints: []
+          dataPoints: [],
         });
       }
     }
-    
+
     return insights;
   }
 
@@ -336,21 +331,24 @@ Be specific with daily tasks and milestones.`;
    */
   private parseCompetitiveAnalysis(response: string): CompetitiveAnalysis {
     return {
-      yourPosition: this.extractSection(response, 'position') || 'Above average but with room for improvement',
-      industryBenchmark: this.extractSection(response, 'benchmark') || 'Top performers achieve 50% lower costs',
-      topPerformers: this.extractSection(response, 'leaders') || 'Companies using hybrid model strategies',
+      yourPosition:
+        this.extractSection(response, 'position') || 'Above average but with room for improvement',
+      industryBenchmark:
+        this.extractSection(response, 'benchmark') || 'Top performers achieve 50% lower costs',
+      topPerformers:
+        this.extractSection(response, 'leaders') || 'Companies using hybrid model strategies',
       gaps: [
         'Lack of predictive pre-computation',
         'Missing cross-team optimization',
         'No usage-based model selection',
-        'Limited caching strategies'
+        'Limited caching strategies',
       ],
       opportunities: [
         'Implement industry-specific model fine-tuning',
         'Leverage time-zone based pre-computation',
         'Create shared optimization pools across teams',
-        'Deploy edge-based inference for common queries'
-      ]
+        'Deploy edge-based inference for common queries',
+      ],
     };
   }
 
@@ -360,13 +358,13 @@ Be specific with daily tasks and milestones.`;
   private parseUnusualPatterns(response: string): string[] {
     const patterns: string[] = [];
     const lines = response.split('\n');
-    
+
     for (const line of lines) {
       if (line.match(/^\d\.|^-|^•/) && line.length > 20) {
-        patterns.push(line.replace(/^[\d\.\-•]\s*/, '').trim());
+        patterns.push(line.replace(/^[\d.\-•]\s*/, '').trim());
       }
     }
-    
+
     return patterns.slice(0, 5);
   }
 
@@ -376,13 +374,13 @@ Be specific with daily tasks and milestones.`;
   private parseRoadmap(response: string): string[] {
     const steps: string[] = [];
     const lines = response.split('\n');
-    
+
     for (const line of lines) {
       if (line.match(/^(Week|Day|Step)/i) && line.length > 10) {
         steps.push(line.trim());
       }
     }
-    
+
     return steps;
   }
 
@@ -390,14 +388,14 @@ Be specific with daily tasks and milestones.`;
    * Extract specific sections from text
    */
   private extractSection(text: string, keyword: string): string {
-    const regex = new RegExp(`${keyword}[:\s]+([^.]+)`, 'i');
+    const regex = new RegExp(`${keyword}[:s]+([^.]+)`, 'i');
     const match = text.match(regex);
     return match ? match[1].trim() : '';
   }
 
   private extractTitle(text: string): string {
     const lines = text.split('\n');
-    return lines[0].replace(/^[\d\.\-•]\s*/, '').substring(0, 50);
+    return lines[0].replace(/^[\d.\-•]\s*/, '').substring(0, 50);
   }
 
   private extractFinding(text: string): string {
@@ -421,20 +419,24 @@ Be specific with daily tasks and milestones.`;
   private loadIndustryPatterns(): void {
     this.industryPatterns.set('ecommerce', {
       commonTasks: ['product descriptions', 'review analysis', 'recommendation'],
-      optimizations: ['batch catalog updates', 'cache product queries', 'pre-generate descriptions'],
-      benchmarks: { avgCostPerSKU: 0.02, catalogUpdateFreq: 'daily' }
+      optimizations: [
+        'batch catalog updates',
+        'cache product queries',
+        'pre-generate descriptions',
+      ],
+      benchmarks: { avgCostPerSKU: 0.02, catalogUpdateFreq: 'daily' },
     });
-    
+
     this.industryPatterns.set('saas', {
       commonTasks: ['code generation', 'documentation', 'error analysis'],
       optimizations: ['template-based generation', 'incremental updates', 'smart routing'],
-      benchmarks: { avgCostPerUser: 0.50, apiCallsPerUser: 100 }
+      benchmarks: { avgCostPerUser: 0.5, apiCallsPerUser: 100 },
     });
-    
+
     this.industryPatterns.set('finance', {
       commonTasks: ['report generation', 'risk analysis', 'compliance checks'],
       optimizations: ['scheduled batch processing', 'regulatory templates', 'tiered model usage'],
-      benchmarks: { avgCostPerReport: 1.50, complianceCheckCost: 0.25 }
+      benchmarks: { avgCostPerReport: 1.5, complianceCheckCost: 0.25 },
     });
   }
 
@@ -451,7 +453,7 @@ Be specific with daily tasks and milestones.`;
         implementation: 'Use vector embeddings to identify similar requests',
         expectedImpact: '35% cost reduction on repeated queries',
         confidence: 0.92,
-        dataPoints: ['1,250 duplicate patterns found', '~$450/month savings']
+        dataPoints: ['1,250 duplicate patterns found', '~$450/month savings'],
       },
       {
         category: 'cost',
@@ -461,8 +463,8 @@ Be specific with daily tasks and milestones.`;
         implementation: 'Score prompt complexity and route accordingly',
         expectedImpact: '40% cost reduction without quality loss',
         confidence: 0.88,
-        dataPoints: ['60% of requests over-provisioned', '~$600/month savings']
-      }
+        dataPoints: ['60% of requests over-provisioned', '~$600/month savings'],
+      },
     ];
   }
 
@@ -476,8 +478,8 @@ Be specific with daily tasks and milestones.`;
         implementation: 'Use CDN with semantic cache keys',
         expectedImpact: '50ms latency reduction, 20% cost savings',
         confidence: 0.85,
-        dataPoints: ['Average latency: 200ms', 'Could reduce to: 100ms']
-      }
+        dataPoints: ['Average latency: 200ms', 'Could reduce to: 100ms'],
+      },
     ];
   }
 
@@ -489,13 +491,13 @@ Be specific with daily tasks and milestones.`;
       gaps: [
         'No semantic deduplication',
         'Missing predictive pre-computation',
-        'Limited cross-request optimization'
+        'Limited cross-request optimization',
       ],
       opportunities: [
         'First-mover advantage in your industry segment',
         'Potential to become benchmark leader with optimizations',
-        'Create competitive moat through AI efficiency'
-      ]
+        'Create competitive moat through AI efficiency',
+      ],
     };
   }
 }

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import { 
-  initializeToolIndex, 
-  findToolsForUseCase, 
+import {
   findQuickWins,
+  findToolsForUseCase,
+  initializeToolIndex,
   recommendToolsForProject,
-  TOOL_CATEGORIES 
+  TOOL_CATEGORIES,
 } from '../lib/research-coordinator/tool-index';
 
 /**
@@ -14,10 +14,10 @@ import {
 
 async function main() {
   console.log('🔍 Research Coordinator Agent Starting...\n');
-  
+
   // Initialize the tool index
   initializeToolIndex();
-  
+
   // Example: Find tools for current meterr needs
   const meterrRequirements = [
     'real-time cost tracking',
@@ -25,14 +25,14 @@ async function main() {
     'usage analytics',
     'error monitoring',
     'user authentication',
-    'payment processing'
+    'payment processing',
   ];
-  
+
   console.log('📋 Analyzing Meterr Requirements...\n');
-  
+
   // Get recommendations
   const recommendations = await recommendToolsForProject(meterrRequirements);
-  
+
   console.log('🎯 Top Tool Recommendations:\n');
   recommendations.forEach((tool, index) => {
     console.log(`${index + 1}. ${tool.name} (${tool.category})`);
@@ -42,7 +42,7 @@ async function main() {
     console.log(`   ⚠️  Cons: ${tool.cons.join(', ')}`);
     console.log(`   🔗 ${tool.url}\n`);
   });
-  
+
   // Find quick wins
   console.log('⚡ Quick Win Tools (< 2 hours to implement):\n');
   const quickWins = await findQuickWins();
@@ -50,7 +50,7 @@ async function main() {
     const tool = result.doc || result;
     console.log(`- ${tool.name}: ${tool.time_saved} saved, ${tool.implementation_effort} to setup`);
   });
-  
+
   // Search for specific needs
   console.log('\n🔎 Searching for Real-time Solutions...\n');
   const realtimeTools = await findToolsForUseCase('realtime');
@@ -64,7 +64,7 @@ async function main() {
 if (process.argv[2] === 'search') {
   const query = process.argv.slice(3).join(' ');
   initializeToolIndex();
-  findToolsForUseCase(query).then(results => {
+  findToolsForUseCase(query).then((results) => {
     console.log(`\n🔍 Search results for "${query}":\n`);
     results.forEach((result: any) => {
       const tool = result.doc || result;
@@ -74,7 +74,7 @@ if (process.argv[2] === 'search') {
   });
 } else if (process.argv[2] === 'quick') {
   initializeToolIndex();
-  findQuickWins().then(results => {
+  findQuickWins().then((results) => {
     console.log('\n⚡ Quick wins (minimal setup time):\n');
     results.forEach((result: any) => {
       const tool = result.doc || result;

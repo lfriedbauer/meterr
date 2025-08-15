@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 // Load environment variables
 dotenv.config();
 
-const testPrompt = "Testing premium models. Please respond with 'Hello from [your model name]!' and nothing else.";
+const testPrompt =
+  "Testing premium models. Please respond with 'Hello from [your model name]!' and nothing else.";
 
 async function testPremiumModels() {
   const client = new UnifiedLLMClient({
@@ -21,9 +22,9 @@ async function testPremiumModels() {
   // Test Claude Opus 4.1
   try {
     console.log('Testing Claude Opus 4.1...');
-    const result = await client.queryClaude({ 
+    const result = await client.queryClaude({
       prompt: testPrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
     console.log('✅ Claude Opus 4.1:', result.response.substring(0, 100));
     console.log('   Model:', result.model);
@@ -37,9 +38,9 @@ async function testPremiumModels() {
   // Test Grok-4
   try {
     console.log('\nTesting Grok-4...');
-    const result = await client.queryGrok({ 
+    const result = await client.queryGrok({
       prompt: testPrompt,
-      model: 'grok-4-latest'
+      model: 'grok-4-latest',
     });
     console.log('✅ Grok-4:', result.response.substring(0, 100));
     console.log('   Model:', result.model);
@@ -53,9 +54,9 @@ async function testPremiumModels() {
   // Also test GPT-4 Turbo for comparison
   try {
     console.log('\nTesting GPT-4 Turbo (for comparison)...');
-    const result = await client.queryOpenAI({ 
+    const result = await client.queryOpenAI({
       prompt: testPrompt,
-      model: 'gpt-4-turbo-preview'
+      model: 'gpt-4-turbo-preview',
     });
     console.log('✅ GPT-4 Turbo:', result.response.substring(0, 100));
     if (result.usage) {

@@ -10,18 +10,14 @@ const serverName = process.argv[2] || 'llm-research';
 const configPath = path.join(__dirname, '..', 'mcp-config.json');
 
 // Run mcp-inspector-cli with the config
-const args = [
-  '--config', configPath,
-  '--server', serverName,
-  '--cli'
-];
+const args = ['--config', configPath, '--server', serverName, '--cli'];
 
 console.log(`Starting MCP Inspector for server: ${serverName}`);
 console.log(`Using config: ${configPath}`);
 
 const inspector = spawn('mcp-inspector-cli', args, {
   stdio: 'inherit',
-  shell: true
+  shell: true,
 });
 
 inspector.on('close', (code) => {

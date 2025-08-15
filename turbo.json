@@ -11,18 +11,8 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**",
-        "build/**",
-        ".vercel/**"
-      ],
-      "env": [
-        "NEXT_PUBLIC_*",
-        "DATABASE_URL",
-        "SUPABASE_SERVICE_KEY"
-      ]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "build/**", ".vercel/**"],
+      "env": ["NEXT_PUBLIC_*", "DATABASE_URL", "SUPABASE_SERVICE_KEY"]
     },
     "dev": {
       "cache": false,

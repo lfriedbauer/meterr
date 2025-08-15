@@ -3,18 +3,18 @@ const visit = require('unist-util-visit');
 // Plugin to filter content based on audience
 function audienceFilter(options = {}) {
   const defaultAudience = options.defaultAudience || 'human';
-  
+
   return (tree, file) => {
     const frontmatter = file.data.frontMatter || {};
     const targetAudience = frontmatter.audience || defaultAudience;
-    
+
     // Add audience metadata
     if (!frontmatter.audience) {
       frontmatter.audience = [defaultAudience];
     } else if (typeof frontmatter.audience === 'string') {
       frontmatter.audience = [frontmatter.audience];
     }
-    
+
     // Process conditional blocks
     visit(tree, 'html', (node, index, parent) => {
       // Look for audience-specific HTML comments
@@ -30,10 +30,10 @@ function audienceFilter(options = {}) {
         }
       }
     });
-    
+
     // Process inline audience tags
     visit(tree, 'paragraph', (node) => {
-      node.children = node.children.filter(child => {
+      node.children = node.children.filter((child) => {
         if (child.type === 'text') {
           // Remove inline audience tags like {human: text} or {ai: text}
           child.value = child.value.replace(

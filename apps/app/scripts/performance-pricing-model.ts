@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
 import { writeFileSync } from 'fs';
 import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
@@ -27,7 +27,7 @@ interface PerformanceContract {
 class PerformancePricingModel {
   private client: UnifiedLLMClient;
   private tiers: PricingTier[] = [];
-  
+
   constructor() {
     this.client = new UnifiedLLMClient({
       openai: process.env.OPENAI_API_KEY,
@@ -40,7 +40,7 @@ class PerformancePricingModel {
 
   async designPricingStrategy() {
     console.log('💰 PERFORMANCE-BASED PRICING STRATEGY\n');
-    console.log('=' .repeat(60) + '\n');
+    console.log('='.repeat(60) + '\n');
 
     // Define the pricing tiers
     this.tiers = [
@@ -52,10 +52,10 @@ class PerformancePricingModel {
           'Basic dashboard',
           'Weekly email reports',
           'Chrome extension',
-          '30-day data retention'
+          '30-day data retention',
         ],
         targetCustomer: 'Small teams, individuals',
-        revenueModel: 'subscription'
+        revenueModel: 'subscription',
       },
       {
         name: 'Professional',
@@ -67,10 +67,10 @@ class PerformancePricingModel {
           'API access',
           'Team management (5 users)',
           '90-day data retention',
-          'Basic optimization suggestions'
+          'Basic optimization suggestions',
         ],
         targetCustomer: 'Growing startups',
-        revenueModel: 'subscription'
+        revenueModel: 'subscription',
       },
       {
         name: 'Business',
@@ -83,10 +83,10 @@ class PerformancePricingModel {
           '1-year data retention',
           'Monthly optimization review',
           'Slack integration',
-          'Priority support'
+          'Priority support',
         ],
         targetCustomer: 'Scale-ups, mid-market',
-        revenueModel: 'hybrid'
+        revenueModel: 'hybrid',
       },
       {
         name: 'Enterprise Performance',
@@ -97,44 +97,46 @@ class PerformancePricingModel {
           'Custom integrations',
           'SLA guarantees',
           'Quarterly business reviews',
-          'Performance-based pricing available'
+          'Performance-based pricing available',
         ],
         targetCustomer: 'Enterprise (>$20K/month AI spend)',
-        revenueModel: 'performance'
-      }
+        revenueModel: 'performance',
+      },
     ];
 
     console.log('📊 Pricing Tiers Defined:\n');
-    this.tiers.forEach(tier => {
+    this.tiers.forEach((tier) => {
       console.log(`${tier.name}: $${tier.basePrice}/month (${tier.revenueModel})`);
     });
   }
 
   async calculatePerformanceScenarios() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('📈 Performance-Based Pricing Scenarios\n');
 
     const scenarios = [
-      { baseline: 5000, savings: 0.25, shareRate: 0.20 },  // 25% savings, we take 20%
-      { baseline: 10000, savings: 0.30, shareRate: 0.25 }, // 30% savings, we take 25%
-      { baseline: 25000, savings: 0.35, shareRate: 0.30 }, // 35% savings, we take 30%
-      { baseline: 50000, savings: 0.40, shareRate: 0.35 }, // 40% savings, we take 35%
+      { baseline: 5000, savings: 0.25, shareRate: 0.2 }, // 25% savings, we take 20%
+      { baseline: 10000, savings: 0.3, shareRate: 0.25 }, // 30% savings, we take 25%
+      { baseline: 25000, savings: 0.35, shareRate: 0.3 }, // 35% savings, we take 30%
+      { baseline: 50000, savings: 0.4, shareRate: 0.35 }, // 40% savings, we take 35%
     ];
 
     console.log('Monthly AI Spend | Savings % | Our Share | Customer Saves | We Earn\n');
     console.log('-'.repeat(70));
 
-    scenarios.forEach(s => {
+    scenarios.forEach((s) => {
       const savedAmount = s.baseline * s.savings;
       const ourEarnings = savedAmount * s.shareRate;
       const customerNetSavings = savedAmount - ourEarnings;
-      
+
       console.log(
         `$${s.baseline.toLocaleString().padEnd(8)} | ` +
-        `${(s.savings * 100).toFixed(0)}%`.padEnd(9) + ' | ' +
-        `${(s.shareRate * 100).toFixed(0)}%`.padEnd(9) + ' | ' +
-        `$${customerNetSavings.toLocaleString().padEnd(14)} | ` +
-        `$${ourEarnings.toLocaleString()}`
+          `${(s.savings * 100).toFixed(0)}%`.padEnd(9) +
+          ' | ' +
+          `${(s.shareRate * 100).toFixed(0)}%`.padEnd(9) +
+          ' | ' +
+          `$${customerNetSavings.toLocaleString().padEnd(14)} | ` +
+          `$${ourEarnings.toLocaleString()}`
       );
     });
 
@@ -142,7 +144,7 @@ class PerformancePricingModel {
   }
 
   async validateWithSales() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🎯 Sales Validation of Performance Model\n');
 
     const validationPrompt = `You're an enterprise sales executive. Evaluate this performance-based pricing model:
@@ -165,19 +167,19 @@ class PerformancePricingModel {
     4. Will customers prefer flat fee or performance model?
     5. What contractual terms are critical?`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt: validationPrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log('Sales Validation Results:\n');
     console.log(response.response.substring(0, 1500));
-    
+
     return response.response;
   }
 
   async createContractTemplate() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('📝 Creating Performance Contract Template\n');
 
     const contractPrompt = `Create a simple, clear performance-based contract template for Meterr.ai that includes:
@@ -194,12 +196,12 @@ class PerformancePricingModel {
     const response = await this.client.queryGemini({ prompt: contractPrompt });
     console.log('Contract Template (Preview):\n');
     console.log(response.response.substring(0, 1000));
-    
+
     return response.response;
   }
 
   async generatePricingPage() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🌐 Generating Pricing Page Copy\n');
 
     const pagePrompt = `Create website pricing page copy for Meterr.ai with these tiers:
@@ -214,19 +216,19 @@ class PerformancePricingModel {
     
     Make it clear, compelling, and focused on value. Include a pricing calculator showing potential ROI.`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt: pagePrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log('Pricing Page Copy:\n');
     console.log(response.response.substring(0, 1500));
-    
+
     return response.response;
   }
 
   async calculateUnitEconomics() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('💹 Unit Economics Analysis\n');
 
     const models = [
@@ -236,7 +238,7 @@ class PerformancePricingModel {
         cac: 200,
         monthlyChurn: 0.05,
         serverCostPerUser: 10,
-        supportCostPerUser: 5
+        supportCostPerUser: 5,
       },
       {
         name: 'Performance-Based',
@@ -244,7 +246,7 @@ class PerformancePricingModel {
         cac: 1000, // higher CAC for enterprise
         monthlyChurn: 0.02, // lower churn
         serverCostPerUser: 50,
-        supportCostPerUser: 200 // dedicated support
+        supportCostPerUser: 200, // dedicated support
       },
       {
         name: 'Hybrid Model',
@@ -252,33 +254,33 @@ class PerformancePricingModel {
         cac: 400,
         monthlyChurn: 0.03,
         serverCostPerUser: 20,
-        supportCostPerUser: 30
-      }
+        supportCostPerUser: 30,
+      },
     ];
 
     console.log('Model           | LTV     | CAC    | LTV:CAC | Margin\n');
     console.log('-'.repeat(60));
 
-    models.forEach(m => {
+    models.forEach((m) => {
       const avgLifetime = 1 / m.monthlyChurn; // months
       const revenue = m.avgPrice * avgLifetime;
       const costs = (m.serverCostPerUser + m.supportCostPerUser) * avgLifetime;
       const ltv = revenue - costs;
       const ltvCacRatio = ltv / m.cac;
-      const margin = ((revenue - costs) / revenue * 100).toFixed(1);
+      const margin = (((revenue - costs) / revenue) * 100).toFixed(1);
 
       console.log(
         `${m.name.padEnd(15)} | ` +
-        `$${ltv.toFixed(0).padEnd(6)} | ` +
-        `$${m.cac.toString().padEnd(6)} | ` +
-        `${ltvCacRatio.toFixed(1).padEnd(7)} | ` +
-        `${margin}%`
+          `$${ltv.toFixed(0).padEnd(6)} | ` +
+          `$${m.cac.toString().padEnd(6)} | ` +
+          `${ltvCacRatio.toFixed(1).padEnd(7)} | ` +
+          `${margin}%`
       );
     });
   }
 
   async createSalesScript() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🎤 Performance-Based Sales Script\n');
 
     const scriptPrompt = `Create a sales script for introducing performance-based pricing to an enterprise prospect:
@@ -294,26 +296,26 @@ class PerformancePricingModel {
     
     Make it conversational, not robotic.`;
 
-    const response = await this.client.queryOpenAI({ 
+    const response = await this.client.queryOpenAI({
       prompt: scriptPrompt,
-      model: 'gpt-4-turbo-preview'
+      model: 'gpt-4-turbo-preview',
     });
-    
+
     console.log('Sales Script:\n');
     console.log(response.response.substring(0, 1500));
-    
+
     return response.response;
   }
 
   async testCustomerReactions() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🧪 Testing Customer Reactions\n');
 
     const reactions = [
       { persona: 'Skeptical CFO', spend: 50000 },
       { persona: 'Innovation-focused CTO', spend: 20000 },
       { persona: 'Cost-conscious Startup Founder', spend: 5000 },
-      { persona: 'Enterprise Procurement Manager', spend: 100000 }
+      { persona: 'Enterprise Procurement Manager', spend: 100000 },
     ];
 
     for (const r of reactions) {
@@ -332,7 +334,7 @@ class PerformancePricingModel {
   }
 
   async generateFinalRecommendation() {
-    console.log('\n' + '=' .repeat(60));
+    console.log('\n' + '='.repeat(60));
     console.log('🎯 FINAL PRICING RECOMMENDATION\n');
 
     const data = {
@@ -341,8 +343,8 @@ class PerformancePricingModel {
         minBaseFee: 499,
         savingsShare: '20-35%',
         baselinePeriod: 30,
-        minContract: 6
-      }
+        minContract: 6,
+      },
     };
 
     const recommendationPrompt = `Based on all analysis, what's the optimal pricing strategy for Meterr.ai?
@@ -361,67 +363,67 @@ class PerformancePricingModel {
     
     Give a clear, actionable recommendation.`;
 
-    const response = await this.client.queryClaude({ 
+    const response = await this.client.queryClaude({
       prompt: recommendationPrompt,
-      model: 'claude-opus-4-1-20250805'
+      model: 'claude-opus-4-1-20250805',
     });
-    
+
     console.log(response.response);
-    
+
     // Save everything
     const report = {
       timestamp: new Date().toISOString(),
       tiers: this.tiers,
       performanceModel: data.performanceModel,
-      recommendation: response.response
+      recommendation: response.response,
     };
-    
+
     const reportPath = path.join(
       process.cwd(),
       'research-results',
       `performance-pricing-strategy.json`
     );
-    
+
     writeFileSync(reportPath, JSON.stringify(report, null, 2));
     console.log(`\n📁 Full pricing strategy saved to: ${reportPath}`);
-    
+
     return report;
   }
 }
 
 async function main() {
   const model = new PerformancePricingModel();
-  
+
   console.log('🚀 DEVELOPING PERFORMANCE-BASED PRICING MODEL\n');
-  
+
   // Design core pricing strategy
   await model.designPricingStrategy();
-  
+
   // Calculate performance scenarios
   await model.calculatePerformanceScenarios();
-  
+
   // Validate with sales perspective
   await model.validateWithSales();
-  
+
   // Create contract template
   await model.createContractTemplate();
-  
+
   // Generate pricing page
   await model.generatePricingPage();
-  
+
   // Analyze unit economics
   await model.calculateUnitEconomics();
-  
+
   // Create sales script
   await model.createSalesScript();
-  
+
   // Test customer reactions
   await model.testCustomerReactions();
-  
+
   // Generate final recommendation
   await model.generateFinalRecommendation();
-  
-  console.log('\n' + '=' .repeat(60));
+
+  console.log('\n' + '='.repeat(60));
   console.log('✅ PRICING STRATEGY COMPLETE\n');
   console.log('Key Decisions:');
   console.log('1. Offer BOTH flat-fee and performance options');

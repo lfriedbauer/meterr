@@ -4,7 +4,7 @@
  * Run: pnpm plop <generator-name>
  */
 
-module.exports = function (plop) {
+module.exports = (plop) => {
   // Set custom helpers
   plop.setHelper('titleCase', (text) => {
     return text.charAt(0).toUpperCase() + text.slice(1);
@@ -22,46 +22,46 @@ module.exports = function (plop) {
           if (!value) return 'Name is required';
           if (!/^[a-z-]+$/.test(value)) return 'Use lowercase with hyphens only';
           return true;
-        }
+        },
       },
       {
         type: 'list',
         name: 'method',
         message: 'HTTP methods to support:',
         choices: ['GET', 'POST', 'GET,POST', 'GET,POST,PUT,DELETE'],
-        default: 'GET,POST'
+        default: 'GET,POST',
       },
       {
         type: 'confirm',
         name: 'needsAuth',
         message: 'Requires authentication?',
-        default: true
+        default: true,
       },
       {
         type: 'confirm',
         name: 'needsValidation',
         message: 'Add Zod validation?',
-        default: true
-      }
+        default: true,
+      },
     ],
     actions: [
       {
         type: 'add',
         path: 'apps/app/app/api/{{dashCase name}}/route.ts',
-        templateFile: 'templates/api-route.hbs'
+        templateFile: 'templates/api-route.hbs',
       },
       {
         type: 'add',
         path: 'apps/app/app/api/{{dashCase name}}/route.test.ts',
-        templateFile: 'templates/api-route-test.hbs'
+        templateFile: 'templates/api-route-test.hbs',
       },
       {
         type: 'add',
         path: 'apps/app/app/api/{{dashCase name}}/schema.ts',
         templateFile: 'templates/api-schema.hbs',
-        skip: (data) => !data.needsValidation ? 'Skipping validation schema' : undefined
-      }
-    ]
+        skip: (data) => (!data.needsValidation ? 'Skipping validation schema' : undefined),
+      },
+    ],
   });
 
   // 2. React Component Generator
@@ -76,53 +76,53 @@ module.exports = function (plop) {
           if (!value) return 'Name is required';
           if (!/^[A-Z][a-zA-Z]*$/.test(value)) return 'Use PascalCase';
           return true;
-        }
+        },
       },
       {
         type: 'list',
         name: 'type',
         message: 'Component type:',
         choices: ['functional', 'client', 'server'],
-        default: 'functional'
+        default: 'functional',
       },
       {
         type: 'confirm',
         name: 'withState',
         message: 'Include state management?',
-        default: false
+        default: false,
       },
       {
         type: 'confirm',
         name: 'withTests',
         message: 'Include tests?',
-        default: true
+        default: true,
       },
       {
         type: 'confirm',
         name: 'withStory',
         message: 'Include Storybook story?',
-        default: false
-      }
+        default: false,
+      },
     ],
     actions: (data) => {
       const actions = [
         {
           type: 'add',
           path: 'packages/@meterr/ui/src/components/{{pascalCase name}}/{{pascalCase name}}.tsx',
-          templateFile: 'templates/component.hbs'
+          templateFile: 'templates/component.hbs',
         },
         {
           type: 'add',
           path: 'packages/@meterr/ui/src/components/{{pascalCase name}}/index.ts',
-          templateFile: 'templates/component-index.hbs'
-        }
+          templateFile: 'templates/component-index.hbs',
+        },
       ];
 
       if (data.withTests) {
         actions.push({
           type: 'add',
           path: 'packages/@meterr/ui/src/components/{{pascalCase name}}/{{pascalCase name}}.test.tsx',
-          templateFile: 'templates/component-test.hbs'
+          templateFile: 'templates/component-test.hbs',
         });
       }
 
@@ -130,12 +130,12 @@ module.exports = function (plop) {
         actions.push({
           type: 'add',
           path: 'packages/@meterr/ui/src/components/{{pascalCase name}}/{{pascalCase name}}.stories.tsx',
-          templateFile: 'templates/component-story.hbs'
+          templateFile: 'templates/component-story.hbs',
         });
       }
 
       return actions;
-    }
+    },
   });
 
   // 3. Database Model Generator
@@ -150,50 +150,50 @@ module.exports = function (plop) {
           if (!value) return 'Name is required';
           if (!/^[a-z]+$/.test(value)) return 'Use lowercase singular';
           return true;
-        }
+        },
       },
       {
         type: 'input',
         name: 'fields',
-        message: 'Fields (comma-separated, e.g., "name:string,email:string,age:number"):'
+        message: 'Fields (comma-separated, e.g., "name:string,email:string,age:number"):',
       },
       {
         type: 'confirm',
         name: 'withTimestamps',
         message: 'Include timestamps (createdAt, updatedAt)?',
-        default: true
+        default: true,
       },
       {
         type: 'confirm',
         name: 'withCRUD',
         message: 'Generate CRUD operations?',
-        default: true
-      }
+        default: true,
+      },
     ],
     actions: (data) => {
       const actions = [
         {
           type: 'add',
           path: 'packages/@meterr/database/src/models/{{camelCase name}}.ts',
-          templateFile: 'templates/model.hbs'
+          templateFile: 'templates/model.hbs',
         },
         {
           type: 'add',
           path: 'packages/@meterr/database/src/types/{{camelCase name}}.ts',
-          templateFile: 'templates/model-types.hbs'
-        }
+          templateFile: 'templates/model-types.hbs',
+        },
       ];
 
       if (data.withCRUD) {
         actions.push({
           type: 'add',
           path: 'packages/@meterr/database/src/queries/{{camelCase name}}.ts',
-          templateFile: 'templates/model-queries.hbs'
+          templateFile: 'templates/model-queries.hbs',
         });
       }
 
       return actions;
-    }
+    },
   });
 
   // 4. Custom Hook Generator
@@ -208,41 +208,41 @@ module.exports = function (plop) {
           if (!value) return 'Name is required';
           if (!/^[A-Z][a-zA-Z]*$/.test(value)) return 'Use PascalCase';
           return true;
-        }
+        },
       },
       {
         type: 'list',
         name: 'type',
         message: 'Hook type:',
         choices: ['state', 'fetch', 'subscription', 'custom'],
-        default: 'fetch'
+        default: 'fetch',
       },
       {
         type: 'confirm',
         name: 'withTests',
         message: 'Include tests?',
-        default: true
-      }
+        default: true,
+      },
     ],
     actions: (data) => {
       const actions = [
         {
           type: 'add',
           path: 'packages/@meterr/ui/src/hooks/use{{pascalCase name}}.ts',
-          templateFile: 'templates/hook.hbs'
-        }
+          templateFile: 'templates/hook.hbs',
+        },
       ];
 
       if (data.withTests) {
         actions.push({
           type: 'add',
           path: 'packages/@meterr/ui/src/hooks/use{{pascalCase name}}.test.ts',
-          templateFile: 'templates/hook-test.hbs'
+          templateFile: 'templates/hook-test.hbs',
         });
       }
 
       return actions;
-    }
+    },
   });
 
   // 5. Full Feature Generator (combines multiple generators)
@@ -257,26 +257,26 @@ module.exports = function (plop) {
           if (!value) return 'Name is required';
           if (!/^[a-z-]+$/.test(value)) return 'Use lowercase with hyphens';
           return true;
-        }
+        },
       },
       {
         type: 'confirm',
         name: 'withDatabase',
         message: 'Include database model?',
-        default: true
+        default: true,
       },
       {
         type: 'confirm',
         name: 'withAPI',
         message: 'Include API routes?',
-        default: true
+        default: true,
       },
       {
         type: 'confirm',
         name: 'withUI',
         message: 'Include UI components?',
-        default: true
-      }
+        default: true,
+      },
     ],
     actions: (data) => {
       const actions = [];
@@ -285,7 +285,7 @@ module.exports = function (plop) {
         actions.push({
           type: 'add',
           path: 'packages/@meterr/database/src/models/{{camelCase name}}.ts',
-          templateFile: 'templates/model.hbs'
+          templateFile: 'templates/model.hbs',
         });
       }
 
@@ -293,7 +293,7 @@ module.exports = function (plop) {
         actions.push({
           type: 'add',
           path: 'apps/app/app/api/{{dashCase name}}/route.ts',
-          templateFile: 'templates/api-route.hbs'
+          templateFile: 'templates/api-route.hbs',
         });
       }
 
@@ -301,16 +301,16 @@ module.exports = function (plop) {
         actions.push({
           type: 'add',
           path: 'apps/app/app/{{dashCase name}}/page.tsx',
-          templateFile: 'templates/page.hbs'
+          templateFile: 'templates/page.hbs',
         });
         actions.push({
           type: 'add',
           path: 'packages/@meterr/ui/src/components/{{pascalCase name}}/{{pascalCase name}}.tsx',
-          templateFile: 'templates/component.hbs'
+          templateFile: 'templates/component.hbs',
         });
       }
 
       return actions;
-    }
+    },
   });
 };

@@ -14,7 +14,7 @@ const API_BASE = 'http://localhost:3001';
 
 async function testAPIs() {
   console.log('🧪 Testing API Endpoints');
-  console.log('=' .repeat(50));
+  console.log('='.repeat(50));
 
   try {
     // Test 1: Create customer (with unique email)
@@ -25,8 +25,8 @@ async function testAPIs() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: testEmail,
-        companyName: 'API Test Company'
-      })
+        companyName: 'API Test Company',
+      }),
     });
 
     if (!customerResponse.ok) {
@@ -47,8 +47,8 @@ async function testAPIs() {
       body: JSON.stringify({
         provider: 'openai',
         keyName: 'Test Key',
-        apiKey: 'sk-test-key-123456789'
-      })
+        apiKey: 'sk-test-key-123456789',
+      }),
     });
 
     if (!apiKeyResponse.ok) {
@@ -62,7 +62,7 @@ async function testAPIs() {
     // Test 3: Get customer API keys
     console.log('\n3️⃣ Testing API key retrieval...');
     const getKeysResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/api-keys`);
-    
+
     if (!getKeysResponse.ok) {
       console.error('   ❌ Failed to get API keys:', getKeysResponse.statusText);
       return false;
@@ -74,7 +74,7 @@ async function testAPIs() {
     // Test 4: Generate Quick Win (will fail without real usage data)
     console.log('\n4️⃣ Testing Quick Win generation...');
     const quickWinResponse = await fetch(`${API_BASE}/api/customers/${customer.id}/quick-win`, {
-      method: 'POST'
+      method: 'POST',
     });
 
     if (quickWinResponse.ok) {
@@ -91,7 +91,7 @@ async function testAPIs() {
     // Test 5: Delete test customer
     console.log('\n5️⃣ Cleaning up test data...');
     const deleteResponse = await fetch(`${API_BASE}/api/customers/${customer.id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
 
     if (!deleteResponse.ok) {
@@ -106,7 +106,7 @@ async function testAPIs() {
     console.log('   ✅ API key storage working');
     console.log('   ✅ API key retrieval working');
     console.log('   ✅ Quick Win API ready (needs usage data)');
-    
+
     console.log('\n🚀 Next steps:');
     console.log('   1. Test metrics framework: npm run test:metrics');
     console.log('   2. Add a real OpenAI API key');
@@ -121,9 +121,11 @@ async function testAPIs() {
 }
 
 // Run the test
-testAPIs().then(success => {
-  process.exit(success ? 0 : 1);
-}).catch(error => {
-  console.error('Fatal error:', error);
-  process.exit(1);
-});
+testAPIs()
+  .then((success) => {
+    process.exit(success ? 0 : 1);
+  })
+  .catch((error) => {
+    console.error('Fatal error:', error);
+    process.exit(1);
+  });

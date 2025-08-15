@@ -9,7 +9,7 @@ const YEAR = new Date().getFullYear();
 // Find suspicious dates (anything that looks old)
 const SUSPICIOUS_PATTERNS = [
   /\b202[0-3]-\d{2}-\d{2}\b/g, // Old years (2020-2023)
-  /\b2024-0[1-9]-\d{2}\b/g,     // Early 2024 (Claude's favorite)
+  /\b2024-0[1-9]-\d{2}\b/g, // Early 2024 (Claude's favorite)
   /Copyright\s*(?:©|\(c\))?\s*202[0-3]/gi, // Old copyrights
 ];
 
@@ -20,15 +20,15 @@ const IGNORE_DIRS = ['node_modules/**', '.next/**', '.git/**', 'dist/**', 'cover
 
 let suspiciousFound = false;
 
-FILE_PATTERNS.forEach(pattern => {
+FILE_PATTERNS.forEach((pattern) => {
   const files = glob.sync(pattern, { ignore: IGNORE_DIRS, nodir: true });
-  
-  files.forEach(file => {
+
+  files.forEach((file) => {
     const content = fs.readFileSync(file, 'utf8');
     const lines = content.split('\n');
-    
+
     lines.forEach((line, index) => {
-      SUSPICIOUS_PATTERNS.forEach(pattern => {
+      SUSPICIOUS_PATTERNS.forEach((pattern) => {
         const matches = line.match(pattern);
         if (matches) {
           suspiciousFound = true;

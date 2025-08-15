@@ -1,11 +1,11 @@
 /**
  * Google Analytics Integration
- * 
+ *
  * Integrates with Google Analytics 4 to fetch customer metrics
  * Uses customer's own API credentials
  */
 
-import { MetricValue } from '../services/metrics-manager';
+import type { MetricValue } from '../services/metrics-manager';
 
 // Types
 export interface GoogleAnalyticsConfig {
@@ -40,51 +40,51 @@ export interface GARequest {
  */
 export class GoogleAnalyticsIntegration {
   private config: GoogleAnalyticsConfig;
-  
+
   // Available metrics
   private availableMetrics: GAMetric[] = [
     {
       name: 'sessions',
       displayName: 'Sessions',
       description: 'Total number of sessions',
-      category: 'traffic'
+      category: 'traffic',
     },
     {
       name: 'conversions',
       displayName: 'Conversions',
       description: 'Total conversions',
-      category: 'conversion'
+      category: 'conversion',
     },
     {
       name: 'conversionRate',
       displayName: 'Conversion Rate',
       description: 'Percentage of sessions that converted',
-      category: 'conversion'
+      category: 'conversion',
     },
     {
       name: 'averageSessionDuration',
       displayName: 'Average Session Duration',
       description: 'Average time users spend on site',
-      category: 'engagement'
+      category: 'engagement',
     },
     {
       name: 'bounceRate',
       displayName: 'Bounce Rate',
       description: 'Percentage of single-page sessions',
-      category: 'engagement'
+      category: 'engagement',
     },
     {
       name: 'totalRevenue',
       displayName: 'Total Revenue',
       description: 'Total revenue from e-commerce',
-      category: 'revenue'
+      category: 'revenue',
     },
     {
       name: 'revenuePerUser',
       displayName: 'Revenue Per User',
       description: 'Average revenue per user',
-      category: 'revenue'
-    }
+      category: 'revenue',
+    },
   ];
 
   constructor(config: GoogleAnalyticsConfig) {
@@ -107,9 +107,9 @@ export class GoogleAnalyticsIntegration {
       const result = await this.fetchMetric('sessions', 7);
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Connection failed' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Connection failed',
       };
     }
   }
@@ -117,22 +117,19 @@ export class GoogleAnalyticsIntegration {
   /**
    * Fetch a specific metric
    */
-  async fetchMetric(
-    metricName: string,
-    days: number = 30
-  ): Promise<MetricValue | null> {
+  async fetchMetric(metricName: string, days: number = 30): Promise<MetricValue | null> {
     try {
       const endDate = new Date();
       const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
-      
+
       const request: GARequest = {
         metrics: [metricName],
         startDate: this.formatDate(startDate),
-        endDate: this.formatDate(endDate)
+        endDate: this.formatDate(endDate),
       };
 
       const data = await this.runReport(request);
-      
+
       if (!data || !data.rows || data.rows.length === 0) {
         return null;
       }
@@ -147,8 +144,8 @@ export class GoogleAnalyticsIntegration {
           source: 'google_analytics',
           propertyId: this.config.propertyId,
           period: `${days} days`,
-          metricName
-        }
+          metricName,
+        },
       };
     } catch (error) {
       console.error('Error fetching GA metric:', error);
@@ -168,18 +165,18 @@ export class GoogleAnalyticsIntegration {
     try {
       const endDate = new Date();
       const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
-      
+
       const request: GARequest = {
         metrics: metricNames,
         startDate: this.formatDate(startDate),
-        endDate: this.formatDate(endDate)
+        endDate: this.formatDate(endDate),
       };
 
       const data = await this.runReport(request);
-      
+
       if (data && data.rows && data.rows.length > 0) {
         const row = data.rows[0];
-        
+
         metricNames.forEach((metricName, index) => {
           if (row.metricValues && row.metricValues[index]) {
             const value = this.parseMetricValue(row.metricValues[index]);
@@ -190,8 +187,8 @@ export class GoogleAnalyticsIntegration {
                 source: 'google_analytics',
                 propertyId: this.config.propertyId,
                 period: `${days} days`,
-                metricName
-              }
+                metricName,
+              },
             };
           } else {
             results[metricName] = null;
@@ -199,13 +196,13 @@ export class GoogleAnalyticsIntegration {
         });
       } else {
         // No data found
-        metricNames.forEach(metricName => {
+        metricNames.forEach((metricName) => {
           results[metricName] = null;
         });
       }
     } catch (error) {
       console.error('Error fetching GA metrics:', error);
-      metricNames.forEach(metricName => {
+      metricNames.forEach((metricName) => {
         results[metricName] = null;
       });
     }
@@ -222,9 +219,9 @@ export class GoogleAnalyticsIntegration {
   ): Promise<{ [step: string]: number }> {
     try {
       const results = await this.fetchMultipleMetrics(funnelSteps, days);
-      
+
       const funnelData: { [step: string]: number } = {};
-      funnelSteps.forEach(step => {
+      funnelSteps.forEach((step) => {
         funnelData[step] = results[step]?.value || 0;
       });
 
@@ -243,25 +240,28 @@ export class GoogleAnalyticsIntegration {
       // Build the API request
       const requestBody = {
         property: `properties/${this.config.propertyId}`,
-        dateRanges: [{
-          startDate: request.startDate,
-          endDate: request.endDate
-        }],
-        metrics: request.metrics.map(metric => ({ name: metric })),
-        dimensions: request.dimensions?.map(dimension => ({ name: dimension })) || []
+        dateRanges: [
+          {
+            startDate: request.startDate,
+            endDate: request.endDate,
+          },
+        ],
+        metrics: request.metrics.map((metric) => ({ name: metric })),
+        dimensions: request.dimensions?.map((dimension) => ({ name: dimension })) || [],
       };
 
       // Use Google Analytics Data API
       const response = await fetch(
-        'https://analyticsdata.googleapis.com/v1beta/properties/' + 
-        this.config.propertyId + ':runReport',
+        'https://analyticsdata.googleapis.com/v1beta/properties/' +
+          this.config.propertyId +
+          ':runReport',
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${await this.getAccessToken()}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${await this.getAccessToken()}`,
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(requestBody),
         }
       );
 
@@ -324,20 +324,22 @@ export class GoogleAnalyticsIntegration {
   /**
    * Get suggested metrics based on customer type
    */
-  static getSuggestedMetrics(customerType: 'ecommerce' | 'saas' | 'content' | 'lead_gen'): string[] {
+  static getSuggestedMetrics(
+    customerType: 'ecommerce' | 'saas' | 'content' | 'lead_gen'
+  ): string[] {
     switch (customerType) {
       case 'ecommerce':
         return ['conversions', 'conversionRate', 'totalRevenue', 'revenuePerUser'];
-      
+
       case 'saas':
         return ['sessions', 'conversionRate', 'averageSessionDuration', 'bounceRate'];
-      
+
       case 'content':
         return ['sessions', 'averageSessionDuration', 'bounceRate'];
-      
+
       case 'lead_gen':
         return ['conversions', 'conversionRate', 'sessions'];
-      
+
       default:
         return ['sessions', 'conversionRate', 'averageSessionDuration'];
     }

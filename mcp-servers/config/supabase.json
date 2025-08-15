@@ -15,25 +15,8 @@
     "anonKey": "${SUPABASE_ANON_KEY}"
   },
   "operations": {
-    "database": [
-      "query",
-      "insert",
-      "update",
-      "delete",
-      "upsert"
-    ],
-    "auth": [
-      "signUp",
-      "signIn",
-      "signOut",
-      "getUser",
-      "updateUser"
-    ],
-    "storage": [
-      "upload",
-      "download",
-      "delete",
-      "list"
-    ]
+    "database": ["query", "insert", "update", "delete", "upsert"],
+    "auth": ["signUp", "signIn", "signOut", "getUser", "updateUser"],
+    "storage": ["upload", "download", "delete", "list"]
   }
 }

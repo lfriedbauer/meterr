@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Main App Bundle",
+    "path": "apps/app/.next/static/chunks/main-*.js",
+    "limit": "150 KB"
+  },
+  {
+    "name": "App Pages",
+    "path": "apps/app/.next/static/chunks/pages/*.js",
+    "limit": "100 KB"
+  },
+  {
+    "name": "Marketing Site",
+    "path": "apps/marketing/.next/static/chunks/main-*.js",
+    "limit": "75 KB"
+  },
+  {
+    "name": "UI Package",
+    "path": "packages/@meterr/ui/dist/index.js",
+    "limit": "50 KB"
+  },
+  {
+    "name": "Total CSS",
+    "path": "apps/app/.next/static/css/*.css",
+    "limit": "60 KB"
+  }
+]

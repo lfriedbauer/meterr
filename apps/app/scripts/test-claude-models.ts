@@ -7,7 +7,7 @@ dotenv.config();
 
 async function testClaudeModels() {
   console.log('🔍 Testing Claude model names...\n');
-  
+
   const models = [
     'claude-opus-4-1-20250805',
     'claude-3-opus-20240229',
@@ -17,9 +17,9 @@ async function testClaudeModels() {
     'claude-3-haiku-20240307',
     'claude-2.1',
     'claude-2.0',
-    'claude-instant-1.2'
+    'claude-instant-1.2',
   ];
-  
+
   for (const model of models) {
     try {
       const response = await axios.post(
@@ -33,8 +33,8 @@ async function testClaudeModels() {
           headers: {
             'x-api-key': process.env.ANTHROPIC_API_KEY,
             'anthropic-version': '2023-06-01',
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         }
       );
       console.log(`✅ ${model} works`);

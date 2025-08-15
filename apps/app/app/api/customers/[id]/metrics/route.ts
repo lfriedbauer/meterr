@@ -3,11 +3,11 @@
  * Handles "Bring Your Own Metrics" functionality
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { MetricsManager } from '@/lib/services/metrics-manager';
 import { GoogleAnalyticsIntegration } from '@/lib/integrations/google-analytics';
 import { StripeIntegration } from '@/lib/integrations/stripe';
+import { MetricsManager } from '@/lib/services/metrics-manager';
 
 // Lazy initialization
 let metricsManager: MetricsManager | null = null;
@@ -31,27 +31,24 @@ const addMetricSchema = z.object({
   baselineValue: z.number().optional(),
   acceptableRangeMin: z.number().optional(),
   acceptableRangeMax: z.number().optional(),
-  description: z.string().optional()
+  description: z.string().optional(),
 });
 
 const testIntegrationSchema = z.object({
   source: z.enum(['google_analytics', 'stripe', 'mixpanel', 'custom']),
-  credentials: z.record(z.string())
+  credentials: z.record(z.string()),
 });
 
 /**
  * GET /api/customers/[id]/metrics - List customer metrics
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: customerId } = await params;
-    
+
     // Get available integrations
     const availableIntegrations = getMetricsManager().getAvailableIntegrations();
-    
+
     // Get customer's configured metrics
     const customerMetrics = await getMetricsManager().getCustomerMetrics(customerId);
 
@@ -62,33 +59,27 @@ export async function GET(
       suggestedMetrics: {
         ecommerce: {
           google_analytics: ['conversions', 'conversionRate', 'sessions'],
-          stripe: ['total_revenue', 'average_order_value', 'conversion_rate']
+          stripe: ['total_revenue', 'average_order_value', 'conversion_rate'],
         },
         saas: {
           google_analytics: ['sessions', 'conversionRate', 'averageSessionDuration'],
-          stripe: ['monthly_recurring_revenue', 'churn_rate', 'new_customers']
+          stripe: ['monthly_recurring_revenue', 'churn_rate', 'new_customers'],
         },
         content: {
-          google_analytics: ['sessions', 'averageSessionDuration', 'bounceRate']
-        }
-      }
+          google_analytics: ['sessions', 'averageSessionDuration', 'bounceRate'],
+        },
+      },
     });
   } catch (error) {
     console.error('Error listing metrics:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 /**
  * POST /api/customers/[id]/metrics - Add a metric
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: customerId } = await params;
     const body = await request.json();
@@ -102,20 +93,17 @@ export async function POST(
       baselineValue: metricData.baselineValue,
       acceptableRangeMin: metricData.acceptableRangeMin,
       acceptableRangeMax: metricData.acceptableRangeMax,
-      description: metricData.description || `${metricData.source} metric`
+      description: metricData.description || `${metricData.source} metric`,
     });
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: result.error },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: result.error }, { status: 400 });
     }
 
     return NextResponse.json({
       success: true,
       metricId: result.metricId,
-      message: `${metricData.name} metric added successfully`
+      message: `${metricData.name} metric added successfully`,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -126,85 +114,80 @@ export async function POST(
     }
 
     console.error('Error adding metric:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 /**
  * Handle test endpoint within POST
  */
-async function handleTestIntegration(
-  request: NextRequest,
-  customerId: string
-) {
-    try {
-      const body = await request.json();
-      const { source, credentials } = testIntegrationSchema.parse(body);
+async function handleTestIntegration(request: NextRequest, customerId: string) {
+  try {
+    const body = await request.json();
+    const { source, credentials } = testIntegrationSchema.parse(body);
 
-      let testResult: { success: boolean; error?: string };
+    let testResult: { success: boolean; error?: string };
 
-      switch (source) {
-        case 'google_analytics':
-          const gaIntegration = new GoogleAnalyticsIntegration({
-            apiKey: credentials.apiKey,
-            propertyId: credentials.propertyId
+    switch (source) {
+      case 'google_analytics': {
+        const gaIntegration = new GoogleAnalyticsIntegration({
+          apiKey: credentials.apiKey,
+          propertyId: credentials.propertyId,
+        });
+        testResult = await gaIntegration.testConnection();
+        break;
+      }
+
+      case 'stripe': {
+        const stripeIntegration = new StripeIntegration({
+          restrictedApiKey: credentials.restrictedApiKey,
+        });
+        testResult = await stripeIntegration.testConnection();
+        break;
+      }
+
+      case 'custom':
+        // Test custom endpoint
+        try {
+          const response = await fetch(credentials.endpointUrl, {
+            headers: credentials.apiKey
+              ? {
+                  Authorization: `Bearer ${credentials.apiKey}`,
+                }
+              : {},
           });
-          testResult = await gaIntegration.testConnection();
-          break;
-
-        case 'stripe':
-          const stripeIntegration = new StripeIntegration({
-            restrictedApiKey: credentials.restrictedApiKey
-          });
-          testResult = await stripeIntegration.testConnection();
-          break;
-
-        case 'custom':
-          // Test custom endpoint
-          try {
-            const response = await fetch(credentials.endpointUrl, {
-              headers: credentials.apiKey ? {
-                'Authorization': `Bearer ${credentials.apiKey}`
-              } : {}
-            });
-            testResult = { success: response.ok };
-            if (!response.ok) {
-              testResult.error = `HTTP ${response.status}`;
-            }
-          } catch (error) {
-            testResult = { 
-              success: false, 
-              error: error instanceof Error ? error.message : 'Connection failed' 
-            };
+          testResult = { success: response.ok };
+          if (!response.ok) {
+            testResult.error = `HTTP ${response.status}`;
           }
-          break;
+        } catch (error) {
+          testResult = {
+            success: false,
+            error: error instanceof Error ? error.message : 'Connection failed',
+          };
+        }
+        break;
 
-        default:
-          testResult = { success: false, error: 'Integration not implemented yet' };
-      }
+      default:
+        testResult = { success: false, error: 'Integration not implemented yet' };
+    }
 
-      return NextResponse.json({
-        success: testResult.success,
-        message: testResult.success 
-          ? `${source} integration test successful`
-          : `${source} integration test failed: ${testResult.error}`,
-        testResult
-      });
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return NextResponse.json(
-          { error: 'Invalid request data', details: error.errors },
-          { status: 400 }
-        );
-      }
-
-      console.error('Error testing integration:', error);
+    return NextResponse.json({
+      success: testResult.success,
+      message: testResult.success
+        ? `${source} integration test successful`
+        : `${source} integration test failed: ${testResult.error}`,
+      testResult,
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Internal server error' },
-        { status: 500 }
+        { error: 'Invalid request data', details: error.errors },
+        { status: 400 }
       );
     }
+
+    console.error('Error testing integration:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
 }

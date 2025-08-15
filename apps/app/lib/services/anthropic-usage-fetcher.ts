@@ -3,8 +3,8 @@
  * Fetches and processes usage data from Anthropic API
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { ApiKeyManager } from './api-key-manager';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { ApiKeyManager } from './api-key-manager';
 
 interface AnthropicUsageResponse {
   data: Array<{
@@ -20,11 +20,7 @@ export class AnthropicUsageFetcher {
   private supabase: SupabaseClient;
   private apiKeyManager: ApiKeyManager;
 
-  constructor(
-    supabaseUrl: string,
-    supabaseServiceKey: string,
-    apiKeyManager: ApiKeyManager
-  ) {
+  constructor(supabaseUrl: string, supabaseServiceKey: string, apiKeyManager: ApiKeyManager) {
     this.supabase = createClient(supabaseUrl, supabaseServiceKey);
     this.apiKeyManager = apiKeyManager;
   }
@@ -40,22 +36,22 @@ export class AnthropicUsageFetcher {
     try {
       // Get customer's Anthropic API key
       const apiKeys = await this.apiKeyManager.getCustomerApiKeys(customerId);
-      const anthropicKey = apiKeys.find(k => k.provider === 'anthropic');
-      
+      const anthropicKey = apiKeys.find((k) => k.provider === 'anthropic');
+
       if (!anthropicKey) {
         return {
           success: false,
-          error: 'No Anthropic API key found for customer'
+          error: 'No Anthropic API key found for customer',
         };
       }
 
       // Decrypt the API key
       const decryptedKey = await this.apiKeyManager.decryptApiKey(anthropicKey.id);
-      
+
       // For Anthropic, we'll simulate usage data since they don't have a usage API yet
       // In production, this would fetch from Anthropic's usage endpoint when available
       const usageData = await this.simulateAnthropicUsage(customerId, decryptedKey);
-      
+
       // Store usage patterns
       for (const usage of usageData) {
         await this.storeUsagePattern(customerId, usage);
@@ -66,13 +62,13 @@ export class AnthropicUsageFetcher {
 
       return {
         success: true,
-        summary
+        summary,
       };
     } catch (error) {
       console.error('Error fetching Anthropic usage:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch usage data'
+        error: error instanceof Error ? error.message : 'Failed to fetch usage data',
       };
     }
   }
@@ -84,7 +80,7 @@ export class AnthropicUsageFetcher {
   private async simulateAnthropicUsage(customerId: string, apiKey: string): Promise<any[]> {
     // Check if this is a real key by making a simple API call
     const isValidKey = await this.validateAnthropicKey(apiKey);
-    
+
     if (!isValidKey) {
       throw new Error('Invalid Anthropic API key');
     }
@@ -97,19 +93,19 @@ export class AnthropicUsageFetcher {
       { name: 'claude-3-5-haiku-20241022', inputPrice: 0.0008, outputPrice: 0.004 },
       { name: 'claude-sonnet-4-20250514', inputPrice: 0.003, outputPrice: 0.015 },
       { name: 'claude-3-haiku-20240307', inputPrice: 0.00025, outputPrice: 0.00125 },
-      { name: 'claude-2.1', inputPrice: 0.008, outputPrice: 0.024 }
+      { name: 'claude-2.1', inputPrice: 0.008, outputPrice: 0.024 },
     ];
 
     const usageData = [];
     const daysOfData = 30;
-    
+
     for (let i = 0; i < daysOfData; i++) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      
+
       // Simulate different usage patterns
       const dailyUsage = Math.floor(Math.random() * 100) + 10; // 10-110 calls per day
-      
+
       for (let j = 0; j < dailyUsage; j++) {
         // Simulate your actual usage pattern: Heavy Opus 4.1 usage
         const modelChoice = Math.random();
@@ -121,12 +117,12 @@ export class AnthropicUsageFetcher {
         } else {
           model = models[5]; // Haiku - 10%
         }
-        
+
         const inputTokens = Math.floor(Math.random() * 2000) + 500;
         const outputTokens = Math.floor(Math.random() * 1500) + 200;
-        const cost = (inputTokens / 1000 * model.inputPrice) + 
-                    (outputTokens / 1000 * model.outputPrice);
-        
+        const cost =
+          (inputTokens / 1000) * model.inputPrice + (outputTokens / 1000) * model.outputPrice;
+
         usageData.push({
           date: date.toISOString(),
           model: model.name,
@@ -134,11 +130,11 @@ export class AnthropicUsageFetcher {
           output_tokens: outputTokens,
           cost,
           request_type: this.getRequestType(),
-          latency_ms: Math.floor(Math.random() * 2000) + 500
+          latency_ms: Math.floor(Math.random() * 2000) + 500,
         });
       }
     }
-    
+
     return usageData;
   }
 
@@ -158,13 +154,13 @@ export class AnthropicUsageFetcher {
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01'
+          'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
           model: 'claude-3-haiku-20240307',
           max_tokens: 1,
-          messages: [{ role: 'user', content: 'Hi' }]
-        })
+          messages: [{ role: 'user', content: 'Hi' }],
+        }),
       });
 
       // If we get a 401, the key is invalid
@@ -187,7 +183,7 @@ export class AnthropicUsageFetcher {
       'document_analysis',
       'summarization',
       'translation',
-      'data_extraction'
+      'data_extraction',
     ];
     return types[Math.floor(Math.random() * types.length)];
   }
@@ -196,22 +192,20 @@ export class AnthropicUsageFetcher {
    * Store usage pattern in database
    */
   private async storeUsagePattern(customerId: string, usage: any): Promise<void> {
-    const { error } = await this.supabase
-      .from('usage_patterns')
-      .upsert({
-        customer_id: customerId,
-        pattern_hash: this.generatePatternHash(usage),
-        model: usage.model,
-        input_tokens: usage.input_tokens,
-        output_tokens: usage.output_tokens,
-        cost: usage.cost,
-        request_type: usage.request_type,
-        timestamp: usage.date,
-        metadata: {
-          latency_ms: usage.latency_ms,
-          provider: 'anthropic'
-        }
-      });
+    const { error } = await this.supabase.from('usage_patterns').upsert({
+      customer_id: customerId,
+      pattern_hash: this.generatePatternHash(usage),
+      model: usage.model,
+      input_tokens: usage.input_tokens,
+      output_tokens: usage.output_tokens,
+      cost: usage.cost,
+      request_type: usage.request_type,
+      timestamp: usage.date,
+      metadata: {
+        latency_ms: usage.latency_ms,
+        provider: 'anthropic',
+      },
+    });
 
     if (error) {
       console.error('Error storing usage pattern:', error);
@@ -222,7 +216,7 @@ export class AnthropicUsageFetcher {
    * Generate a hash for the usage pattern
    */
   private generatePatternHash(usage: any): string {
-    const str = `${usage.model}-${usage.request_type}-${Math.round(usage.input_tokens/100)}`;
+    const str = `${usage.model}-${usage.request_type}-${Math.round(usage.input_tokens / 100)}`;
     return Buffer.from(str).toString('base64').substring(0, 16);
   }
 
@@ -232,8 +226,8 @@ export class AnthropicUsageFetcher {
   private calculateUsageSummary(usageData: any[]): any {
     const totalCost = usageData.reduce((sum, u) => sum + u.cost, 0);
     const modelCosts: Record<string, number> = {};
-    
-    usageData.forEach(u => {
+
+    usageData.forEach((u) => {
       if (!modelCosts[u.model]) {
         modelCosts[u.model] = 0;
       }
@@ -245,7 +239,7 @@ export class AnthropicUsageFetcher {
       totalRequests: usageData.length,
       averageCostPerRequest: (totalCost / usageData.length).toFixed(4),
       modelBreakdown: modelCosts,
-      provider: 'anthropic'
+      provider: 'anthropic',
     };
   }
 }

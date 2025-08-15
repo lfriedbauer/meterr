@@ -29,7 +29,7 @@ class OpenAIAPICapture {
   private setupMessageListener(): void {
     window.addEventListener('message', async (event) => {
       if (event.source !== window) return;
-      
+
       if (event.data.type === 'OPENAI_API_REQUEST') {
         await this.handleAPIRequest(event.data.payload);
       } else if (event.data.type === 'OPENAI_API_RESPONSE') {
@@ -45,16 +45,16 @@ class OpenAIAPICapture {
       url: data.url,
       method: data.method,
       headers: data.headers,
-      body: data.body
+      body: data.body,
     };
 
     this.apiCalls.set(data.id, apiCall);
-    
+
     // Send to background script for storage
     try {
       await chrome.runtime.sendMessage({
         type: 'API_CALL_CAPTURED',
-        payload: apiCall
+        payload: apiCall,
       });
     } catch (error) {
       console.error('Failed to send API call to background:', error);
@@ -73,7 +73,7 @@ class OpenAIAPICapture {
     try {
       await chrome.runtime.sendMessage({
         type: 'API_CALL_UPDATED',
-        payload: apiCall
+        payload: apiCall,
       });
     } catch (error) {
       console.error('Failed to update API call:', error);

@@ -1,11 +1,11 @@
 /**
  * Custom Endpoint Integration
- * 
+ *
  * Allows customers to connect their own API endpoints for metrics
  * Supports various authentication methods and response formats
  */
 
-import { MetricValue } from '../services/metrics-manager';
+import type { MetricValue } from '../services/metrics-manager';
 
 // Types
 export interface CustomEndpointConfig {
@@ -49,29 +49,29 @@ export class CustomEndpointIntegration {
    */
   async testConnection(): Promise<{ success: boolean; error?: string; responseTime?: number }> {
     const startTime = Date.now();
-    
+
     try {
       const response = await this.makeRequest();
       const responseTime = Date.now() - startTime;
-      
+
       if (response.success) {
-        return { 
-          success: true, 
-          responseTime 
+        return {
+          success: true,
+          responseTime,
         };
       } else {
-        return { 
-          success: false, 
+        return {
+          success: false,
           error: response.error,
-          responseTime 
+          responseTime,
         };
       }
     } catch (error) {
       const responseTime = Date.now() - startTime;
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: error instanceof Error ? error.message : 'Connection failed',
-        responseTime 
+        responseTime,
       };
     }
   }
@@ -85,7 +85,7 @@ export class CustomEndpointIntegration {
   ): Promise<MetricValue | null> {
     try {
       const response = await this.makeRequest(context);
-      
+
       if (!response.success || !response.data) {
         console.error('Failed to fetch from custom endpoint:', response.error);
         return null;
@@ -93,13 +93,16 @@ export class CustomEndpointIntegration {
 
       // Extract value using JSONPath
       const value = this.extractValueFromResponse(
-        response.data, 
+        response.data,
         metricDefinition.jsonPath,
         metricDefinition.expectedType
       );
 
       if (value === null) {
-        console.error('Could not extract value from response using path:', metricDefinition.jsonPath);
+        console.error(
+          'Could not extract value from response using path:',
+          metricDefinition.jsonPath
+        );
         return null;
       }
 
@@ -111,8 +114,8 @@ export class CustomEndpointIntegration {
           endpoint: this.config.endpointUrl,
           metricName: metricDefinition.name,
           unit: metricDefinition.unit,
-          responseTime: response.responseTime
-        }
+          responseTime: response.responseTime,
+        },
       };
     } catch (error) {
       console.error('Error fetching custom metric:', error);
@@ -132,10 +135,10 @@ export class CustomEndpointIntegration {
     try {
       // Make a single request and extract multiple values
       const response = await this.makeRequest(context);
-      
+
       if (!response.success || !response.data) {
         // Return null for all metrics
-        metricDefinitions.forEach(metric => {
+        metricDefinitions.forEach((metric) => {
           results[metric.name] = null;
         });
         return results;
@@ -158,8 +161,8 @@ export class CustomEndpointIntegration {
               endpoint: this.config.endpointUrl,
               metricName: metricDef.name,
               unit: metricDef.unit,
-              responseTime: response.responseTime
-            }
+              responseTime: response.responseTime,
+            },
           };
         } else {
           results[metricDef.name] = null;
@@ -169,12 +172,12 @@ export class CustomEndpointIntegration {
       return results;
     } catch (error) {
       console.error('Error fetching custom metrics:', error);
-      
+
       // Return null for all metrics on error
-      metricDefinitions.forEach(metric => {
+      metricDefinitions.forEach((metric) => {
         results[metric.name] = null;
       });
-      
+
       return results;
     }
   }
@@ -185,7 +188,7 @@ export class CustomEndpointIntegration {
   async discoverMetrics(): Promise<CustomMetricDefinition[]> {
     try {
       const response = await this.makeRequest();
-      
+
       if (!response.success || !response.data) {
         return [];
       }
@@ -200,7 +203,7 @@ export class CustomEndpointIntegration {
           displayName: this.pathToDisplayName(path),
           description: `Auto-discovered metric from ${path}`,
           jsonPath: path,
-          expectedType: 'number'
+          expectedType: 'number',
         });
       });
 
@@ -235,12 +238,12 @@ export class CustomEndpointIntegration {
    */
   private async makeRequest(context?: any): Promise<EndpointResponse> {
     const startTime = Date.now();
-    
+
     try {
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         'User-Agent': 'meterr-metrics/1.0',
-        ...(this.config.headers || {})
+        ...(this.config.headers || {}),
       };
 
       // Add authentication
@@ -259,14 +262,14 @@ export class CustomEndpointIntegration {
       const requestOptions: RequestInit = {
         method: this.config.method || 'GET',
         headers,
-        timeout: 30000 // 30 second timeout
+        timeout: 30000, // 30 second timeout
       };
 
       // Add request body for POST requests
       if (this.config.method === 'POST' && this.config.requestBody) {
         requestOptions.body = JSON.stringify({
           ...this.config.requestBody,
-          ...context
+          ...context,
         });
       }
 
@@ -277,7 +280,7 @@ export class CustomEndpointIntegration {
         return {
           success: false,
           error: `HTTP ${response.status}: ${response.statusText}`,
-          responseTime
+          responseTime,
         };
       }
 
@@ -299,14 +302,14 @@ export class CustomEndpointIntegration {
       return {
         success: true,
         data,
-        responseTime
+        responseTime,
       };
     } catch (error) {
       const responseTime = Date.now() - startTime;
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Request failed',
-        responseTime
+        responseTime,
       };
     }
   }
@@ -314,11 +317,7 @@ export class CustomEndpointIntegration {
   /**
    * Extract value from response using JSONPath-like syntax
    */
-  private extractValueFromResponse(
-    data: any, 
-    jsonPath: string, 
-    expectedType: string
-  ): any {
+  private extractValueFromResponse(data: any, jsonPath: string, expectedType: string): any {
     try {
       // Simple JSONPath implementation
       const paths = jsonPath.split('.');
@@ -326,7 +325,7 @@ export class CustomEndpointIntegration {
 
       for (const path of paths) {
         if (path === '$') continue; // Root indicator
-        
+
         if (current === null || current === undefined) {
           return null;
         }
@@ -335,11 +334,11 @@ export class CustomEndpointIntegration {
         if (path.includes('[') && path.includes(']')) {
           const [key, indexStr] = path.split('[');
           const index = parseInt(indexStr.replace(']', ''));
-          
+
           if (key) {
             current = current[key];
           }
-          
+
           if (Array.isArray(current) && !isNaN(index)) {
             current = current[index];
           }
@@ -380,13 +379,13 @@ export class CustomEndpointIntegration {
    */
   private findNumericPaths(obj: any, currentPath = '$', maxDepth = 3): string[] {
     const paths: string[] = [];
-    
+
     if (maxDepth <= 0) return paths;
 
     if (obj && typeof obj === 'object') {
       for (const [key, value] of Object.entries(obj)) {
         const newPath = currentPath === '$' ? `$.${key}` : `${currentPath}.${key}`;
-        
+
         if (typeof value === 'number') {
           paths.push(newPath);
         } else if (Array.isArray(value) && value.length > 0) {
@@ -413,7 +412,7 @@ export class CustomEndpointIntegration {
       .replace(/^\$\./, '')
       .replace(/\[0\]/g, '')
       .split('.')
-      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
   }
 
@@ -427,14 +426,14 @@ export class CustomEndpointIntegration {
         displayName: 'Total Users',
         description: 'Total number of registered users',
         jsonPath: '$.data.users.total',
-        expectedType: 'number'
+        expectedType: 'number',
       },
       {
         name: 'active_users',
         displayName: 'Active Users',
         description: 'Number of active users in the last 30 days',
         jsonPath: '$.data.users.active',
-        expectedType: 'number'
+        expectedType: 'number',
       },
       {
         name: 'monthly_revenue',
@@ -442,7 +441,7 @@ export class CustomEndpointIntegration {
         description: 'Total revenue for the current month',
         jsonPath: '$.data.revenue.monthly',
         expectedType: 'number',
-        unit: 'USD'
+        unit: 'USD',
       },
       {
         name: 'conversion_rate',
@@ -450,7 +449,7 @@ export class CustomEndpointIntegration {
         description: 'Percentage of visitors who convert',
         jsonPath: '$.data.conversion.rate',
         expectedType: 'number',
-        unit: '%'
+        unit: '%',
       },
       {
         name: 'customer_satisfaction',
@@ -458,8 +457,8 @@ export class CustomEndpointIntegration {
         description: 'Average customer satisfaction score',
         jsonPath: '$.data.satisfaction.average',
         expectedType: 'number',
-        unit: 'score'
-      }
+        unit: 'score',
+      },
     ];
   }
 }

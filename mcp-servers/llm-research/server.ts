@@ -1,12 +1,9 @@
+import { type ResearchQuery, type ResearchResponse, UnifiedLLMClient } from '@meterr/llm-client';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
-import { UnifiedLLMClient, ResearchQuery, ResearchResponse } from '@meterr/llm-client';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import dotenv from 'dotenv';
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 
 // Load environment variables
@@ -164,10 +161,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case 'query_single_llm': {
       const { service, prompt, model, temperature } = args as any;
       const query: ResearchQuery = { prompt, model, temperature };
-      
+
       try {
         let response: ResearchResponse;
-        
+
         switch (service) {
           case 'openai':
             response = await llmClient.queryOpenAI(query);
@@ -187,23 +184,27 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           default:
             throw new Error(`Unknown service: ${service}`);
         }
-        
+
         // Store result
         const researchId = `single-${Date.now()}`;
         researchStore.set(researchId, [response]);
-        
+
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({
-                research_id: researchId,
-                service: response.service,
-                model: response.model,
-                response: response.response,
-                usage: response.usage,
-                timestamp: response.timestamp,
-              }, null, 2),
+              text: JSON.stringify(
+                {
+                  research_id: researchId,
+                  service: response.service,
+                  model: response.model,
+                  response: response.response,
+                  usage: response.usage,
+                  timestamp: response.timestamp,
+                },
+                null,
+                2
+              ),
             },
           ],
         };
@@ -223,14 +224,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case 'query_all_llms': {
       const { prompt, temperature } = args as any;
       const query: ResearchQuery = { prompt, temperature };
-      
+
       try {
         const responses = await llmClient.queryAll(query);
-        
+
         // Store results
         const researchId = `batch-${Date.now()}`;
         researchStore.set(researchId, responses);
-        
+
         // Format response summary
         const summary = responses.map((r: ResearchResponse) => ({
           service: r.service,
@@ -238,18 +239,27 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           preview: r.response.substring(0, 200) + '...',
           cost: r.usage?.totalCost,
         }));
-        
+
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({
-                research_id: researchId,
-                total_responses: responses.length,
-                services_queried: responses.map((r: ResearchResponse) => r.service),
-                total_cost: responses.reduce((sum: number, r: ResearchResponse) => sum + (r.usage?.totalCost || 0), 0).toFixed(4),
-                responses: summary,
-              }, null, 2),
+              text: JSON.stringify(
+                {
+                  research_id: researchId,
+                  total_responses: responses.length,
+                  services_queried: responses.map((r: ResearchResponse) => r.service),
+                  total_cost: responses
+                    .reduce(
+                      (sum: number, r: ResearchResponse) => sum + (r.usage?.totalCost || 0),
+                      0
+                    )
+                    .toFixed(4),
+                  responses: summary,
+                },
+                null,
+                2
+              ),
             },
           ],
         };
@@ -268,54 +278,58 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     case 'execute_research_batch': {
       const { batch_file } = args as any;
-      
+
       try {
         // Load batch file
         const batchPath = path.resolve(batch_file);
         if (!existsSync(batchPath)) {
           throw new Error(`Batch file not found: ${batchPath}`);
         }
-        
+
         const batchData = JSON.parse(readFileSync(batchPath, 'utf-8'));
         const queries: ResearchQuery[] = batchData.queries || batchData;
-        
+
         // Execute all queries
         const allResponses: ResearchResponse[] = [];
         let totalCost = 0;
-        
+
         for (let i = 0; i < queries.length; i++) {
           console.log(`Executing query ${i + 1}/${queries.length}...`);
           const responses = await llmClient.queryAll(queries[i]);
           allResponses.push(...responses);
-          
+
           // Calculate cost
-          responses.forEach(r => {
+          responses.forEach((r) => {
             if (r.usage?.totalCost) {
               totalCost += r.usage.totalCost;
             }
           });
-          
+
           // Rate limiting
           if (i < queries.length - 1) {
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise((resolve) => setTimeout(resolve, 2000));
           }
         }
-        
+
         // Store results
         const researchId = `batch-${Date.now()}`;
         researchStore.set(researchId, allResponses);
-        
+
         return {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({
-                research_id: researchId,
-                total_queries: queries.length,
-                total_responses: allResponses.length,
-                total_cost: totalCost.toFixed(4),
-                services_used: [...new Set(allResponses.map(r => r.service))],
-              }, null, 2),
+              text: JSON.stringify(
+                {
+                  research_id: researchId,
+                  total_queries: queries.length,
+                  total_responses: allResponses.length,
+                  total_cost: totalCost.toFixed(4),
+                  services_used: [...new Set(allResponses.map((r) => r.service))],
+                },
+                null,
+                2
+              ),
             },
           ],
         };
@@ -335,7 +349,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case 'analyze_responses': {
       const { research_id } = args as any;
       const responses = researchStore.get(research_id);
-      
+
       if (!responses) {
         return {
           content: [
@@ -347,20 +361,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           isError: true,
         };
       }
-      
+
       // Analyze responses for common themes
       const keywords = new Map<string, number>();
       const sentiments = { positive: 0, negative: 0, neutral: 0 };
-      
-      responses.forEach(response => {
+
+      responses.forEach((response) => {
         const text = response.response.toLowerCase();
-        
+
         // Extract keywords (simple approach)
         const words = text.split(/\s+/).filter((w: string) => w.length > 5);
         words.forEach((word: string) => {
           keywords.set(word, (keywords.get(word) || 0) + 1);
         });
-        
+
         // Simple sentiment analysis
         if (text.includes('excellent') || text.includes('great') || text.includes('valuable')) {
           sentiments.positive++;
@@ -370,27 +384,31 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           sentiments.neutral++;
         }
       });
-      
+
       // Get top keywords
       const topKeywords = Array.from(keywords.entries())
         .sort((a, b) => b[1] - a[1])
         .slice(0, 20)
         .map(([word, count]) => ({ word, count }));
-      
+
       return {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              research_id,
-              total_responses: responses.length,
-              services: [...new Set(responses.map(r => r.service))],
-              sentiment_analysis: sentiments,
-              top_keywords: topKeywords,
-              average_response_length: Math.round(
-                responses.reduce((sum, r) => sum + r.response.length, 0) / responses.length
-              ),
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                research_id,
+                total_responses: responses.length,
+                services: [...new Set(responses.map((r) => r.service))],
+                sentiment_analysis: sentiments,
+                top_keywords: topKeywords,
+                average_response_length: Math.round(
+                  responses.reduce((sum, r) => sum + r.response.length, 0) / responses.length
+                ),
+              },
+              null,
+              2
+            ),
           },
         ],
       };
@@ -399,7 +417,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case 'save_research_results': {
       const { research_id, filename } = args as any;
       const responses = researchStore.get(research_id);
-      
+
       if (!responses) {
         return {
           content: [
@@ -411,7 +429,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           isError: true,
         };
       }
-      
+
       const outputPath = path.join(RESULTS_DIR, `${filename}.json`);
       const output = {
         research_id,
@@ -420,9 +438,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         total_cost: responses.reduce((sum, r) => sum + (r.usage?.totalCost || 0), 0),
         responses: responses,
       };
-      
+
       writeFileSync(outputPath, JSON.stringify(output, null, 2));
-      
+
       return {
         content: [
           {
@@ -436,7 +454,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     case 'get_research_cost': {
       const { research_id } = args as any;
       const responses = researchStore.get(research_id);
-      
+
       if (!responses) {
         return {
           content: [
@@ -448,11 +466,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           isError: true,
         };
       }
-      
+
       const costByService = new Map<string, number>();
       let totalCost = 0;
-      
-      responses.forEach(response => {
+
+      responses.forEach((response) => {
         if (response.usage?.totalCost) {
           totalCost += response.usage.totalCost;
           costByService.set(
@@ -461,22 +479,26 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           );
         }
       });
-      
+
       return {
         content: [
           {
             type: 'text',
-            text: JSON.stringify({
-              research_id,
-              total_cost: totalCost.toFixed(4),
-              cost_by_service: Object.fromEntries(
-                Array.from(costByService.entries()).map(([service, cost]) => [
-                  service,
-                  cost.toFixed(4),
-                ])
-              ),
-              average_cost_per_query: (totalCost / responses.length).toFixed(4),
-            }, null, 2),
+            text: JSON.stringify(
+              {
+                research_id,
+                total_cost: totalCost.toFixed(4),
+                cost_by_service: Object.fromEntries(
+                  Array.from(costByService.entries()).map(([service, cost]) => [
+                    service,
+                    cost.toFixed(4),
+                  ])
+                ),
+                average_cost_per_query: (totalCost / responses.length).toFixed(4),
+              },
+              null,
+              2
+            ),
           },
         ],
       };

@@ -6,11 +6,7 @@
       "name": "Real-time Cost Dashboard",
       "description": "Live view of AI spending across all providers",
       "userValue": "See exactly where money is being spent right now",
-      "technicalRequirements": [
-        "Next.js dashboard",
-        "Supabase database",
-        "Webhook listeners"
-      ],
+      "technicalRequirements": ["Next.js dashboard", "Supabase database", "Webhook listeners"],
       "estimatedHours": 16
     },
     {
@@ -39,22 +35,14 @@
       "name": "Team Usage Breakdown",
       "description": "See which developers/projects use most tokens",
       "userValue": "Identify waste and optimize team behavior",
-      "technicalRequirements": [
-        "User attribution",
-        "Project tagging",
-        "Analytics queries"
-      ],
+      "technicalRequirements": ["User attribution", "Project tagging", "Analytics queries"],
       "estimatedHours": 10
     },
     {
       "name": "Export & Reports",
       "description": "PDF/CSV reports for finance teams",
       "userValue": "Easy expense reporting and budgeting",
-      "technicalRequirements": [
-        "PDF generation",
-        "CSV export",
-        "Report templates"
-      ],
+      "technicalRequirements": ["PDF generation", "CSV export", "Report templates"],
       "estimatedHours": 6
     }
   ]

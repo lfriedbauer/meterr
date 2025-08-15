@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 // Load environment variables
 dotenv.config();
 
-const testPrompt = "Testing connection. Please respond with 'Hello from [your name]!' and nothing else.";
+const testPrompt =
+  "Testing connection. Please respond with 'Hello from [your name]!' and nothing else.";
 
 async function testAPIs() {
   const client = new UnifiedLLMClient({
@@ -21,9 +22,9 @@ async function testAPIs() {
   // Test OpenAI
   try {
     console.log('Testing OpenAI...');
-    const result = await client.queryOpenAI({ 
+    const result = await client.queryOpenAI({
       prompt: testPrompt,
-      model: 'gpt-3.5-turbo' 
+      model: 'gpt-3.5-turbo',
     });
     console.log('✅ OpenAI:', result.response.substring(0, 50));
   } catch (error: any) {
@@ -33,9 +34,9 @@ async function testAPIs() {
   // Test Claude
   try {
     console.log('\nTesting Claude...');
-    const result = await client.queryClaude({ 
+    const result = await client.queryClaude({
       prompt: testPrompt,
-      model: 'claude-3-5-sonnet-20241022'
+      model: 'claude-3-5-sonnet-20241022',
     });
     console.log('✅ Claude:', result.response.substring(0, 50));
   } catch (error: any) {
@@ -45,9 +46,9 @@ async function testAPIs() {
   // Test Google Gemini
   try {
     console.log('\nTesting Google Gemini...');
-    const result = await client.queryGemini({ 
+    const result = await client.queryGemini({
       prompt: testPrompt,
-      model: 'gemini-1.5-flash'
+      model: 'gemini-1.5-flash',
     });
     console.log('✅ Gemini:', result.response.substring(0, 50));
   } catch (error: any) {
@@ -57,9 +58,9 @@ async function testAPIs() {
   // Test Perplexity
   try {
     console.log('\nTesting Perplexity...');
-    const result = await client.queryPerplexity({ 
+    const result = await client.queryPerplexity({
       prompt: testPrompt,
-      model: 'sonar'
+      model: 'sonar',
     });
     console.log('✅ Perplexity:', result.response.substring(0, 50));
   } catch (error: any) {
@@ -69,9 +70,9 @@ async function testAPIs() {
   // Test Grok
   try {
     console.log('\nTesting Grok...');
-    const result = await client.queryGrok({ 
+    const result = await client.queryGrok({
       prompt: testPrompt,
-      model: 'grok-2'
+      model: 'grok-2',
     });
     console.log('✅ Grok:', result.response.substring(0, 50));
   } catch (error: any) {

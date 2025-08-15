@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 import dotenv from 'dotenv';
 import { writeFileSync } from 'fs';
 import path from 'path';
+import { UnifiedLLMClient } from '../../../packages/@meterr/llm-client/index';
 
 dotenv.config({ path: path.join(__dirname, '../../../.env') });
 
@@ -26,7 +26,7 @@ async function findTargetCompanies() {
   });
 
   console.log('🎯 Finding First 10 Target Customers\n');
-  console.log('=' .repeat(60) + '\n');
+  console.log('='.repeat(60) + '\n');
 
   // Use Perplexity to find real companies
   const searchPrompt = `Find 10 real companies that:
@@ -101,9 +101,9 @@ async function findTargetCompanies() {
   - Team usage tracking`;
 
   console.log('\n📝 Content Marketing Ideas...\n');
-  const contentIdeas = await client.queryOpenAI({ 
+  const contentIdeas = await client.queryOpenAI({
     prompt: contentPrompt,
-    model: 'gpt-4-turbo-preview'
+    model: 'gpt-4-turbo-preview',
   });
   console.log(contentIdeas.response.substring(0, 1000));
 
@@ -120,8 +120,8 @@ async function findTargetCompanies() {
       'Send personalized connection request',
       'Post 1 LinkedIn article today',
       'Set up Calendly for consultations',
-      'Create simple landing page'
-    ]
+      'Create simple landing page',
+    ],
   };
 
   const planPath = path.join(
@@ -146,7 +146,7 @@ async function calculateROI() {
   });
 
   console.log('\n💰 ROI Calculator for Sales Pitch\n');
-  console.log('=' .repeat(60) + '\n');
+  console.log('='.repeat(60) + '\n');
 
   const roiPrompt = `Create a simple ROI calculator for our AI cost optimization service:
   
@@ -179,7 +179,7 @@ async function calculateROI() {
 
 async function createLandingPage() {
   console.log('\n🌐 Simple Landing Page Copy\n');
-  console.log('=' .repeat(60) + '\n');
+  console.log('='.repeat(60) + '\n');
 
   const client = new UnifiedLLMClient({
     openai: process.env.OPENAI_API_KEY,
@@ -213,17 +213,17 @@ async function createLandingPage() {
 
 async function main() {
   console.log('🚀 SALES PIPELINE ACTIVATION\n');
-  
+
   // Find target companies
   const salesPlan = await findTargetCompanies();
-  
+
   // Calculate ROI for pitch
   await calculateROI();
-  
+
   // Create landing page
   await createLandingPage();
-  
-  console.log('\n' + '=' .repeat(60));
+
+  console.log('\n' + '='.repeat(60));
   console.log('✅ NEXT ACTIONS (DO TODAY):');
   console.log('1. Pick 3 companies from the list');
   console.log('2. Find their CTOs on LinkedIn');

@@ -1,7 +1,7 @@
-import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import axios from 'axios';
+import OpenAI from 'openai';
 
 export interface LLMConfig {
   openai?: string;
@@ -38,15 +38,15 @@ export class UnifiedLLMClient {
 
   constructor(config: LLMConfig) {
     this.config = config;
-    
+
     if (config.openai) {
       this.openai = new OpenAI({ apiKey: config.openai });
     }
-    
+
     if (config.anthropic) {
       this.anthropic = new Anthropic({ apiKey: config.anthropic });
     }
-    
+
     if (config.google) {
       this.gemini = new GoogleGenerativeAI(config.google);
     }
@@ -54,7 +54,7 @@ export class UnifiedLLMClient {
 
   async queryOpenAI(query: ResearchQuery): Promise<ResearchResponse> {
     if (!this.openai) throw new Error('OpenAI API key not configured');
-    
+
     const completion = await this.openai.chat.completions.create({
       model: query.model || 'gpt-4-turbo-preview',
       messages: [{ role: 'user', content: query.prompt }],
@@ -73,18 +73,20 @@ export class UnifiedLLMClient {
       service: 'OpenAI',
       model: query.model || 'gpt-4-turbo-preview',
       response: completion.choices[0].message.content || '',
-      usage: usage ? {
-        promptTokens: usage.prompt_tokens,
-        completionTokens: usage.completion_tokens,
-        totalCost: cost
-      } : undefined,
-      timestamp: new Date()
+      usage: usage
+        ? {
+            promptTokens: usage.prompt_tokens,
+            completionTokens: usage.completion_tokens,
+            totalCost: cost,
+          }
+        : undefined,
+      timestamp: new Date(),
     };
   }
 
   async queryClaude(query: ResearchQuery): Promise<ResearchResponse> {
     if (!this.anthropic) throw new Error('Anthropic API key not configured');
-    
+
     const message = await this.anthropic.messages.create({
       model: query.model || 'claude-opus-4-1-20250805',
       messages: [{ role: 'user', content: query.prompt }],
@@ -107,19 +109,19 @@ export class UnifiedLLMClient {
       usage: {
         promptTokens: inputTokens,
         completionTokens: outputTokens,
-        totalCost: cost
+        totalCost: cost,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   async queryGemini(query: ResearchQuery): Promise<ResearchResponse> {
     if (!this.gemini) throw new Error('Google API key not configured');
-    
-    const model = this.gemini.getGenerativeModel({ 
-      model: query.model || 'gemini-1.5-pro' 
+
+    const model = this.gemini.getGenerativeModel({
+      model: query.model || 'gemini-1.5-pro',
     });
-    
+
     const result = await model.generateContent(query.prompt);
     const response = await result.response;
     const text = response.text();
@@ -128,29 +130,29 @@ export class UnifiedLLMClient {
       service: 'Google',
       model: query.model || 'gemini-1.5-pro',
       response: text,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
   async queryPerplexity(query: ResearchQuery): Promise<ResearchResponse> {
     if (!this.config.perplexity) throw new Error('Perplexity API key not configured');
-    
+
     const response = await axios.post(
       'https://api.perplexity.ai/chat/completions',
       {
         model: query.model || 'sonar',
         messages: [
           { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: query.prompt }
+          { role: 'user', content: query.prompt },
         ],
         temperature: query.temperature || 0.7,
         max_tokens: query.maxTokens || 2000,
       },
       {
         headers: {
-          'Authorization': `Bearer ${this.config.perplexity}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${this.config.perplexity}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
 
@@ -158,38 +160,40 @@ export class UnifiedLLMClient {
       service: 'Perplexity',
       model: response.data.model || query.model || 'sonar',
       response: response.data.choices[0].message.content,
-      usage: response.data.usage ? {
-        promptTokens: response.data.usage.prompt_tokens,
-        completionTokens: response.data.usage.completion_tokens,
-        totalCost: this.calculatePerplexityCost(
-          response.data.usage.prompt_tokens,
-          response.data.usage.completion_tokens
-        )
-      } : undefined,
-      timestamp: new Date()
+      usage: response.data.usage
+        ? {
+            promptTokens: response.data.usage.prompt_tokens,
+            completionTokens: response.data.usage.completion_tokens,
+            totalCost: this.calculatePerplexityCost(
+              response.data.usage.prompt_tokens,
+              response.data.usage.completion_tokens
+            ),
+          }
+        : undefined,
+      timestamp: new Date(),
     };
   }
 
   async queryGrok(query: ResearchQuery): Promise<ResearchResponse> {
     if (!this.config.xai) throw new Error('X.AI API key not configured');
-    
+
     const response = await axios.post(
       'https://api.x.ai/v1/chat/completions',
       {
         model: query.model || 'grok-4-latest',
         messages: [
           { role: 'system', content: 'You are a helpful research assistant.' },
-          { role: 'user', content: query.prompt }
+          { role: 'user', content: query.prompt },
         ],
         temperature: query.temperature || 0.7,
         max_tokens: query.maxTokens || 2000,
-        stream: false
+        stream: false,
       },
       {
         headers: {
-          'Authorization': `Bearer ${this.config.xai}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${this.config.xai}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
 
@@ -206,9 +210,9 @@ export class UnifiedLLMClient {
       usage: {
         promptTokens: inputTokens,
         completionTokens: outputTokens,
-        totalCost: cost
+        totalCost: cost,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
   }
 
@@ -218,59 +222,54 @@ export class UnifiedLLMClient {
 
     // Query all configured services in parallel
     const promises = [];
-    
+
     if (this.config.openai) {
       promises.push(
-        this.queryOpenAI(query)
-          .catch(err => {
-            errors.push(`OpenAI: ${err.message}`);
-            return undefined as any;
-          })
+        this.queryOpenAI(query).catch((err) => {
+          errors.push(`OpenAI: ${err.message}`);
+          return undefined as any;
+        })
       );
     }
-    
+
     if (this.config.anthropic) {
       promises.push(
-        this.queryClaude(query)
-          .catch(err => {
-            errors.push(`Claude: ${err.message}`);
-            return undefined as any;
-          })
+        this.queryClaude(query).catch((err) => {
+          errors.push(`Claude: ${err.message}`);
+          return undefined as any;
+        })
       );
     }
-    
+
     if (this.config.google) {
       promises.push(
-        this.queryGemini(query)
-          .catch(err => {
-            errors.push(`Gemini: ${err.message}`);
-            return undefined as any;
-          })
+        this.queryGemini(query).catch((err) => {
+          errors.push(`Gemini: ${err.message}`);
+          return undefined as any;
+        })
       );
     }
-    
+
     if (this.config.perplexity) {
       promises.push(
-        this.queryPerplexity(query)
-          .catch(err => {
-            errors.push(`Perplexity: ${err.message}`);
-            return undefined as any;
-          })
+        this.queryPerplexity(query).catch((err) => {
+          errors.push(`Perplexity: ${err.message}`);
+          return undefined as any;
+        })
       );
     }
-    
+
     if (this.config.xai) {
       promises.push(
-        this.queryGrok(query)
-          .catch(err => {
-            errors.push(`Grok: ${err.message}`);
-            return undefined as any;
-          })
+        this.queryGrok(query).catch((err) => {
+          errors.push(`Grok: ${err.message}`);
+          return undefined as any;
+        })
       );
     }
 
     const responses = await Promise.allSettled(promises);
-    
+
     responses.forEach((result) => {
       if (result.status === 'fulfilled' && result.value) {
         results.push(result.value);
@@ -290,7 +289,7 @@ export class UnifiedLLMClient {
       'gpt-4': { input: 0.03, output: 0.06 },
       'gpt-3.5-turbo': { input: 0.0005, output: 0.0015 },
     };
-    
+
     const modelPricing = pricing[model] || pricing['gpt-4-turbo-preview'];
     return (inputTokens / 1000) * modelPricing.input + (outputTokens / 1000) * modelPricing.output;
   }
@@ -304,7 +303,7 @@ export class UnifiedLLMClient {
       'claude-3-sonnet-20240229': { input: 0.003, output: 0.015 },
       'claude-3-haiku-20240307': { input: 0.00025, output: 0.00125 },
     };
-    
+
     const modelPricing = pricing[model] || pricing['claude-opus-4-1-20250805'];
     return (inputTokens / 1000) * modelPricing.input + (outputTokens / 1000) * modelPricing.output;
   }
@@ -327,18 +326,18 @@ export class ResearchExecutor {
   async executeResearchPlan(prompts: ResearchQuery[]): Promise<Map<string, ResearchResponse[]>> {
     for (const prompt of prompts) {
       console.log(`Executing research query: ${prompt.prompt.substring(0, 100)}...`);
-      
+
       try {
         const responses = await this.client.queryAll(prompt);
         this.results.set(prompt.prompt, responses);
-        
+
         // Rate limiting - wait 2 seconds between queries
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (error) {
         console.error(`Failed to execute query: ${error}`);
       }
     }
-    
+
     return this.results;
   }
 
@@ -348,23 +347,23 @@ export class ResearchExecutor {
       timestamp: new Date().toISOString(),
       queries: Array.from(this.results.entries()).map(([prompt, responses]) => ({
         prompt,
-        responses: responses.map(r => ({
+        responses: responses.map((r) => ({
           service: r.service,
           model: r.model,
           response: r.response,
           usage: r.usage,
-          timestamp: r.timestamp
-        }))
-      }))
+          timestamp: r.timestamp,
+        })),
+      })),
     };
-    
+
     await fs.writeFile(filepath, JSON.stringify(output, null, 2));
   }
 
   getTotalCost(): number {
     let total = 0;
-    this.results.forEach(responses => {
-      responses.forEach(response => {
+    this.results.forEach((responses) => {
+      responses.forEach((response) => {
         if (response.usage?.totalCost) {
           total += response.usage.totalCost;
         }

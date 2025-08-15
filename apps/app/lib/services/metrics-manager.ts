@@ -1,14 +1,14 @@
 /**
  * Metrics Manager - "Bring Your Own Metrics" Framework
- * 
+ *
  * Allows customers to define and track their own success metrics
  * to validate that AI optimizations don't hurt quality
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { CustomEndpointIntegration } from '../integrations/custom-endpoint';
 import { GoogleAnalyticsIntegration } from '../integrations/google-analytics';
 import { StripeIntegration } from '../integrations/stripe';
-import { CustomEndpointIntegration } from '../integrations/custom-endpoint';
 
 // Types
 export interface MetricDefinition {
@@ -51,7 +51,7 @@ export interface MetricIntegration {
  */
 export class MetricsManager {
   private supabase;
-  
+
   // Available metric integrations
   private integrations: MetricIntegration[] = [
     {
@@ -59,39 +59,39 @@ export class MetricsManager {
       name: 'Google Analytics',
       description: 'Website traffic, conversions, engagement metrics',
       requiredCredentials: ['google_analytics_api_key', 'property_id'],
-      sampleEndpoint: 'https://analyticsreporting.googleapis.com/v4/reports:batchGet'
+      sampleEndpoint: 'https://analyticsreporting.googleapis.com/v4/reports:batchGet',
     },
     {
       source: 'stripe',
       name: 'Stripe Revenue',
       description: 'Revenue, conversion rates, customer metrics',
       requiredCredentials: ['stripe_restricted_key'],
-      sampleEndpoint: 'https://api.stripe.com/v1/charges'
+      sampleEndpoint: 'https://api.stripe.com/v1/charges',
     },
     {
       source: 'mixpanel',
       name: 'Mixpanel Analytics',
       description: 'User engagement, feature adoption, conversion funnels',
-      requiredCredentials: ['mixpanel_api_key', 'project_id']
+      requiredCredentials: ['mixpanel_api_key', 'project_id'],
     },
     {
       source: 'amplitude',
       name: 'Amplitude Analytics',
       description: 'User behavior, retention, product analytics',
-      requiredCredentials: ['amplitude_api_key', 'amplitude_secret']
+      requiredCredentials: ['amplitude_api_key', 'amplitude_secret'],
     },
     {
       source: 'intercom',
       name: 'Intercom Support',
       description: 'Customer satisfaction, response times, resolution rates',
-      requiredCredentials: ['intercom_access_token']
+      requiredCredentials: ['intercom_access_token'],
     },
     {
       source: 'custom',
       name: 'Custom Endpoint',
       description: 'Your own API endpoint returning metric values',
-      requiredCredentials: ['endpoint_url', 'api_key']
-    }
+      requiredCredentials: ['endpoint_url', 'api_key'],
+    },
   ];
 
   constructor(supabaseUrl: string, supabaseKey: string) {
@@ -130,7 +130,7 @@ export class MetricsManager {
           baseline_value: metric.baselineValue,
           acceptable_range_min: metric.acceptableRangeMin,
           acceptable_range_max: metric.acceptableRangeMax,
-          is_active: true
+          is_active: true,
         })
         .select('id')
         .single();
@@ -148,15 +148,15 @@ export class MetricsManager {
       // Log the action
       await this.logAudit(customerId, 'metric_added', {
         metricName: metric.name,
-        source: metric.source
+        source: metric.source,
       });
 
       return { success: true, metricId: data.id };
     } catch (error) {
       console.error('Error adding metric:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -178,14 +178,14 @@ export class MetricsManager {
         return [];
       }
 
-      return data.map(metric => ({
+      return data.map((metric) => ({
         name: metric.metric_name,
         source: metric.metric_source,
         endpointUrl: metric.endpoint_url,
         baselineValue: metric.baseline_value,
         acceptableRangeMin: metric.acceptable_range_min,
         acceptableRangeMax: metric.acceptable_range_max,
-        description: this.getIntegrationDescription(metric.metric_source)
+        description: this.getIntegrationDescription(metric.metric_source),
       }));
     } catch (error) {
       console.error('Error in getCustomerMetrics:', error);
@@ -196,10 +196,7 @@ export class MetricsManager {
   /**
    * Fetch current value for a metric
    */
-  async fetchMetricValue(
-    customerId: string,
-    metricName: string
-  ): Promise<MetricValue | null> {
+  async fetchMetricValue(customerId: string, metricName: string): Promise<MetricValue | null> {
     try {
       // Get metric definition
       const { data: metric, error } = await this.supabase
@@ -222,16 +219,16 @@ export class MetricsManager {
       switch (metric.metric_source) {
         case 'google_analytics':
           return await this.fetchGoogleAnalyticsValue(metric, credentials);
-        
+
         case 'stripe':
           return await this.fetchStripeValue(metric, credentials);
-        
+
         case 'mixpanel':
           return await this.fetchMixpanelValue(metric, credentials);
-        
+
         case 'custom':
           return await this.fetchCustomValue(metric, credentials);
-        
+
         default:
           console.error('Unknown metric source:', metric.metric_source);
           return null;
@@ -253,7 +250,7 @@ export class MetricsManager {
 
       for (const metric of metrics) {
         const currentValue = await this.fetchMetricValue(customerId, metric.name);
-        
+
         if (currentValue && metric.baselineValue) {
           const validation = this.validateMetricValue(metric, currentValue.value);
           validations.push(validation);
@@ -270,17 +267,14 @@ export class MetricsManager {
   /**
    * Validate a single metric value against baseline
    */
-  private validateMetricValue(
-    metric: MetricDefinition,
-    currentValue: number
-  ): MetricValidation {
+  private validateMetricValue(metric: MetricDefinition, currentValue: number): MetricValidation {
     const baselineValue = metric.baselineValue || 0;
     const minRange = metric.acceptableRangeMin || baselineValue * 0.95; // Default 5% tolerance
     const maxRange = metric.acceptableRangeMax || baselineValue * 1.05;
-    
+
     const isWithinRange = currentValue >= minRange && currentValue <= maxRange;
     const percentageChange = ((currentValue - baselineValue) / baselineValue) * 100;
-    
+
     let status: 'passed' | 'warning' | 'failed';
     if (isWithinRange) {
       status = 'passed';
@@ -297,21 +291,23 @@ export class MetricsManager {
       acceptableRange: [minRange, maxRange],
       isWithinRange,
       percentageChange,
-      status
+      status,
     };
   }
 
   /**
    * Validate metric configuration
    */
-  private async validateMetric(metric: MetricDefinition): Promise<{ isValid: boolean; error?: string }> {
+  private async validateMetric(
+    metric: MetricDefinition
+  ): Promise<{ isValid: boolean; error?: string }> {
     // Basic validation
     if (!metric.name || !metric.source) {
       return { isValid: false, error: 'Metric name and source are required' };
     }
 
     // Source-specific validation
-    const integration = this.integrations.find(i => i.source === metric.source);
+    const integration = this.integrations.find((i) => i.source === metric.source);
     if (!integration) {
       return { isValid: false, error: 'Invalid metric source' };
     }
@@ -366,7 +362,7 @@ export class MetricsManager {
       const creds = JSON.parse(credentials);
       const gaIntegration = new GoogleAnalyticsIntegration({
         apiKey: creds.apiKey,
-        propertyId: creds.propertyId
+        propertyId: creds.propertyId,
       });
 
       return await gaIntegration.fetchMetric(metric.metric_name);
@@ -390,7 +386,7 @@ export class MetricsManager {
       }
 
       const stripeIntegration = new StripeIntegration({
-        restrictedApiKey: credentials
+        restrictedApiKey: credentials,
       });
 
       return await stripeIntegration.fetchMetric(metric.metric_name);
@@ -411,7 +407,7 @@ export class MetricsManager {
     return {
       value: 67.8, // Mock engagement score
       timestamp: new Date(),
-      metadata: { source: 'mixpanel' }
+      metadata: { source: 'mixpanel' },
     };
   }
 
@@ -442,7 +438,7 @@ export class MetricsManager {
         authValue: config.authValue || credentials,
         headers: config.headers,
         method: config.method || 'GET',
-        requestBody: config.requestBody
+        requestBody: config.requestBody,
       });
 
       // Use a default metric definition
@@ -451,7 +447,7 @@ export class MetricsManager {
         displayName: metric.metric_name,
         description: `Custom metric: ${metric.metric_name}`,
         jsonPath: config.jsonPath || '$.value',
-        expectedType: 'number' as const
+        expectedType: 'number' as const,
       };
 
       return await customIntegration.fetchMetric(metricDefinition);
@@ -465,27 +461,21 @@ export class MetricsManager {
    * Get integration description
    */
   private getIntegrationDescription(source: string): string {
-    const integration = this.integrations.find(i => i.source === source);
+    const integration = this.integrations.find((i) => i.source === source);
     return integration?.description || 'Custom metric';
   }
 
   /**
    * Log audit event
    */
-  private async logAudit(
-    customerId: string,
-    action: string,
-    metadata: any
-  ): Promise<void> {
+  private async logAudit(customerId: string, action: string, metadata: any): Promise<void> {
     try {
-      await this.supabase
-        .from('audit_logs')
-        .insert({
-          customer_id: customerId,
-          action,
-          metadata,
-          entity_type: 'metric'
-        });
+      await this.supabase.from('audit_logs').insert({
+        customer_id: customerId,
+        action,
+        metadata,
+        entity_type: 'metric',
+      });
     } catch (error) {
       console.error('Failed to log audit event:', error);
     }

@@ -96,11 +96,7 @@
         "from": {
           "name": "Claude-CTO",
           "role": "CTO Perspective",
-          "expertise": [
-            "enterprise needs",
-            "technical validation",
-            "budget"
-          ],
+          "expertise": ["enterprise needs", "technical validation", "budget"],
           "llm": "claude"
         },
         "to": "R&D",
@@ -112,11 +108,7 @@
         "from": {
           "name": "Claude-CTO",
           "role": "CTO Perspective",
-          "expertise": [
-            "enterprise needs",
-            "technical validation",
-            "budget"
-          ],
+          "expertise": ["enterprise needs", "technical validation", "budget"],
           "llm": "claude"
         },
         "to": "R&D",
@@ -128,11 +120,7 @@
         "from": {
           "name": "Perplexity-Market",
           "role": "Market Researcher",
-          "expertise": [
-            "competitor analysis",
-            "pricing",
-            "trends"
-          ],
+          "expertise": ["competitor analysis", "pricing", "trends"],
           "llm": "perplexity"
         },
         "to": "Product Design",
@@ -144,11 +132,7 @@
         "from": {
           "name": "GPT-Customer",
           "role": "Customer Advocate",
-          "expertise": [
-            "user needs",
-            "pain points",
-            "adoption barriers"
-          ],
+          "expertise": ["user needs", "pain points", "adoption barriers"],
           "llm": "gpt4"
         },
         "to": "R&D",

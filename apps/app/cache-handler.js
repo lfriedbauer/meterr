@@ -41,37 +41,33 @@ IncrementalCache.onCreation(async ({ buildId }) => {
     // Stale-while-revalidate pattern for better UX
     useFileSystem: true,
     revalidatedTags: [],
-    
+
     // Custom TTL based on route patterns
     ttl: {
       // Static pages cached for 1 hour
       '/': 3600,
       '/pricing': 3600,
       '/features': 3600,
-      
+
       // Dynamic dashboard pages cached for 1 minute
       '/app/*': 60,
       '/api/*': 0, // No caching for API routes
-      
+
       // Default TTL
       '*': 300,
     },
-    
+
     // Revalidation strategy
     revalidate: async (options) => {
       const { tags, paths } = options;
-      
+
       // Batch revalidation for efficiency
       if (tags?.length) {
-        await Promise.all(
-          tags.map(tag => client.del(`tag:${tag}`))
-        );
+        await Promise.all(tags.map((tag) => client.del(`tag:${tag}`)));
       }
-      
+
       if (paths?.length) {
-        await Promise.all(
-          paths.map(path => client.del(`path:${path}`))
-        );
+        await Promise.all(paths.map((path) => client.del(`path:${path}`)));
       }
     },
   };

@@ -1,11 +1,11 @@
 /**
  * Stripe Integration
- * 
+ *
  * Integrates with Stripe to fetch revenue and conversion metrics
  * Uses customer's restricted read-only API key
  */
 
-import { MetricValue } from '../services/metrics-manager';
+import type { MetricValue } from '../services/metrics-manager';
 
 // Types
 export interface StripeConfig {
@@ -30,62 +30,62 @@ export interface StripeTimeframe {
 export class StripeIntegration {
   private config: StripeConfig;
   private baseUrl = 'https://api.stripe.com/v1';
-  
+
   // Available metrics
   private availableMetrics: StripeMetric[] = [
     {
       name: 'total_revenue',
       displayName: 'Total Revenue',
       description: 'Total revenue from successful charges',
-      category: 'revenue'
+      category: 'revenue',
     },
     {
       name: 'monthly_recurring_revenue',
       displayName: 'Monthly Recurring Revenue',
       description: 'MRR from active subscriptions',
-      category: 'subscription'
+      category: 'subscription',
     },
     {
       name: 'conversion_rate',
       displayName: 'Payment Conversion Rate',
       description: 'Successful payments / total payment attempts',
-      category: 'conversion'
+      category: 'conversion',
     },
     {
       name: 'average_order_value',
       displayName: 'Average Order Value',
       description: 'Average value per successful transaction',
-      category: 'revenue'
+      category: 'revenue',
     },
     {
       name: 'customer_count',
       displayName: 'Total Customers',
       description: 'Number of unique customers',
-      category: 'customer'
+      category: 'customer',
     },
     {
       name: 'new_customers',
       displayName: 'New Customers',
       description: 'New customers in the period',
-      category: 'customer'
+      category: 'customer',
     },
     {
       name: 'churn_rate',
       displayName: 'Churn Rate',
       description: 'Percentage of customers who cancelled',
-      category: 'subscription'
+      category: 'subscription',
     },
     {
       name: 'failed_payment_rate',
       displayName: 'Failed Payment Rate',
       description: 'Percentage of failed payment attempts',
-      category: 'conversion'
-    }
+      category: 'conversion',
+    },
   ];
 
   constructor(config: StripeConfig) {
     this.config = config;
-    
+
     // Validate that it's a restricted key
     if (!config.restrictedApiKey.startsWith('rk_')) {
       throw new Error('Stripe API key must be a restricted key (starts with rk_)');
@@ -108,9 +108,9 @@ export class StripeIntegration {
       const response = await this.makeRequest('/balance');
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Connection failed' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Connection failed',
       };
     }
   }
@@ -118,41 +118,38 @@ export class StripeIntegration {
   /**
    * Fetch a specific metric
    */
-  async fetchMetric(
-    metricName: string,
-    days: number = 30
-  ): Promise<MetricValue | null> {
+  async fetchMetric(metricName: string, days: number = 30): Promise<MetricValue | null> {
     try {
       const endDate = new Date();
       const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
-      
+
       const timeframe = { startDate, endDate };
-      
+
       switch (metricName) {
         case 'total_revenue':
           return await this.getTotalRevenue(timeframe);
-        
+
         case 'monthly_recurring_revenue':
           return await this.getMRR(timeframe);
-        
+
         case 'conversion_rate':
           return await this.getConversionRate(timeframe);
-        
+
         case 'average_order_value':
           return await this.getAverageOrderValue(timeframe);
-        
+
         case 'customer_count':
           return await this.getCustomerCount(timeframe);
-        
+
         case 'new_customers':
           return await this.getNewCustomers(timeframe);
-        
+
         case 'churn_rate':
           return await this.getChurnRate(timeframe);
-        
+
         case 'failed_payment_rate':
           return await this.getFailedPaymentRate(timeframe);
-        
+
         default:
           console.error('Unknown Stripe metric:', metricName);
           return null;
@@ -170,9 +167,9 @@ export class StripeIntegration {
     const charges = await this.makeRequest('/charges', {
       created: {
         gte: Math.floor(timeframe.startDate.getTime() / 1000),
-        lte: Math.floor(timeframe.endDate.getTime() / 1000)
+        lte: Math.floor(timeframe.endDate.getTime() / 1000),
       },
-      limit: 100
+      limit: 100,
     });
 
     let totalRevenue = 0;
@@ -194,8 +191,8 @@ export class StripeIntegration {
         source: 'stripe',
         metric: 'total_revenue',
         currency: 'usd',
-        period: `${Math.floor((timeframe.endDate.getTime() - timeframe.startDate.getTime()) / (24 * 60 * 60 * 1000))} days`
-      }
+        period: `${Math.floor((timeframe.endDate.getTime() - timeframe.startDate.getTime()) / (24 * 60 * 60 * 1000))} days`,
+      },
     };
   }
 
@@ -205,7 +202,7 @@ export class StripeIntegration {
   private async getMRR(timeframe: StripeTimeframe): Promise<MetricValue> {
     const subscriptions = await this.makeRequest('/subscriptions', {
       status: 'active',
-      limit: 100
+      limit: 100,
     });
 
     let mrr = 0;
@@ -217,7 +214,7 @@ export class StripeIntegration {
               // Convert to monthly amount
               const amount = item.price.unit_amount || 0;
               const interval = item.price.recurring?.interval || 'month';
-              
+
               let monthlyAmount = amount;
               if (interval === 'year') {
                 monthlyAmount = amount / 12;
@@ -226,7 +223,7 @@ export class StripeIntegration {
               } else if (interval === 'day') {
                 monthlyAmount = amount * 30;
               }
-              
+
               mrr += monthlyAmount * (item.quantity || 1);
             }
           }
@@ -244,8 +241,8 @@ export class StripeIntegration {
         source: 'stripe',
         metric: 'monthly_recurring_revenue',
         currency: 'usd',
-        subscriptionCount: subscriptions.data?.length || 0
-      }
+        subscriptionCount: subscriptions.data?.length || 0,
+      },
     };
   }
 
@@ -256,9 +253,9 @@ export class StripeIntegration {
     const charges = await this.makeRequest('/charges', {
       created: {
         gte: Math.floor(timeframe.startDate.getTime() / 1000),
-        lte: Math.floor(timeframe.endDate.getTime() / 1000)
+        lte: Math.floor(timeframe.endDate.getTime() / 1000),
       },
-      limit: 100
+      limit: 100,
     });
 
     let totalAttempts = 0;
@@ -266,7 +263,7 @@ export class StripeIntegration {
 
     if (charges.data) {
       totalAttempts = charges.data.length;
-      successfulPayments = charges.data.filter(charge => charge.status === 'succeeded').length;
+      successfulPayments = charges.data.filter((charge) => charge.status === 'succeeded').length;
     }
 
     const conversionRate = totalAttempts > 0 ? (successfulPayments / totalAttempts) * 100 : 0;
@@ -278,8 +275,8 @@ export class StripeIntegration {
         source: 'stripe',
         metric: 'conversion_rate',
         totalAttempts,
-        successfulPayments
-      }
+        successfulPayments,
+      },
     };
   }
 
@@ -290,9 +287,9 @@ export class StripeIntegration {
     const charges = await this.makeRequest('/charges', {
       created: {
         gte: Math.floor(timeframe.startDate.getTime() / 1000),
-        lte: Math.floor(timeframe.endDate.getTime() / 1000)
+        lte: Math.floor(timeframe.endDate.getTime() / 1000),
       },
-      limit: 100
+      limit: 100,
     });
 
     let totalAmount = 0;
@@ -307,7 +304,7 @@ export class StripeIntegration {
       }
     }
 
-    const averageOrderValue = successfulCharges > 0 ? (totalAmount / successfulCharges) / 100 : 0;
+    const averageOrderValue = successfulCharges > 0 ? totalAmount / successfulCharges / 100 : 0;
 
     return {
       value: averageOrderValue,
@@ -316,8 +313,8 @@ export class StripeIntegration {
         source: 'stripe',
         metric: 'average_order_value',
         currency: 'usd',
-        orderCount: successfulCharges
-      }
+        orderCount: successfulCharges,
+      },
     };
   }
 
@@ -327,9 +324,9 @@ export class StripeIntegration {
   private async getCustomerCount(timeframe: StripeTimeframe): Promise<MetricValue> {
     const customers = await this.makeRequest('/customers', {
       created: {
-        lte: Math.floor(timeframe.endDate.getTime() / 1000)
+        lte: Math.floor(timeframe.endDate.getTime() / 1000),
       },
-      limit: 100
+      limit: 100,
     });
 
     const customerCount = customers.data?.length || 0;
@@ -339,8 +336,8 @@ export class StripeIntegration {
       timestamp: new Date(),
       metadata: {
         source: 'stripe',
-        metric: 'customer_count'
-      }
+        metric: 'customer_count',
+      },
     };
   }
 
@@ -351,9 +348,9 @@ export class StripeIntegration {
     const customers = await this.makeRequest('/customers', {
       created: {
         gte: Math.floor(timeframe.startDate.getTime() / 1000),
-        lte: Math.floor(timeframe.endDate.getTime() / 1000)
+        lte: Math.floor(timeframe.endDate.getTime() / 1000),
       },
-      limit: 100
+      limit: 100,
     });
 
     const newCustomerCount = customers.data?.length || 0;
@@ -364,8 +361,8 @@ export class StripeIntegration {
       metadata: {
         source: 'stripe',
         metric: 'new_customers',
-        period: `${Math.floor((timeframe.endDate.getTime() - timeframe.startDate.getTime()) / (24 * 60 * 60 * 1000))} days`
-      }
+        period: `${Math.floor((timeframe.endDate.getTime() - timeframe.startDate.getTime()) / (24 * 60 * 60 * 1000))} days`,
+      },
     };
   }
 
@@ -378,17 +375,17 @@ export class StripeIntegration {
       status: 'canceled',
       canceled_at: {
         gte: Math.floor(timeframe.startDate.getTime() / 1000),
-        lte: Math.floor(timeframe.endDate.getTime() / 1000)
+        lte: Math.floor(timeframe.endDate.getTime() / 1000),
       },
-      limit: 100
+      limit: 100,
     });
 
     // Get all subscriptions that were active at start of period
     const activeSubs = await this.makeRequest('/subscriptions', {
       created: {
-        lte: Math.floor(timeframe.startDate.getTime() / 1000)
+        lte: Math.floor(timeframe.startDate.getTime() / 1000),
       },
-      limit: 100
+      limit: 100,
     });
 
     const cancelledCount = cancelledSubs.data?.length || 0;
@@ -403,8 +400,8 @@ export class StripeIntegration {
         source: 'stripe',
         metric: 'churn_rate',
         cancelledCount,
-        activeCount
-      }
+        activeCount,
+      },
     };
   }
 
@@ -415,9 +412,9 @@ export class StripeIntegration {
     const charges = await this.makeRequest('/charges', {
       created: {
         gte: Math.floor(timeframe.startDate.getTime() / 1000),
-        lte: Math.floor(timeframe.endDate.getTime() / 1000)
+        lte: Math.floor(timeframe.endDate.getTime() / 1000),
       },
-      limit: 100
+      limit: 100,
     });
 
     let totalCharges = 0;
@@ -425,7 +422,7 @@ export class StripeIntegration {
 
     if (charges.data) {
       totalCharges = charges.data.length;
-      failedCharges = charges.data.filter(charge => charge.status === 'failed').length;
+      failedCharges = charges.data.filter((charge) => charge.status === 'failed').length;
     }
 
     const failedPaymentRate = totalCharges > 0 ? (failedCharges / totalCharges) * 100 : 0;
@@ -437,8 +434,8 @@ export class StripeIntegration {
         source: 'stripe',
         metric: 'failed_payment_rate',
         totalCharges,
-        failedCharges
-      }
+        failedCharges,
+      },
     };
   }
 
@@ -448,7 +445,7 @@ export class StripeIntegration {
   private async makeRequest(endpoint: string, params: any = {}): Promise<any> {
     try {
       const url = new URL(this.baseUrl + endpoint);
-      
+
       // Add query parameters
       Object.entries(params).forEach(([key, value]) => {
         if (typeof value === 'object' && value !== null) {
@@ -463,16 +460,16 @@ export class StripeIntegration {
 
       const response = await fetch(url.toString(), {
         headers: {
-          'Authorization': `Bearer ${this.config.restrictedApiKey}`,
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
+          Authorization: `Bearer ${this.config.restrictedApiKey}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         throw new Error(
           `Stripe API error: ${response.status} ${response.statusText}` +
-          (errorData?.error?.message ? ` - ${errorData.error.message}` : '')
+            (errorData?.error?.message ? ` - ${errorData.error.message}` : '')
         );
       }
 
@@ -490,13 +487,13 @@ export class StripeIntegration {
     switch (businessType) {
       case 'ecommerce':
         return ['total_revenue', 'average_order_value', 'conversion_rate', 'new_customers'];
-      
+
       case 'saas':
         return ['monthly_recurring_revenue', 'churn_rate', 'new_customers', 'failed_payment_rate'];
-      
+
       case 'marketplace':
         return ['total_revenue', 'customer_count', 'conversion_rate', 'average_order_value'];
-      
+
       default:
         return ['total_revenue', 'conversion_rate', 'customer_count'];
     }
