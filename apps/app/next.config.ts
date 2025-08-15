@@ -74,16 +74,16 @@ const nextConfig: NextConfig = {
     // Parallel processing with all 32 threads
     config.parallelism = 32;
     
-    // Massive cache for fast rebuilds (using available RAM)
+    // Filesystem cache for fast rebuilds
     config.cache = {
       type: 'filesystem',
       allowCollectingMemory: true,
-      memoryCacheSize: 4 * 1024 * 1024 * 1024, // 4GB memory cache
       compression: false, // No compression (we have 256GB RAM)
       hashAlgorithm: 'xxhash64', // Faster hashing
       idleTimeout: 60000,
       idleTimeoutForInitialStore: 0,
-      maxMemoryGenerations: 1
+      maxMemoryGenerations: Infinity,
+      memoryCacheUnaffected: true
     };
     
     // Optimize bundle size
@@ -140,9 +140,11 @@ const nextConfig: NextConfig = {
       },
     };
     
-    // Tree shaking
-    config.optimization.usedExports = true;
-    config.optimization.sideEffects = false;
+    // Tree shaking (only in production)
+    if (!isServer) {
+      config.optimization.usedExports = true;
+      config.optimization.sideEffects = false;
+    }
     
     return config;
   },
