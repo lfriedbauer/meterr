@@ -33,14 +33,16 @@ const nextConfig: NextConfig = {
     // Use all 32 CPU cores
     cpus: 32,
     workerThreads: true,
-    parallelServerCompiles: true,
-    parallelServerBuildTraces: true,
+    // Note: parallelServerCompiles and parallelServerBuildTraces removed
+    // as they require specific build worker configurations
     optimizeCss: true,
-    turbo: {
-      resolveAlias: {
-        underscore: 'lodash',
-        mocha: { browser: 'mocha/browser-entry.js' }
-      }
+  },
+  
+  // Turbopack configuration (moved from experimental.turbo)
+  turbopack: {
+    resolveAlias: {
+      underscore: 'lodash',
+      mocha: { browser: 'mocha/browser-entry.js' }
     }
   },
   
