@@ -43,13 +43,22 @@ export async function POST(request: NextRequest) {
     // Check if customer already exists
     const { data: existing } = await getSupabase()
       .from('customers')
-      .select('id')
+      .select('id, email, company_name, status')
       .eq('email', email)
       .single();
 
     if (existing) {
+      // Return existing customer instead of error
       return NextResponse.json(
-        { error: 'Customer with this email already exists' },
+        { 
+          error: 'Customer already exists, continuing with existing account',
+          existingCustomer: {
+            id: existing.id,
+            email: existing.email,
+            companyName: existing.company_name,
+            status: existing.status
+          }
+        },
         { status: 409 }
       );
     }

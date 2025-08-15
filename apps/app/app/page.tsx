@@ -25,13 +25,20 @@ export default function Dashboard() {
         body: JSON.stringify({ email, companyName })
       });
       
+      const data = await res.json();
+      
       if (!res.ok) {
-        const data = await res.json();
+        // Check if customer already exists
+        if (res.status === 409 && data.existingCustomer) {
+          // Use existing customer
+          setCustomerId(data.existingCustomer.id);
+          setStep(2);
+          return;
+        }
         throw new Error(data.error || 'Failed to create customer');
       }
       
-      const { customer } = await res.json();
-      setCustomerId(customer.id);
+      setCustomerId(data.customer.id);
       setStep(2);
     } catch (err: any) {
       setError(err.message);
@@ -311,6 +318,22 @@ export default function Dashboard() {
           <p className="mt-2">
             🔒 Privacy-first: We only analyze metadata, never your prompts
           </p>
+          {customerId && (
+            <button
+              onClick={() => {
+                setStep(1);
+                setCustomerId('');
+                setEmail('');
+                setCompanyName('');
+                setApiKey('');
+                setQuickWin(null);
+                setError('');
+              }}
+              className="mt-4 text-blue-600 hover:underline"
+            >
+              Start Over with Different Email
+            </button>
+          )}
         </div>
       </div>
     </main>
