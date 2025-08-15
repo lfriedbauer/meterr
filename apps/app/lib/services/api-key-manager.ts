@@ -66,6 +66,15 @@ export class ApiKeyManager {
         }
       }
 
+      // Check if key already exists for this provider and name
+      const { data: existingKey } = await this.supabase
+        .from('customer_api_keys')
+        .select('id')
+        .eq('customer_id', customerId)
+        .eq('provider', apiKey.provider)
+        .eq('key_name', apiKey.keyName)
+        .single();
+
       // Generate key hint (last 4 characters)
       const keyHint = '...' + apiKey.apiKey.slice(-4);
 
@@ -78,21 +87,45 @@ export class ApiKeyManager {
         return { success: false, error: 'Failed to encrypt API key' };
       }
 
-      const { data, error } = await this.supabase
-        .from('customer_api_keys')
-        .insert({
-          customer_id: customerId,
-          provider: apiKey.provider,
-          key_name: apiKey.keyName,
-          encrypted_key: encryptedData,
-          key_hint: keyHint,
-          is_active: true
-        })
-        .select('id')
-        .single();
+      let data, error;
+      
+      if (existingKey) {
+        // Update existing key
+        const result = await this.supabase
+          .from('customer_api_keys')
+          .update({
+            encrypted_key: encryptedData,
+            key_hint: keyHint,
+            is_active: true,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingKey.id)
+          .select('id')
+          .single();
+        
+        data = result.data;
+        error = result.error;
+      } else {
+        // Insert new key
+        const result = await this.supabase
+          .from('customer_api_keys')
+          .insert({
+            customer_id: customerId,
+            provider: apiKey.provider,
+            key_name: apiKey.keyName,
+            encrypted_key: encryptedData,
+            key_hint: keyHint,
+            is_active: true
+          })
+          .select('id')
+          .single();
+        
+        data = result.data;
+        error = result.error;
+      }
 
       if (error) {
-        console.error('Error storing API key:', error);
+        console.error('Error storing/updating API key:', error);
         return { success: false, error: error.message };
       }
 
