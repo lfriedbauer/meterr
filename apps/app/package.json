@@ -7,7 +7,10 @@
     "build": "next build",
     "build:prod": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:setup": "npx tsx scripts/test-setup.ts",
+    "test:api": "npx tsx scripts/test-api.ts",
+    "test:metrics": "node scripts/test-metrics.js"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
@@ -15,10 +18,14 @@
     "@opentelemetry/sdk-metrics": "^2.0.1",
     "@opentelemetry/sdk-trace-node": "^2.0.1",
     "@opentelemetry/semantic-conventions": "^1.36.0",
+    "@supabase/supabase-js": "^2.55.0",
+    "dotenv": "^16.6.1",
     "lucide-react": "^0.539.0",
     "next": "15.4.6",
+    "openai": "^5.12.2",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -29,6 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "tailwindcss": "^4",
+    "tsx": "^4.20.4",
     "typescript": "^5"
   }
 }
