@@ -1,0 +1,101 @@
+/**
+ * TypeScript Types: {{titleCase name}}
+ * Generated with Plop
+ */
+
+import { z } from 'zod';
+import { BigNumber } from 'bignumber.js';
+
+// Base schema
+export const {{camelCase name}}Schema = z.object({
+  id: z.string().uuid(),
+  {{#each fields}}
+  {{#if (eq type 'string')}}
+  {{camelCase name}}: z.string(),
+  {{else if (eq type 'number')}}
+  {{camelCase name}}: z.number(),
+  {{else if (eq type 'boolean')}}
+  {{camelCase name}}: z.boolean(),
+  {{else if (eq type 'date')}}
+  {{camelCase name}}: z.date(),
+  {{else if (eq type 'bigNumber')}}
+  {{camelCase name}}: z.instanceof(BigNumber),
+  {{else}}
+  {{camelCase name}}: z.unknown(),
+  {{/if}}
+  {{/each}}
+  {{#if withTimestamps}}
+  createdAt: z.date(),
+  updatedAt: z.date()
+  {{/if}}
+});
+
+// Create input schema (omit id and timestamps)
+export const {{camelCase name}}CreateSchema = {{camelCase name}}Schema.omit({
+  id: true,
+  {{#if withTimestamps}}
+  createdAt: true,
+  updatedAt: true
+  {{/if}}
+});
+
+// Update input schema (all fields optional)
+export const {{camelCase name}}UpdateSchema = {{camelCase name}}Schema.partial().omit({
+  id: true,
+  {{#if withTimestamps}}
+  createdAt: true
+  {{/if}}
+});
+
+// Filter schema for queries
+export const {{camelCase name}}FilterSchema = {{camelCase name}}Schema.partial();
+
+// TypeScript types
+export type {{pascalCase name}} = z.infer<typeof {{camelCase name}}Schema>;
+export type {{pascalCase name}}CreateInput = z.infer<typeof {{camelCase name}}CreateSchema>;
+export type {{pascalCase name}}UpdateInput = z.infer<typeof {{camelCase name}}UpdateSchema>;
+export type {{pascalCase name}}Filter = z.infer<typeof {{camelCase name}}FilterSchema>;
+
+// Enums and constants
+export const {{constantCase name}}_STATUS = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  PENDING: 'pending',
+  ARCHIVED: 'archived'
+} as const;
+
+export type {{pascalCase name}}Status = typeof {{constantCase name}}_STATUS[keyof typeof {{constantCase name}}_STATUS];
+
+// Validation helpers
+export function validate{{pascalCase name}}(data: unknown): {{pascalCase name}} {
+  return {{camelCase name}}Schema.parse(data);
+}
+
+export function isValid{{pascalCase name}}(data: unknown): data is {{pascalCase name}} {
+  return {{camelCase name}}Schema.safeParse(data).success;
+}
+
+// Default values
+export const default{{pascalCase name}}: Partial<{{pascalCase name}}> = {
+  {{#each fields}}
+  {{#if defaultValue}}
+  {{camelCase name}}: {{defaultValue}},
+  {{/if}}
+  {{/each}}
+};
+
+// Computed properties
+export interface {{pascalCase name}}WithComputed extends {{pascalCase name}} {
+  // Add computed properties here
+  displayName?: string;
+  isActive?: boolean;
+}
+
+export function with{{pascalCase name}}Computed({{camelCase name}}: {{pascalCase name}}): {{pascalCase name}}WithComputed {
+  return {
+    ...{{camelCase name}},
+    // Add computed logic here
+    displayName: `{{pascalCase name}} ${{{camelCase name}}.id}`,
+    isActive: true
+  };
+}

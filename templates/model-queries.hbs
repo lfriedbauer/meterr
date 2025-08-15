@@ -1,0 +1,197 @@
+/**
+ * Database Queries: {{titleCase name}}
+ * Generated with Plop
+ */
+
+import { {{pascalCase name}}Model } from '../models/{{camelCase name}}';
+import type { {{pascalCase name}}, {{pascalCase name}}CreateInput, {{pascalCase name}}UpdateInput, {{pascalCase name}}Filter } from '../types/{{camelCase name}}';
+import { Result } from '@/lib/result';
+import { cache } from '@/lib/cache';
+
+export class {{pascalCase name}}Queries {
+  private static readonly CACHE_PREFIX = '{{snakeCase name}}:';
+  private static readonly CACHE_TTL = 60 * 5; // 5 minutes
+
+  /**
+   * Get a single {{camelCase name}} by ID
+   */
+  static async getById(id: string, useCache = true): Promise<Result<{{pascalCase name}} | null, Error>> {
+    const cacheKey = `${this.CACHE_PREFIX}${id}`;
+
+    if (useCache) {
+      const cached = await cache.get<{{pascalCase name}}>(cacheKey);
+      if (cached) {
+        return Result.ok(cached);
+      }
+    }
+
+    const result = await {{pascalCase name}}Model.findById(id);
+    
+    if (result.isOk() && result.value) {
+      await cache.set(cacheKey, result.value, this.CACHE_TTL);
+    }
+
+    return result;
+  }
+
+  /**
+   * Get all {{camelCase name}}s with optional filtering
+   */
+  static async getAll(filter?: {{pascalCase name}}Filter): Promise<Result<{{pascalCase name}}[], Error>> {
+    const cacheKey = `${this.CACHE_PREFIX}list:${JSON.stringify(filter || {})}`;
+    
+    const cached = await cache.get<{{pascalCase name}}[]>(cacheKey);
+    if (cached) {
+      return Result.ok(cached);
+    }
+
+    const result = await {{pascalCase name}}Model.findAll(filter);
+    
+    if (result.isOk()) {
+      await cache.set(cacheKey, result.value, this.CACHE_TTL);
+    }
+
+    return result;
+  }
+
+  /**
+   * Get paginated {{camelCase name}}s
+   */
+  static async getPaginated(
+    page = 1,
+    pageSize = 10,
+    filter?: {{pascalCase name}}Filter
+  ): Promise<Result<{ items: {{pascalCase name}}[], total: number, hasMore: boolean }, Error>> {
+    const offset = (page - 1) * pageSize;
+    
+    // Get total count
+    const countResult = await {{pascalCase name}}Model.count(filter);
+    if (countResult.isErr()) {
+      return Result.err(countResult.error);
+    }
+
+    // Get paginated items
+    const itemsResult = await {{pascalCase name}}Model.findAll({
+      ...filter,
+      _limit: pageSize,
+      _offset: offset
+    } as any);
+
+    if (itemsResult.isErr()) {
+      return Result.err(itemsResult.error);
+    }
+
+    const total = countResult.value;
+    const items = itemsResult.value;
+    const hasMore = offset + items.length < total;
+
+    return Result.ok({ items, total, hasMore });
+  }
+
+  /**
+   * Create a new {{camelCase name}}
+   */
+  static async create(data: {{pascalCase name}}CreateInput): Promise<Result<{{pascalCase name}}, Error>> {
+    const result = await {{pascalCase name}}Model.create(data);
+    
+    if (result.isOk()) {
+      // Invalidate list cache
+      await cache.deletePattern(`${this.CACHE_PREFIX}list:*`);
+    }
+
+    return result;
+  }
+
+  /**
+   * Update an existing {{camelCase name}}
+   */
+  static async update(id: string, data: {{pascalCase name}}UpdateInput): Promise<Result<{{pascalCase name}}, Error>> {
+    const result = await {{pascalCase name}}Model.update(id, data);
+    
+    if (result.isOk()) {
+      // Invalidate caches
+      await cache.delete(`${this.CACHE_PREFIX}${id}`);
+      await cache.deletePattern(`${this.CACHE_PREFIX}list:*`);
+    }
+
+    return result;
+  }
+
+  /**
+   * Delete a {{camelCase name}}
+   */
+  static async delete(id: string): Promise<Result<boolean, Error>> {
+    const result = await {{pascalCase name}}Model.delete(id);
+    
+    if (result.isOk()) {
+      // Invalidate caches
+      await cache.delete(`${this.CACHE_PREFIX}${id}`);
+      await cache.deletePattern(`${this.CACHE_PREFIX}list:*`);
+    }
+
+    return result;
+  }
+
+  /**
+   * Bulk create {{camelCase name}}s
+   */
+  static async createMany(items: {{pascalCase name}}CreateInput[]): Promise<Result<{{pascalCase name}}[], Error>> {
+    const result = await {{pascalCase name}}Model.createMany(items);
+    
+    if (result.isOk()) {
+      // Invalidate list cache
+      await cache.deletePattern(`${this.CACHE_PREFIX}list:*`);
+    }
+
+    return result;
+  }
+
+  /**
+   * Search {{camelCase name}}s
+   */
+  static async search(query: string, fields: (keyof {{pascalCase name}})[] = ['name']): Promise<Result<{{pascalCase name}}[], Error>> {
+    // This is a simple implementation - you might want to use a proper search service
+    const allResult = await this.getAll();
+    
+    if (allResult.isErr()) {
+      return allResult;
+    }
+
+    const searchTerm = query.toLowerCase();
+    const filtered = allResult.value.filter(item => {
+      return fields.some(field => {
+        const value = item[field];
+        if (typeof value === 'string') {
+          return value.toLowerCase().includes(searchTerm);
+        }
+        return false;
+      });
+    });
+
+    return Result.ok(filtered);
+  }
+
+  /**
+   * Get statistics
+   */
+  static async getStats(): Promise<Result<{
+    total: number,
+    active: number,
+    inactive: number,
+    recent: number
+  }, Error>> {
+    const countResult = await {{pascalCase name}}Model.count();
+    
+    if (countResult.isErr()) {
+      return Result.err(countResult.error);
+    }
+
+    // Add more sophisticated stats as needed
+    return Result.ok({
+      total: countResult.value,
+      active: 0, // TODO: Implement based on status field
+      inactive: 0,
+      recent: 0 // TODO: Count created in last 24 hours
+    });
+  }
+}

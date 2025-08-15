@@ -48,7 +48,17 @@
     "check:docs": "node scripts/check-docs-consistency.js",
     "check:docs-consistency": "node scripts/check-docs-consistency.js",
     "docs:validate": "pnpm check:docs-consistency",
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev:gpu": "cross-env ENABLE_GPU=true pnpm dev",
+    "dev:memory": "cross-env USE_MEMORY_DB=true pnpm dev",
+    "dev:fast": "cross-env USE_MEMORY_DB=true ENABLE_GPU=true pnpm dev",
+    "benchmark:tokens": "tsx scripts/benchmark-tokens.ts",
+    "benchmark:db": "tsx scripts/benchmark-db.ts",
+    "generate": "plop",
+    "generate:api": "plop api",
+    "generate:component": "plop component",
+    "generate:model": "plop model",
+    "generate:feature": "plop feature"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -61,8 +71,13 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.17.0",
+    "@faker-js/faker": "^8.3.1",
     "@google/generative-ai": "^0.2.0",
     "axios": "^1.6.5",
-    "openai": "^4.24.1"
+    "better-sqlite3": "^9.2.2",
+    "bignumber.js": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "openai": "^4.24.1",
+    "plop": "^4.0.1"
   }
 }

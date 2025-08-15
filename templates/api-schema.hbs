@@ -1,0 +1,53 @@
+import { z } from 'zod';
+
+// Request schema for {{titleCase name}}
+export const {{camelCase name}}Schema = z.object({
+  {{#each fields}}
+  {{#if (eq type 'string')}}
+  {{name}}: z.string(){{#if required}}{{else}}.optional(){{/if}},
+  {{else if (eq type 'number')}}
+  {{name}}: z.number(){{#if required}}{{else}}.optional(){{/if}},
+  {{else if (eq type 'boolean')}}
+  {{name}}: z.boolean(){{#if required}}{{else}}.optional(){{/if}},
+  {{else if (eq type 'date')}}
+  {{name}}: z.string().datetime(){{#if required}}{{else}}.optional(){{/if}},
+  {{else if (eq type 'email')}}
+  {{name}}: z.string().email(){{#if required}}{{else}}.optional(){{/if}},
+  {{else if (eq type 'url')}}
+  {{name}}: z.string().url(){{#if required}}{{else}}.optional(){{/if}},
+  {{else if (eq type 'uuid')}}
+  {{name}}: z.string().uuid(){{#if required}}{{else}}.optional(){{/if}},
+  {{else if (eq type 'array')}}
+  {{name}}: z.array(z.string()){{#if required}}{{else}}.optional(){{/if}},
+  {{else if (eq type 'object')}}
+  {{name}}: z.object({}){{#if required}}{{else}}.optional(){{/if}},
+  {{else}}
+  {{name}}: z.unknown(){{#if required}}{{else}}.optional(){{/if}},
+  {{/if}}
+  {{/each}}
+  // TODO: Add specific fields for {{titleCase name}}
+  name: z.string().min(1).max(100),
+  description: z.string().optional(),
+  metadata: z.record(z.unknown()).optional()
+});
+
+// Response schema
+export const {{camelCase name}}ResponseSchema = {{camelCase name}}Schema.extend({
+  id: z.string().uuid(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime()
+});
+
+// List response schema
+export const {{camelCase name}}ListResponseSchema = z.object({
+  items: z.array({{camelCase name}}ResponseSchema),
+  total: z.number(),
+  page: z.number(),
+  pageSize: z.number(),
+  hasMore: z.boolean()
+});
+
+// TypeScript types
+export type {{pascalCase name}} = z.infer<typeof {{camelCase name}}Schema>;
+export type {{pascalCase name}}Response = z.infer<typeof {{camelCase name}}ResponseSchema>;
+export type {{pascalCase name}}ListResponse = z.infer<typeof {{camelCase name}}ListResponseSchema>;

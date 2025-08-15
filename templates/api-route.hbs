@@ -1,0 +1,149 @@
+import { NextRequest, NextResponse } from 'next/server';
+{{#if needsAuth}}
+import { auth } from '@/lib/auth';
+{{/if}}
+{{#if needsValidation}}
+import { {{camelCase name}}Schema } from './schema';
+{{/if}}
+import { Result, Ok, Err } from '@/lib/result';
+import { BigNumber } from 'bignumber.js';
+import { logger } from '@/lib/logger';
+
+{{#if (includes method 'GET')}}
+export async function GET(request: NextRequest) {
+  try {
+    {{#if needsAuth}}
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+    {{/if}}
+
+    // TODO: Implement GET logic for {{name}}
+    const data = {
+      message: 'GET {{name}} endpoint',
+      timestamp: new Date().toISOString()
+    };
+
+    logger.info('GET {{name}} successful', { userId: session?.user?.id });
+    
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    logger.error('GET {{name}} failed', { error });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+{{/if}}
+
+{{#if (includes method 'POST')}}
+export async function POST(request: NextRequest) {
+  try {
+    {{#if needsAuth}}
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+    {{/if}}
+
+    const body = await request.json();
+    
+    {{#if needsValidation}}
+    // Validate input
+    const validation = {{camelCase name}}Schema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid input', details: validation.error },
+        { status: 400 }
+      );
+    }
+    const data = validation.data;
+    {{else}}
+    const data = body;
+    {{/if}}
+
+    // TODO: Implement POST logic for {{name}}
+    const result = {
+      id: crypto.randomUUID(),
+      ...data,
+      createdAt: new Date().toISOString()
+    };
+
+    logger.info('POST {{name}} successful', { userId: session?.user?.id, id: result.id });
+    
+    return NextResponse.json({ success: true, data: result }, { status: 201 });
+  } catch (error) {
+    logger.error('POST {{name}} failed', { error });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+{{/if}}
+
+{{#if (includes method 'PUT')}}
+export async function PUT(request: NextRequest) {
+  try {
+    {{#if needsAuth}}
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+    {{/if}}
+
+    const body = await request.json();
+    
+    // TODO: Implement PUT logic for {{name}}
+    
+    return NextResponse.json({ success: true, data: body });
+  } catch (error) {
+    logger.error('PUT {{name}} failed', { error });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+{{/if}}
+
+{{#if (includes method 'DELETE')}}
+export async function DELETE(request: NextRequest) {
+  try {
+    {{#if needsAuth}}
+    // Check authentication
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+    {{/if}}
+
+    // TODO: Implement DELETE logic for {{name}}
+    
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    logger.error('DELETE {{name}} failed', { error });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+{{/if}}

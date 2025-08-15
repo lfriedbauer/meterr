@@ -1,0 +1,98 @@
+{{#if (eq type 'client')}}
+'use client';
+{{/if}}
+
+import { Suspense } from 'react';
+import { Metadata } from 'next';
+import { {{pascalCase name}} } from '@meterr/ui/components/{{pascalCase name}}';
+
+{{#unless (eq type 'client')}}
+export const metadata: Metadata = {
+  title: '{{titleCase name}} | Meterr',
+  description: '{{titleCase name}} page for Meterr application'
+};
+{{/unless}}
+
+interface {{pascalCase name}}PageProps {
+  params: {
+    id?: string;
+  };
+  searchParams: {
+    [key: string]: string | string[] | undefined;
+  };
+}
+
+export default function {{pascalCase name}}Page({ params, searchParams }: {{pascalCase name}}PageProps) {
+  return (
+    <div className="container mx-auto py-8">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">{{titleCase name}}</h1>
+        <p className="text-gray-600">
+          {/* TODO: Add page description */}
+          Manage your {{camelCase name}} settings and configurations
+        </p>
+      </header>
+
+      <Suspense fallback={<LoadingSkeleton />}>
+        <main>
+          <{{pascalCase name}} 
+            {{#if params.id}}
+            id={params.id}
+            {{/if}}
+            {...searchParams}
+          />
+        </main>
+      </Suspense>
+
+      <footer className="mt-12 pt-8 border-t">
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-gray-500">
+            Last updated: {new Date().toLocaleDateString()}
+          </p>
+          <div className="space-x-4">
+            <button className="text-sm text-blue-600 hover:underline">
+              Help
+            </button>
+            <button className="text-sm text-blue-600 hover:underline">
+              Documentation
+            </button>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function LoadingSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="h-8 bg-gray-200 rounded animate-pulse" />
+      <div className="h-64 bg-gray-200 rounded animate-pulse" />
+      <div className="grid grid-cols-3 gap-4">
+        <div className="h-32 bg-gray-200 rounded animate-pulse" />
+        <div className="h-32 bg-gray-200 rounded animate-pulse" />
+        <div className="h-32 bg-gray-200 rounded animate-pulse" />
+      </div>
+    </div>
+  );
+}
+
+// Error boundary
+export function ErrorBoundary({ error, reset }: { error: Error; reset: () => void }) {
+  return (
+    <div className="container mx-auto py-8">
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-red-800 mb-2">
+          Something went wrong
+        </h2>
+        <p className="text-red-600 mb-4">{error.message}</p>
+        <button
+          onClick={reset}
+          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+        >
+          Try again
+        </button>
+      </div>
+    </div>
+  );
+}

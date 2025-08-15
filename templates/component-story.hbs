@@ -1,0 +1,152 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import { {{pascalCase name}} } from './{{pascalCase name}}';
+
+const meta = {
+  title: 'Components/{{pascalCase name}}',
+  component: {{pascalCase name}},
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        component: 'TODO: Add component description for {{pascalCase name}}'
+      }
+    }
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    className: {
+      control: 'text',
+      description: 'Additional CSS classes'
+    },
+    children: {
+      control: 'text',
+      description: 'Component content'
+    }
+  },
+  args: {
+    // Default props
+  }
+} satisfies Meta<typeof {{pascalCase name}}>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// Default story
+export const Default: Story = {
+  args: {
+    children: 'Default {{pascalCase name}}'
+  }
+};
+
+// With custom styling
+export const WithCustomStyle: Story = {
+  args: {
+    className: 'p-4 bg-gray-100 rounded-lg',
+    children: 'Styled {{pascalCase name}}'
+  }
+};
+
+{{#if withState}}
+// Loading state
+export const Loading: Story = {
+  args: {
+    // Mock loading state
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Component in loading state'
+      }
+    }
+  }
+};
+
+// Error state
+export const Error: Story = {
+  args: {
+    // Mock error state
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Component displaying an error'
+      }
+    }
+  }
+};
+
+// With data
+export const WithData: Story = {
+  args: {
+    // Mock data
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Component with loaded data'
+      }
+    }
+  }
+};
+{{/if}}
+
+{{#if (eq type 'button')}}
+// Disabled state
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+    children: 'Disabled Button'
+  }
+};
+
+// With icon
+export const WithIcon: Story = {
+  args: {
+    children: (
+      <>
+        <span>🚀</span>
+        <span>Launch</span>
+      </>
+    )
+  }
+};
+{{/if}}
+
+{{#if (eq type 'form')}}
+// Empty form
+export const EmptyForm: Story = {
+  args: {}
+};
+
+// Pre-filled form
+export const PreFilled: Story = {
+  args: {
+    defaultValues: {
+      // Add default values
+    }
+  }
+};
+
+// With validation errors
+export const WithErrors: Story = {
+  args: {
+    errors: {
+      // Add validation errors
+    }
+  }
+};
+{{/if}}
+
+// Interactive playground
+export const Playground: Story = {
+  args: {
+    children: 'Customize me!'
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Interactive playground for testing different prop combinations'
+      }
+    }
+  }
+};

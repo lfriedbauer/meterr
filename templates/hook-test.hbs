@@ -1,0 +1,325 @@
+/**
+ * Tests for use{{pascalCase name}} hook
+ * Generated with Plop
+ */
+
+import { renderHook, act, waitFor } from '@testing-library/react';
+import { use{{pascalCase name}} } from './use{{pascalCase name}}';
+
+{{#if (eq type 'fetch')}}
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactNode } from 'react';
+
+// Setup query client wrapper
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false }
+    }
+  });
+  
+  return ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+};
+
+// Mock fetch
+global.fetch = jest.fn();
+const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+{{/if}}
+
+describe('use{{pascalCase name}}', () => {
+  {{#if (eq type 'fetch')}}
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should fetch data successfully', async () => {
+    const mockData = { id: '123', name: 'Test' };
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockData
+    } as Response);
+
+    const { result } = renderHook(
+      () => use{{pascalCase name}}('123'),
+      { wrapper: createWrapper() }
+    );
+
+    expect(result.current.isLoading).toBe(true);
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.data).toEqual(mockData);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('should handle fetch errors', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      statusText: 'Not Found'
+    } as Response);
+
+    const { result } = renderHook(
+      () => use{{pascalCase name}}('123'),
+      { wrapper: createWrapper() }
+    );
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(result.current.error).toBeDefined();
+    expect(result.current.data).toBeUndefined();
+  });
+
+  it('should update data', async () => {
+    const mockData = { id: '123', name: 'Test' };
+    const updatedData = { ...mockData, name: 'Updated' };
+    
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockData
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => updatedData
+      } as Response);
+
+    const { result } = renderHook(
+      () => use{{pascalCase name}}('123'),
+      { wrapper: createWrapper() }
+    );
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(mockData);
+    });
+
+    act(() => {
+      result.current.update({ name: 'Updated' });
+    });
+
+    await waitFor(() => {
+      expect(result.current.isUpdating).toBe(false);
+    });
+  });
+
+  it('should delete data', async () => {
+    const mockData = { id: '123', name: 'Test' };
+    
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockData
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true })
+      } as Response);
+
+    const { result } = renderHook(
+      () => use{{pascalCase name}}('123'),
+      { wrapper: createWrapper() }
+    );
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(mockData);
+    });
+
+    act(() => {
+      result.current.delete();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isDeleting).toBe(false);
+    });
+  });
+  {{/if}}
+
+  {{#if (eq type 'state')}}
+  it('should initialize with default value', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}('initial'));
+    
+    expect(result.current.value).toBe('initial');
+    expect(result.current.canUndo).toBe(false);
+    expect(result.current.canRedo).toBe(false);
+  });
+
+  it('should update value', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}('initial'));
+    
+    act(() => {
+      result.current.setValue('updated');
+    });
+
+    expect(result.current.value).toBe('updated');
+    expect(result.current.canUndo).toBe(true);
+  });
+
+  it('should handle undo', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}('initial'));
+    
+    act(() => {
+      result.current.setValue('second');
+      result.current.setValue('third');
+    });
+
+    expect(result.current.value).toBe('third');
+
+    act(() => {
+      result.current.undo();
+    });
+
+    expect(result.current.value).toBe('second');
+    expect(result.current.canRedo).toBe(true);
+  });
+
+  it('should handle redo', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}('initial'));
+    
+    act(() => {
+      result.current.setValue('second');
+      result.current.setValue('third');
+      result.current.undo();
+    });
+
+    expect(result.current.value).toBe('second');
+
+    act(() => {
+      result.current.redo();
+    });
+
+    expect(result.current.value).toBe('third');
+  });
+
+  it('should reset to initial value', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}('initial'));
+    
+    act(() => {
+      result.current.setValue('changed');
+      result.current.reset();
+    });
+
+    expect(result.current.value).toBe('initial');
+    expect(result.current.canUndo).toBe(false);
+    expect(result.current.canRedo).toBe(false);
+  });
+  {{/if}}
+
+  {{#if (eq type 'subscription')}}
+  let mockEventSource: any;
+
+  beforeEach(() => {
+    mockEventSource = {
+      onopen: null,
+      onmessage: null,
+      onerror: null,
+      close: jest.fn()
+    };
+    
+    global.EventSource = jest.fn(() => mockEventSource) as any;
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should connect to channel', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}('test-channel'));
+    
+    act(() => {
+      mockEventSource.onopen();
+    });
+
+    expect(result.current.isConnected).toBe(true);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('should receive messages', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}('test-channel'));
+    
+    const testMessage = { type: 'test', data: 'hello' };
+    
+    act(() => {
+      mockEventSource.onmessage({ data: JSON.stringify(testMessage) });
+    });
+
+    expect(result.current.lastMessage).toEqual(testMessage);
+  });
+
+  it('should handle connection errors', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}('test-channel'));
+    
+    act(() => {
+      mockEventSource.onerror({});
+    });
+
+    expect(result.current.isConnected).toBe(false);
+    expect(result.current.error).toBeDefined();
+  });
+
+  it('should send messages', async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: true });
+    
+    const { result } = renderHook(() => use{{pascalCase name}}('test-channel'));
+    
+    await act(async () => {
+      await result.current.sendMessage({ test: 'data' });
+    });
+
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/publish/test-channel',
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ test: 'data' })
+      })
+    );
+  });
+
+  it('should cleanup on unmount', () => {
+    const { unmount } = renderHook(() => use{{pascalCase name}}('test-channel'));
+    
+    unmount();
+
+    expect(mockEventSource.close).toHaveBeenCalled();
+  });
+  {{/if}}
+
+  {{#if (eq type 'custom')}}
+  it('should initialize with null state', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}());
+    
+    expect(result.current.state).toBeNull();
+    expect(result.current.loading).toBe(false);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('should handle actions', async () => {
+    const { result } = renderHook(() => use{{pascalCase name}}());
+    
+    act(() => {
+      result.current.action();
+    });
+
+    expect(result.current.loading).toBe(true);
+
+    // Wait for async action to complete
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+  });
+
+  it('should compute derived values', () => {
+    const { result } = renderHook(() => use{{pascalCase name}}());
+    
+    // Test computed values
+    expect(result.current.computed).toBeDefined();
+  });
+  {{/if}}
+});

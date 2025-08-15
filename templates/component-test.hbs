@@ -1,0 +1,103 @@
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { {{pascalCase name}} } from './{{pascalCase name}}';
+
+describe('{{pascalCase name}}', () => {
+  it('should render without crashing', () => {
+    render(<{{pascalCase name}} />);
+    expect(screen.getByRole('{{#if (eq type 'button')}}button{{else}}region{{/if}}')).toBeInTheDocument();
+  });
+
+  it('should apply custom className', () => {
+    const { container } = render(<{{pascalCase name}} className="custom-class" />);
+    expect(container.firstChild).toHaveClass('custom-class');
+  });
+
+  it('should render children', () => {
+    render(
+      <{{pascalCase name}}>
+        <span>Test Content</span>
+      </{{pascalCase name}}>
+    );
+    expect(screen.getByText('Test Content')).toBeInTheDocument();
+  });
+
+  {{#if withState}}
+  it('should handle loading state', () => {
+    render(<{{pascalCase name}} />);
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
+  it('should handle error state', async () => {
+    // Mock an error scenario
+    const ErrorComponent = () => {
+      const [error] = React.useState(new Error('Test error'));
+      return <{{pascalCase name}} />;
+    };
+    
+    render(<ErrorComponent />);
+    await waitFor(() => {
+      expect(screen.getByText(/Error:/)).toBeInTheDocument();
+    });
+  });
+
+  it('should display data when loaded', async () => {
+    // TODO: Mock data fetching
+    render(<{{pascalCase name}} />);
+    
+    await waitFor(() => {
+      // Add assertions for rendered data
+    });
+  });
+  {{/if}}
+
+  {{#if (eq type 'button')}}
+  it('should handle click events', () => {
+    const handleClick = jest.fn();
+    render(<{{pascalCase name}} onClick={handleClick} />);
+    
+    fireEvent.click(screen.getByRole('button'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should be disabled when disabled prop is true', () => {
+    render(<{{pascalCase name}} disabled />);
+    expect(screen.getByRole('button')).toBeDisabled();
+  });
+  {{/if}}
+
+  {{#if (eq type 'form')}}
+  it('should handle form submission', () => {
+    const handleSubmit = jest.fn();
+    render(<{{pascalCase name}} onSubmit={handleSubmit} />);
+    
+    fireEvent.submit(screen.getByRole('form'));
+    expect(handleSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it('should validate required fields', async () => {
+    render(<{{pascalCase name}} />);
+    
+    fireEvent.submit(screen.getByRole('form'));
+    
+    await waitFor(() => {
+      expect(screen.getByText(/required/i)).toBeInTheDocument();
+    });
+  });
+  {{/if}}
+
+  // Accessibility tests
+  it('should have proper ARIA attributes', () => {
+    render(<{{pascalCase name}} aria-label="Test Component" />);
+    expect(screen.getByLabelText('Test Component')).toBeInTheDocument();
+  });
+
+  it('should be keyboard navigable', () => {
+    render(<{{pascalCase name}} />);
+    const element = screen.getByRole('{{#if (eq type 'button')}}button{{else}}region{{/if}}');
+    
+    element.focus();
+    expect(element).toHaveFocus();
+  });
+});

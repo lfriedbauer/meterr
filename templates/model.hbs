@@ -1,0 +1,223 @@
+/**
+ * Database Model: {{titleCase name}}
+ * Generated with Plop
+ */
+
+import { BigNumber } from 'bignumber.js';
+import { Result, Ok, Err } from '@/lib/result';
+import { supabase } from '@/lib/supabase';
+import type { {{pascalCase name}}, {{pascalCase name}}CreateInput, {{pascalCase name}}UpdateInput } from '../types/{{camelCase name}}';
+
+export class {{pascalCase name}}Model {
+  private static readonly TABLE_NAME = '{{snakeCase name}}s';
+
+  /**
+   * Create a new {{camelCase name}}
+   */
+  static async create(data: {{pascalCase name}}CreateInput): Promise<Result<{{pascalCase name}}, Error>> {
+    try {
+      const { data: result, error } = await supabase
+        .from(this.TABLE_NAME)
+        .insert({
+          ...data,
+          {{#if withTimestamps}}
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+          {{/if}}
+        })
+        .select()
+        .single();
+
+      if (error) {
+        return Err(new Error(`Failed to create {{camelCase name}}: ${error.message}`));
+      }
+
+      return Ok(this.transform(result));
+    } catch (error) {
+      return Err(error as Error);
+    }
+  }
+
+  /**
+   * Find a {{camelCase name}} by ID
+   */
+  static async findById(id: string): Promise<Result<{{pascalCase name}} | null, Error>> {
+    try {
+      const { data, error } = await supabase
+        .from(this.TABLE_NAME)
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return Ok(null); // Not found
+        }
+        return Err(new Error(`Failed to find {{camelCase name}}: ${error.message}`));
+      }
+
+      return Ok(this.transform(data));
+    } catch (error) {
+      return Err(error as Error);
+    }
+  }
+
+  /**
+   * Find all {{camelCase name}}s with optional filters
+   */
+  static async findAll(filters?: Partial<{{pascalCase name}}>): Promise<Result<{{pascalCase name}}[], Error>> {
+    try {
+      let query = supabase.from(this.TABLE_NAME).select('*');
+
+      // Apply filters
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            query = query.eq(key, value);
+          }
+        });
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        return Err(new Error(`Failed to find {{camelCase name}}s: ${error.message}`));
+      }
+
+      return Ok((data || []).map(this.transform));
+    } catch (error) {
+      return Err(error as Error);
+    }
+  }
+
+  /**
+   * Update a {{camelCase name}}
+   */
+  static async update(id: string, data: {{pascalCase name}}UpdateInput): Promise<Result<{{pascalCase name}}, Error>> {
+    try {
+      const { data: result, error } = await supabase
+        .from(this.TABLE_NAME)
+        .update({
+          ...data,
+          {{#if withTimestamps}}
+          updated_at: new Date().toISOString()
+          {{/if}}
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        return Err(new Error(`Failed to update {{camelCase name}}: ${error.message}`));
+      }
+
+      return Ok(this.transform(result));
+    } catch (error) {
+      return Err(error as Error);
+    }
+  }
+
+  /**
+   * Delete a {{camelCase name}}
+   */
+  static async delete(id: string): Promise<Result<boolean, Error>> {
+    try {
+      const { error } = await supabase
+        .from(this.TABLE_NAME)
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        return Err(new Error(`Failed to delete {{camelCase name}}: ${error.message}`));
+      }
+
+      return Ok(true);
+    } catch (error) {
+      return Err(error as Error);
+    }
+  }
+
+  /**
+   * Count {{camelCase name}}s
+   */
+  static async count(filters?: Partial<{{pascalCase name}}>): Promise<Result<number, Error>> {
+    try {
+      let query = supabase.from(this.TABLE_NAME).select('*', { count: 'exact', head: true });
+
+      // Apply filters
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            query = query.eq(key, value);
+          }
+        });
+      }
+
+      const { count, error } = await query;
+
+      if (error) {
+        return Err(new Error(`Failed to count {{camelCase name}}s: ${error.message}`));
+      }
+
+      return Ok(count || 0);
+    } catch (error) {
+      return Err(error as Error);
+    }
+  }
+
+  /**
+   * Transform database record to domain model
+   */
+  private static transform(record: any): {{pascalCase name}} {
+    return {
+      id: record.id,
+      {{#each fields}}
+      {{name}}: record.{{snakeCase name}},
+      {{/each}}
+      {{#if withTimestamps}}
+      createdAt: new Date(record.created_at),
+      updatedAt: new Date(record.updated_at)
+      {{/if}}
+    };
+  }
+
+  /**
+   * Batch operations
+   */
+  static async createMany(items: {{pascalCase name}}CreateInput[]): Promise<Result<{{pascalCase name}}[], Error>> {
+    try {
+      const { data, error } = await supabase
+        .from(this.TABLE_NAME)
+        .insert(items.map(item => ({
+          ...item,
+          {{#if withTimestamps}}
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+          {{/if}}
+        })))
+        .select();
+
+      if (error) {
+        return Err(new Error(`Failed to create {{camelCase name}}s: ${error.message}`));
+      }
+
+      return Ok((data || []).map(this.transform));
+    } catch (error) {
+      return Err(error as Error);
+    }
+  }
+
+  /**
+   * Transaction support
+   */
+  static async transaction<T>(fn: () => Promise<T>): Promise<Result<T, Error>> {
+    try {
+      // Note: Supabase doesn't have built-in transaction support
+      // This is a placeholder for future implementation
+      const result = await fn();
+      return Ok(result);
+    } catch (error) {
+      return Err(error as Error);
+    }
+  }
+}

@@ -1,0 +1,301 @@
+/**
+ * Custom Hook: use{{pascalCase name}}
+ * Generated with Plop
+ */
+
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Result } from '@/lib/result';
+
+{{#if (eq type 'fetch')}}
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+interface Use{{pascalCase name}}Options {
+  enabled?: boolean;
+  refetchInterval?: number;
+  onSuccess?: (data: any) => void;
+  onError?: (error: Error) => void;
+}
+
+export function use{{pascalCase name}}(id?: string, options: Use{{pascalCase name}}Options = {}) {
+  const queryClient = useQueryClient();
+  const { enabled = true, refetchInterval, onSuccess, onError } = options;
+
+  // Fetch query
+  const {
+    data,
+    error,
+    isLoading,
+    isError,
+    refetch
+  } = useQuery({
+    queryKey: ['{{camelCase name}}', id],
+    queryFn: async () => {
+      if (!id) throw new Error('ID is required');
+      
+      const response = await fetch(`/api/{{dashCase name}}/${id}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.statusText}`);
+      }
+      return response.json();
+    },
+    enabled: enabled && !!id,
+    refetchInterval,
+    onSuccess,
+    onError
+  });
+
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: async (updates: any) => {
+      const response = await fetch(`/api/{{dashCase name}}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to update: ${response.statusText}`);
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['{{camelCase name}}', id]);
+      onSuccess?.(data);
+    },
+    onError
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/{{dashCase name}}/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to delete: ${response.statusText}`);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['{{camelCase name}}']);
+      onSuccess?.(null);
+    },
+    onError
+  });
+
+  return {
+    data,
+    error,
+    isLoading,
+    isError,
+    refetch,
+    update: updateMutation.mutate,
+    delete: deleteMutation.mutate,
+    isUpdating: updateMutation.isLoading,
+    isDeleting: deleteMutation.isLoading
+  };
+}
+{{/if}}
+
+{{#if (eq type 'state')}}
+interface {{pascalCase name}}State {
+  value: any;
+  history: any[];
+  canUndo: boolean;
+  canRedo: boolean;
+}
+
+export function use{{pascalCase name}}(initialValue?: any) {
+  const [state, setState] = useState<{{pascalCase name}}State>({
+    value: initialValue,
+    history: [initialValue],
+    canUndo: false,
+    canRedo: false
+  });
+  const [historyIndex, setHistoryIndex] = useState(0);
+
+  const setValue = useCallback((newValue: any) => {
+    setState(prev => {
+      const newHistory = [...prev.history.slice(0, historyIndex + 1), newValue];
+      return {
+        value: newValue,
+        history: newHistory,
+        canUndo: true,
+        canRedo: false
+      };
+    });
+    setHistoryIndex(prev => prev + 1);
+  }, [historyIndex]);
+
+  const undo = useCallback(() => {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      setState(prev => ({
+        ...prev,
+        value: prev.history[newIndex],
+        canUndo: newIndex > 0,
+        canRedo: true
+      }));
+      setHistoryIndex(newIndex);
+    }
+  }, [historyIndex]);
+
+  const redo = useCallback(() => {
+    if (historyIndex < state.history.length - 1) {
+      const newIndex = historyIndex + 1;
+      setState(prev => ({
+        ...prev,
+        value: prev.history[newIndex],
+        canUndo: true,
+        canRedo: newIndex < prev.history.length - 1
+      }));
+      setHistoryIndex(newIndex);
+    }
+  }, [historyIndex, state.history.length]);
+
+  const reset = useCallback(() => {
+    setState({
+      value: initialValue,
+      history: [initialValue],
+      canUndo: false,
+      canRedo: false
+    });
+    setHistoryIndex(0);
+  }, [initialValue]);
+
+  return {
+    value: state.value,
+    setValue,
+    undo,
+    redo,
+    reset,
+    canUndo: state.canUndo,
+    canRedo: state.canRedo,
+    history: state.history
+  };
+}
+{{/if}}
+
+{{#if (eq type 'subscription')}}
+interface Use{{pascalCase name}}Options {
+  onMessage?: (message: any) => void;
+  onError?: (error: Error) => void;
+  onConnect?: () => void;
+  onDisconnect?: () => void;
+}
+
+export function use{{pascalCase name}}(channel: string, options: Use{{pascalCase name}}Options = {}) {
+  const [isConnected, setIsConnected] = useState(false);
+  const [lastMessage, setLastMessage] = useState<any>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    if (!channel) return;
+
+    // Create WebSocket or EventSource connection
+    const eventSource = new EventSource(`/api/subscribe/${channel}`);
+
+    eventSource.onopen = () => {
+      setIsConnected(true);
+      setError(null);
+      options.onConnect?.();
+    };
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        setLastMessage(data);
+        options.onMessage?.(data);
+      } catch (err) {
+        const error = new Error('Failed to parse message');
+        setError(error);
+        options.onError?.(error);
+      }
+    };
+
+    eventSource.onerror = (event) => {
+      setIsConnected(false);
+      const error = new Error('Connection error');
+      setError(error);
+      options.onError?.(error);
+      options.onDisconnect?.();
+    };
+
+    return () => {
+      eventSource.close();
+      setIsConnected(false);
+      options.onDisconnect?.();
+    };
+  }, [channel]);
+
+  const sendMessage = useCallback(async (message: any) => {
+    try {
+      const response = await fetch(`/api/publish/${channel}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(message)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+    } catch (err) {
+      setError(err as Error);
+      options.onError?.(err as Error);
+    }
+  }, [channel, options]);
+
+  return {
+    isConnected,
+    lastMessage,
+    error,
+    sendMessage
+  };
+}
+{{/if}}
+
+{{#if (eq type 'custom')}}
+// Custom hook implementation
+export function use{{pascalCase name}}() {
+  const [state, setState] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  // TODO: Implement custom logic for {{pascalCase name}}
+  
+  useEffect(() => {
+    // Setup logic
+    return () => {
+      // Cleanup logic
+    };
+  }, []);
+
+  const action = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // TODO: Implement action logic
+      setState(/* new state */);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const computed = useMemo(() => {
+    // TODO: Add computed values
+    return state;
+  }, [state]);
+
+  return {
+    state,
+    loading,
+    error,
+    action,
+    computed
+  };
+}
+{{/if}}

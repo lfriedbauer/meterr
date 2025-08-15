@@ -1,0 +1,55 @@
+{{#if (eq type 'client')}}
+'use client';
+
+{{/if}}
+import React{{#if withState}}, { useState, useEffect, useMemo }{{/if}} from 'react';
+import { cn } from '@/lib/utils';
+
+interface {{pascalCase name}}Props {
+  className?: string;
+  children?: React.ReactNode;
+  // TODO: Add specific props for {{pascalCase name}}
+}
+
+export const {{pascalCase name}}: React.FC<{{pascalCase name}}Props> = ({
+  className,
+  children,
+  ...props
+}) => {
+  {{#if withState}}
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<unknown>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    // TODO: Implement data fetching or side effects
+  }, []);
+
+  const processedData = useMemo(() => {
+    // TODO: Implement data processing
+    return data;
+  }, [data]);
+  {{/if}}
+
+  return (
+    <div className={cn('{{dashCase name}}', className)} {...props}>
+      {{#if withState}}
+      {loading && <div>Loading...</div>}
+      {error && <div>Error: {error.message}</div>}
+      {data && (
+        <div>
+          {/* TODO: Render data */}
+          {children}
+        </div>
+      )}
+      {{else}}
+      {/* TODO: Implement {{pascalCase name}} UI */}
+      {children}
+      {{/if}}
+    </div>
+  );
+};
+
+{{pascalCase name}}.displayName = '{{pascalCase name}}';
+
+export default {{pascalCase name}};
