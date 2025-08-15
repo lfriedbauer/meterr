@@ -3,7 +3,7 @@ title: Deployment Guide
 description: Vercel configurations, rollback procedures, and feature flags
 audience: ["human"]
 status: ready
-last_updated: 2025-01-14
+last_updated: 2025-08-15
 owner: devops
 ---
 

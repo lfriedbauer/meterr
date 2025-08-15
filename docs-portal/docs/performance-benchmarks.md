@@ -3,7 +3,7 @@ title: Performance Benchmarks
 description: Response time targets, query optimization, and caching rules
 audience: ["ai"]
 status: ready
-last_updated: 2025-01-14
+last_updated: 2025-08-15
 owner: engineering
 ---
 

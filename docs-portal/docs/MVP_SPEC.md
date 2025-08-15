@@ -3,7 +3,7 @@ title: MVP Specification
 description: Technical blueprint for AI Profitability Platform features and requirements
 audience: ["human", "ai"]
 status: ready
-last_updated: 2025-01-14
+last_updated: 2025-08-15
 owner: product
 ---
 

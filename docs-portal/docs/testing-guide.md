@@ -3,7 +3,7 @@ title: Testing Guide
 description: Coverage targets, mock patterns, and E2E flows for meterr.ai
 audience: ["human", "ai"]
 status: ready
-last_updated: 2025-01-14
+last_updated: 2025-08-15
 owner: engineering
 ---
 

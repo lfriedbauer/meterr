@@ -3,7 +3,7 @@ title: Error Handling Playbook
 description: Error codes, recovery strategies, and Result patterns for meterr.ai
 audience: ["ai"]
 status: ready
-last_updated: 2025-01-14
+last_updated: 2025-08-15
 owner: engineering
 ---
 

@@ -3,7 +3,7 @@ title: Startup Security Checklist
 description: Pragmatic security approach for startups - what to do now vs. later
 audience: ["human", "ai"]
 status: ready
-last_updated: 2025-01-14
+last_updated: 2025-08-15
 owner: security
 ---
 

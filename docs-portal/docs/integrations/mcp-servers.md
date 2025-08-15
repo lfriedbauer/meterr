@@ -3,7 +3,7 @@ title: MCP Server Integrations
 description: Model Context Protocol servers for AI agent automation
 audience: ["ai", "human"]
 status: ready
-last_updated: 2025-08-13
+last_updated: 2025-08-15
 owner: team
 sidebar_position: 1
 ---

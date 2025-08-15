@@ -58,7 +58,14 @@
     "generate:api": "plop api",
     "generate:component": "plop component",
     "generate:model": "plop model",
-    "generate:feature": "plop feature"
+    "generate:feature": "plop feature",
+    "fix:dates": "node scripts/fix-dates.cjs",
+    "check:dates": "node scripts/check-dates.cjs",
+    "python:setup": "bash scripts/setup-python.sh",
+    "analyze:tokens": "python scripts/python/token_analyzer.py",
+    "test:models": "python scripts/python/model_tester.py",
+    "dashboard": "streamlit run scripts/python/dashboard.py",
+    "benchmark:gpu": "python scripts/python/token_analyzer.py --benchmark"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

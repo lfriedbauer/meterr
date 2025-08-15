@@ -3,7 +3,7 @@ title: Security Checklist
 description: Pre-deploy audits, key rotation, and OWASP compliance for meterr.ai
 audience: ["human", "ai"]
 status: ready
-last_updated: 2025-01-14
+last_updated: 2025-08-15
 owner: security
 ---
 

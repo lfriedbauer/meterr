@@ -3,7 +3,7 @@ title: Data Governance
 description: PII masking, data retention, and GDPR compliance for meterr.ai
 audience: ["human", "ai"]
 status: ready
-last_updated: 2025-01-14
+last_updated: 2025-08-15
 owner: data-protection
 ---
 

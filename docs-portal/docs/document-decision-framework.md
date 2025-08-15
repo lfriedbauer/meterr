@@ -3,7 +3,7 @@ title: Document Decision Framework
 description: Guidelines for when to create new docs vs. extend existing ones
 audience: ["human", "ai"]
 status: ready
-last_updated: 2025-01-14
+last_updated: 2025-08-15
 owner: documentation
 ---
 

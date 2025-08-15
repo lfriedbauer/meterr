@@ -1,6 +1,6 @@
 # Claude Instructions for meterr.ai
 
-*Last updated: 2025-08-14*
+*Last updated: 2025-08-15*
 
 ## 0) Prime Directive & Purpose
 
@@ -503,6 +503,26 @@ Every time you touch code:
 3. **ALWAYS** follow code quality standards
 4. **NEVER** generate unoptimized code
 5. **NEVER** ignore available hardware capabilities
+
+---
+
+## 12) Date Handling Rules
+
+### IMPORTANT: Automatic Date Correction
+- **Scripts Available:** `pnpm fix:dates` automatically corrects all dates
+- **Never worry about dates** - They will be auto-corrected
+- **Use dynamic dates in code:**
+  ```typescript
+  import { getDynamicDate, CURRENT_YEAR } from '@/lib/constants/dates';
+  ```
+
+### Date Management
+1. **Never hardcode dates** - A script will auto-fix them anyway
+2. **Use placeholder dates** - The fix-dates script will correct them
+3. **Scripts run automatically on:**
+   - `pnpm dev` (start of development)
+   - `pnpm build` (before building)
+   - Git commits (if using Husky)
 
 ---
 

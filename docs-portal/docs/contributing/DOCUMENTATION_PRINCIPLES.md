@@ -74,7 +74,7 @@ title: Clear, descriptive title
 description: One-line summary
 audience: ["human", "ai"] # or one of them
 status: draft|ready|deprecated
-last_updated: 2025-08-13
+last_updated: 2025-08-15
 owner: team|person responsible
 ---
 ```
@@ -198,4 +198,4 @@ owner: team|person responsible
 ---
 
 *These principles guide all documentation decisions for meterr.ai*
-*Last updated: 2025-08-13*
+*Last updated: 2025-08-15*

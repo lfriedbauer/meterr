@@ -3,7 +3,7 @@ title: AI Context
 sidebar_position: 0
 audience: ["ai"]
 description: "Token-efficient documentation optimized for AI agents"
-last_updated: 2025-08-13
+last_updated: 2025-08-15
 owner: team
 status: ready
 ---

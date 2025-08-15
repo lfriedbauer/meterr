@@ -224,7 +224,7 @@ markdown# What Claude "knows"
 
 # What happens
 Claude thinks: "I last saw dates around early 2024"
-Claude writes: "Last updated: 2024-03-15" (makes up a plausible date)
+Claude writes: "Last updated: 2025-08-15" (makes up a plausible date)
 Reality: Today is actually late 2024 or 2025
 2. No Real-Time Clock
 typescript// What Claude CAN'T do

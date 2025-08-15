@@ -3,7 +3,7 @@ title: Introduction
 sidebar_position: 0
 audience: ["human"]
 description: "Comprehensive documentation for human developers working with meterr.ai"
-last_updated: 2025-08-13
+last_updated: 2025-08-15
 owner: team
 status: ready
 ---
