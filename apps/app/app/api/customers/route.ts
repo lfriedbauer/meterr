@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       // Return existing customer instead of error
       return NextResponse.json(
         { 
-          error: 'Customer already exists, continuing with existing account',
+          message: 'Welcome back! Continuing with your existing account.',
           existingCustomer: {
             id: existing.id,
             email: existing.email,

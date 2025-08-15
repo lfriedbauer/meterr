@@ -30,9 +30,10 @@ export default function Dashboard() {
       if (!res.ok) {
         // Check if customer already exists
         if (res.status === 409 && data.existingCustomer) {
-          // Use existing customer
+          // Use existing customer - no error needed
           setCustomerId(data.existingCustomer.id);
           setStep(2);
+          setError(''); // Clear any error
           return;
         }
         throw new Error(data.error || 'Failed to create customer');
